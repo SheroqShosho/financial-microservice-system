@@ -1,4 +1,4 @@
 package se.omegapoint.productdirectory.dtos;
 
-public class CreditCardDTO {
+public class CreditCardRequestDTO {
 }
