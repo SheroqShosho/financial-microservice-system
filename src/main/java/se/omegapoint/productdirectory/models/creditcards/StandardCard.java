@@ -1,19 +1,22 @@
 package se.omegapoint.productdirectory.models.creditcards;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import se.omegapoint.productdirectory.models.Product;
 import se.omegapoint.productdirectory.models.enums.CreditCardType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
+import javax.smartcardio.Card;
 import java.math.BigDecimal;
 
 @Entity
-public class PlatinumCard extends CreditCard {
+public class StandardCard extends CreditCard {
 
-    protected PlatinumCard() {
+    protected StandardCard() {
     }
 
-    protected PlatinumCard(CreditCardType creditCardType,
+    protected StandardCard(CreditCardType creditCardType,
                            BigDecimal spentAmount,
                            BigDecimal creditLimit,
                            BigDecimal fee,
@@ -23,4 +26,6 @@ public class PlatinumCard extends CreditCard {
 
         super(creditCardType, spentAmount, creditLimit, fee, interestRate, productType, productStatus);
     }
+
+
 }

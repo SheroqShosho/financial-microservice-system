@@ -1,9 +1,10 @@
 package se.omegapoint.productdirectory.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
+
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -24,7 +25,8 @@ public abstract class Product {
     @NotNull
     private ProductStatus productStatus;
 
-    protected Product() {}
+    protected Product() {
+    }
 
     protected Product(ProductType productType, ProductStatus productStatus) {
         this.productType = productType;
@@ -38,6 +40,7 @@ public abstract class Product {
     public ProductType getProductType() {
         return productType;
     }
+
     public void setProductType(ProductType productType) {
         this.productType = productType;
     }
@@ -45,6 +48,7 @@ public abstract class Product {
     public ProductStatus getProductStatus() {
         return productStatus;
     }
+
     public void setProductStatus(ProductStatus productStatus) {
         this.productStatus = productStatus;
     }
