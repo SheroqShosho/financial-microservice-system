@@ -5,7 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
+import static jakarta.persistence.InheritanceType.JOINED;
+
+
 @Entity
+@Inheritance(strategy = JOINED)
 public abstract class Product {
 
     @Id
@@ -22,4 +26,13 @@ public abstract class Product {
     @Enumerated(EnumType.STRING)
     @NotNull
     private ProductStatus productStatus;
+
+    protected Product() {
+    }
+
+    protected Product(ProductType productType, ProductStatus productStatus) {
+        this.productType = productType;
+        this.productStatus = productStatus;
+    }
+
 }
