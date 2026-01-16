@@ -9,7 +9,7 @@ import static jakarta.persistence.InheritanceType.JOINED;
 
 
 @Entity
-@Inheritance(strategy = JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Product {
 
     @Id
@@ -27,12 +27,28 @@ public abstract class Product {
     @NotNull
     private ProductStatus productStatus;
 
-    protected Product() {
-    }
+    protected Product() {}
 
     protected Product(ProductType productType, ProductStatus productStatus) {
         this.productType = productType;
         this.productStatus = productStatus;
     }
 
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
+    }
+
+    public ProductStatus getProductStatus() {
+        return productStatus;
+    }
+    public void setProductStatus(ProductStatus productStatus) {
+        this.productStatus = productStatus;
+    }
 }
