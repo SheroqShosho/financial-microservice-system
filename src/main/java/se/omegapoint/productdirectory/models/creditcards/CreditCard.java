@@ -13,7 +13,7 @@ import se.omegapoint.productdirectory.models.enums.ProductType;
 import java.math.BigDecimal;
 
 @Entity
-public abstract class CreditCard extends Product {
+public class CreditCard extends Product {
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -36,7 +36,7 @@ public abstract class CreditCard extends Product {
     @NotNull
     private BigDecimal interestRate;
 
-    protected CreditCard() {
+    public CreditCard() {
     }
 
     protected CreditCard(CreditCardType creditCardType, BigDecimal spentAmount, BigDecimal creditLimit, BigDecimal fee, BigDecimal interestRate, ProductType productType, ProductStatus productStatus) {

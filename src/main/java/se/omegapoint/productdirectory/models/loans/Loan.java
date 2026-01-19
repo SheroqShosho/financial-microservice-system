@@ -30,13 +30,13 @@ public class Loan extends Product {
 
     @Column
     @NotNull
-    private int durationMonths;
+    private Integer durationMonths;
 
     @Column
     @NotNull
     private BigDecimal interestRate;
 
-    protected Loan() {}
+    public Loan() {}
 
     protected Loan(
                 LoanType loanType,
