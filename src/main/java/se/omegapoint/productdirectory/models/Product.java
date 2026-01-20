@@ -12,7 +12,6 @@ public abstract class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Integer productId;
 
     @Column

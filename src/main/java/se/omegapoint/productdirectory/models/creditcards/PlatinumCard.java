@@ -13,14 +13,24 @@ public class PlatinumCard extends CreditCard {
     protected PlatinumCard() {
     }
 
-    protected PlatinumCard(CreditCardType creditCardType,
-                           BigDecimal spentAmount,
-                           BigDecimal creditLimit,
-                           BigDecimal fee,
-                           BigDecimal interestRate,
-                           ProductType productType,
-                           ProductStatus productStatus) {
+    protected PlatinumCard(
+            CreditCardType creditCardType,
+            BigDecimal spentAmount,
+            BigDecimal creditLimit,
+            BigDecimal fee,
+            BigDecimal interestRate,
+            ProductType productType,
+            ProductStatus productStatus
+    ) {
 
-        super(creditCardType, spentAmount, creditLimit, fee, interestRate, productType, productStatus);
+        super(
+                creditCardType,
+                spentAmount,
+                creditLimit,
+                fee,
+                interestRate,
+                productType,
+                productStatus
+        );
     }
 }

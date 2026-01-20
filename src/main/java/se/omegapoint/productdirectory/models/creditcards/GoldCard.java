@@ -23,6 +23,14 @@ public class GoldCard extends CreditCard {
             ProductStatus productStatus
     ) {
 
-        super(creditCardType, spentAmount, creditLimit, fee, interestRate, productType, productStatus);
+        super(
+                creditCardType,
+                spentAmount,
+                creditLimit,
+                fee,
+                interestRate,
+                productType,
+                productStatus
+        );
     }
 }
