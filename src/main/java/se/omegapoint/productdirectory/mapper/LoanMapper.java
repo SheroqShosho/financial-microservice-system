@@ -4,31 +4,34 @@ import org.springframework.stereotype.Component;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
 import se.omegapoint.productdirectory.models.loans.Loan;
+
 @Component
 public class LoanMapper {
 
-    public LoanResponseDTO mapToLoanResponse(Loan loan) {
+    // Mapper för response med ID (Entity > DTO)
+    public LoanResponseDTO mapToLoanResponse(Loan entity) {
         return new LoanResponseDTO(
-                loan.getProductId(),
-                loan.getProductType(),
-                loan.getProductStatus(),
-                loan.getLoanType(),
-                loan.getMinAmount(),
-                loan.getMaxAmount(),
-                loan.getDurationMonths(),
-                loan.getInterestRate()
+                entity.getProductId(),
+                entity.getProductType(),
+                entity.getProductStatus(),
+                entity.getLoanType(),
+                entity.getMinAmount(),
+                entity.getMaxAmount(),
+                entity.getDurationMonths(),
+                entity.getInterestRate()
         );
     }
 
-    public Loan mapToLoan(LoanRequestDTO loanRequestDTO) {
-        Loan loan = new Loan();
-        loan.setProductType(loanRequestDTO.productType());
-        loan.setProductStatus(loanRequestDTO.productStatus());
-        loan.setLoanType(loanRequestDTO.loanType());
-        loan.setMinAmount(loanRequestDTO.minAmount());
-        loan.setMaxAmount(loanRequestDTO.maxAmount());
-        loan.setDurationMonths(loanRequestDTO.durationMonths());
-        loan.setInterestRate(loanRequestDTO.interestRate());
-        return loan;
+    // Mapper för request utan ID (DTO > Entity)
+    public Loan mapToLoan(LoanRequestDTO request) {
+        Loan entity = new Loan();
+        entity.setProductType(request.productType());
+        entity.setProductStatus(request.productStatus());
+        entity.setLoanType(request.loanType());
+        entity.setMinAmount(request.minAmount());
+        entity.setMaxAmount(request.maxAmount());
+        entity.setDurationMonths(request.durationMonths());
+        entity.setInterestRate(request.interestRate());
+        return entity;
     }
 }

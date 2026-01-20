@@ -14,13 +14,13 @@ public class MortgageLoan extends Loan {
     }
 
     protected MortgageLoan(
-                        LoanType loanType,
-                        BigDecimal minAmount,
-                        BigDecimal maxAmount,
-                        int durationMonths,
-                        BigDecimal interestRate,
-                        ProductType productType,
-                        ProductStatus productStatus
+        LoanType loanType,
+        BigDecimal minAmount,
+        BigDecimal maxAmount,
+        Integer durationMonths,
+        BigDecimal interestRate,
+        ProductType productType,
+        ProductStatus productStatus
     ) {
 
         super(

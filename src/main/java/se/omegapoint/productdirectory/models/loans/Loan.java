@@ -36,16 +36,17 @@ public class Loan extends Product {
     @NotNull
     private BigDecimal interestRate;
 
-    public Loan() {}
+    public Loan() {
+    }
 
     protected Loan(
-                LoanType loanType,
-                BigDecimal minAmount,
-                BigDecimal maxAmount,
-                int durationMonths,
-                BigDecimal interestRate,
-                ProductType productType,
-                ProductStatus productStatus
+            LoanType loanType,
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
+            Integer durationMonths,
+            BigDecimal interestRate,
+            ProductType productType,
+            ProductStatus productStatus
     ) {
 
         super(productType, productStatus);
@@ -59,6 +60,7 @@ public class Loan extends Product {
     public LoanType getLoanType() {
         return loanType;
     }
+
     public void setLoanType(LoanType loanType) {
         this.loanType = loanType;
     }
@@ -66,6 +68,7 @@ public class Loan extends Product {
     public BigDecimal getMinAmount() {
         return minAmount;
     }
+
     public void setMinAmount(BigDecimal minAmount) {
         this.minAmount = minAmount;
     }
@@ -73,6 +76,7 @@ public class Loan extends Product {
     public BigDecimal getMaxAmount() {
         return maxAmount;
     }
+
     public void setMaxAmount(BigDecimal maxAmount) {
         this.maxAmount = maxAmount;
     }
@@ -80,14 +84,18 @@ public class Loan extends Product {
     public int getDurationMonths() {
         return durationMonths;
     }
-    public void setDurationMonths(int durationMonths) {}
+
+    public void setDurationMonths(Integer durationMonths) {
+        this.durationMonths = durationMonths;
+    }
 
     public BigDecimal getInterestRate() {
         return interestRate;
     }
-    public void setInterestRate(BigDecimal interestRate) {}
 
-
+    public void setInterestRate(BigDecimal interestRate) {
+        this.interestRate = interestRate;
+    }
 
 
 }

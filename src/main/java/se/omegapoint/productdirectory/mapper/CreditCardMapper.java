@@ -4,9 +4,11 @@ import org.springframework.stereotype.Component;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
 import se.omegapoint.productdirectory.models.creditcards.CreditCard;
+
 @Component
 public class CreditCardMapper {
 
+    // Mapper för response med ID (Entity > DTO)
     public CreditCardResponseDTO mapToCreditCardResponse(CreditCard entity) {
         return new CreditCardResponseDTO(
                 entity.getProductId(),
@@ -20,6 +22,7 @@ public class CreditCardMapper {
         );
     }
 
+    // Mapper för request utan ID (DTO > Entity)
     public CreditCard mapToCreditCardEntity(CreditCardRequestDTO request) {
         CreditCard entity = new CreditCard();
         entity.setProductType(request.productType());

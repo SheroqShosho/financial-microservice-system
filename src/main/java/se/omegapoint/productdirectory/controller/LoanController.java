@@ -1,17 +1,40 @@
 package se.omegapoint.productdirectory.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
+import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
 import se.omegapoint.productdirectory.service.LoanService;
 
+import java.util.List;
+
+// RestController för lån
 @RestController
 @RequestMapping("/api/loan")
 public class LoanController {
 
     private final LoanService loanService;
 
+    // Konstruktor för injection
     public LoanController(final LoanService loanService) {
         this.loanService = loanService;
+    }
 
+    // Hanterar GET-request och hämtar alla lån. Returnerar dto-lista samt statuskod
+    @GetMapping
+    public ResponseEntity<List<LoanResponseDTO>> getAll() {
+        List<LoanResponseDTO> allLoans = loanService.getAllLoans(); // Skapar lista via service
+
+        return ResponseEntity.status(HttpStatus.OK).body(allLoans); // Returnerar response med listan och statuskod
+    }
+
+    // Hanterar POST-request och skapar nytt lån i databas. Returnerar sedan dto-response med body och statuskod
+    @PostMapping
+    public ResponseEntity<LoanResponseDTO> create(@RequestBody LoanRequestDTO request) {
+        LoanResponseDTO response = loanService.addLoan(request); // Skickar request till service och får tillbaka response
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response); // Returnerar response till client med body och statuskod
     }
 
 }

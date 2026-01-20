@@ -1,6 +1,6 @@
 package se.omegapoint.productdirectory.models.loans;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import se.omegapoint.productdirectory.models.enums.LoanType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
@@ -11,16 +11,17 @@ import java.math.BigDecimal;
 public class PrivateLoan extends Loan {
 
 
-    protected PrivateLoan() {}
+    protected PrivateLoan() {
+    }
 
     protected PrivateLoan(
-                       LoanType loanType,
-                       BigDecimal minAmount,
-                       BigDecimal maxAmount,
-                       int durationMonths,
-                       BigDecimal interestRate,
-                       ProductType productType,
-                       ProductStatus productStatus
+            LoanType loanType,
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
+            Integer durationMonths,
+            BigDecimal interestRate,
+            ProductType productType,
+            ProductStatus productStatus
     ) {
 
         super(
