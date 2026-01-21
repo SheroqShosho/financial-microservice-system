@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
-import se.omegapoint.productdirectory.mapper.CreditCardMapper;
+import se.omegapoint.productdirectory.mappers.CreditCardMapper;
 import se.omegapoint.productdirectory.models.creditcards.CreditCard;
 import se.omegapoint.productdirectory.repositories.CreditCardRepository;
 
