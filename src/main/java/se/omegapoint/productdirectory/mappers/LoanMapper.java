@@ -1,4 +1,4 @@
-package se.omegapoint.productdirectory.mapper;
+package se.omegapoint.productdirectory.mappers;
 
 import org.springframework.stereotype.Component;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;

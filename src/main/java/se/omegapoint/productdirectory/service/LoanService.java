@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
-import se.omegapoint.productdirectory.mapper.LoanMapper;
+import se.omegapoint.productdirectory.mappers.LoanMapper;
 import se.omegapoint.productdirectory.models.loans.Loan;
 import se.omegapoint.productdirectory.repositories.LoanRepository;
 
