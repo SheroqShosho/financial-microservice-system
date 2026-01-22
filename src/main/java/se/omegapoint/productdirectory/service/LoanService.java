@@ -1,5 +1,7 @@
 package se.omegapoint.productdirectory.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
@@ -14,6 +16,8 @@ import java.util.List;
 @Transactional
 public class LoanService {
 
+    private static final Logger log = LoggerFactory.getLogger(LoanService.class);
+
     private final LoanRepository loanRepository;
     private final LoanMapper loanMapper;
 
@@ -25,6 +29,7 @@ public class LoanService {
 
     // Hämtar och returnerar alla lån
     public List<LoanResponseDTO> getAllLoans() {
+        log.info("Retrieving all loans");
         return loanRepository.findAll() // Repo/hibernate skapar SQL för att hämta alla lån
                 .stream() // Streamar alla delar en efter en
                 .map(loanMapper::mapToLoanResponse) // Mappar om från entity till DTO
@@ -33,6 +38,7 @@ public class LoanService {
 
     // Skapar nytt lån i databasen och returnerar response
     public LoanResponseDTO addLoan(LoanRequestDTO request) {
+        log.info("Adding a loan: {}", request);
         Loan entity = loanMapper.mapToLoan(request); // Använder request och mappar till entity
         Loan savedEntity = loanRepository.save(entity); // Entity sparas i databasen via repo
 

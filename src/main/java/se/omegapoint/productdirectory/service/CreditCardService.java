@@ -1,5 +1,7 @@
 package se.omegapoint.productdirectory.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
@@ -14,6 +16,8 @@ import java.util.List;
 @Transactional
 public class CreditCardService {
 
+    private static final Logger log = LoggerFactory.getLogger(CreditCardService.class);
+
     private final CreditCardRepository creditCardRepository;
     private final CreditCardMapper creditCardMapper;
 
@@ -25,7 +29,8 @@ public class CreditCardService {
 
     // Hämtar och returnerar lista med alla kreditkort
     public List<CreditCardResponseDTO> getAllCreditCards() {
-        return creditCardRepository.findAll() // Repo/hibernate skapar SQL för att hämta alla kort
+        log.info("Retrieving all credit cards");
+        return creditCardRepository.findAll()// Repo/hibernate skapar SQL för att hämta alla kort
                 .stream() // Streamar alla delar en efter en
                 .map(creditCardMapper::mapToCreditCardResponse) // Mappar om från entity till DTO
                 .toList(); // Lägger till i lista
@@ -33,6 +38,7 @@ public class CreditCardService {
 
     // Skapar nytt kreditkort i databasen och returnerar response
     public CreditCardResponseDTO addCreditCard(CreditCardRequestDTO request) {
+        log.info("Adding credit card {}", request);
         CreditCard entity = creditCardMapper.mapToCreditCardEntity(request); // Använder request och mappar till entity
         CreditCard savedEntity = creditCardRepository.save(entity); // Entity sparas i databasen via repo
 
