@@ -7,5 +7,4 @@ import se.omegapoint.productdirectory.models.creditcards.CreditCard;
 @Repository
 public interface CreditCardRepository extends JpaRepository<CreditCard, Integer> {
 
-
 }

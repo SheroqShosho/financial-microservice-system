@@ -43,4 +43,21 @@ public class CreditCardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response); // Returnerar response till client med body och statuskod
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<CreditCardResponseDTO> update(@PathVariable Integer id, @RequestBody CreditCardRequestDTO request) {
+        log.info("Update credit card: {} with data {}", id, request);
+        CreditCardResponseDTO response = creditCardService.updateCreditCard(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        log.info("Delete credit card: {}", id);
+
+        creditCardService.deleteCreditCard(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

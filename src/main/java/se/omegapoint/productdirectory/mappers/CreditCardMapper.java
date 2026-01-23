@@ -34,4 +34,28 @@ public class CreditCardMapper {
         entity.setInterestRate(request.interestRate());
         return entity;
     }
+
+    public void updateEntityFromDTO(CreditCardRequestDTO request, CreditCard entity) {
+        if (request.productType() != null) {
+            entity.setProductType(request.productType());
+        }
+        if (request.productStatus() != null) {
+            entity.setProductStatus(request.productStatus());
+        }
+        if (request.creditCardType() != null) {
+            entity.setCreditCardType(request.creditCardType());
+        }
+        if (request.spentAmount() != null) {
+            entity.setSpentAmount(request.spentAmount());
+        }
+        if (request.creditLimit() != null) {
+            entity.setCreditLimit(request.creditLimit());
+        }
+        if (request.fee() != null) {
+            entity.setFee(request.fee());
+        }
+        if (request.interestRate() != null) {
+            entity.setInterestRate(request.interestRate());
+        }
+    }
 }
