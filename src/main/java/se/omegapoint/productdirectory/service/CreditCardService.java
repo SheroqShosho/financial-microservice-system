@@ -45,11 +45,22 @@ public class CreditCardService {
         return creditCardMapper.mapToCreditCardResponse(savedEntity); // Entity mappas om till response-dto och returneras
     }
 
+    public CreditCardResponseDTO updateCreditCard(Integer id, CreditCardRequestDTO request) {
+        log.info("Updating credit card {}", request);
+
+        CreditCard existingCreditCard = creditCardRepository.findById(id).orElseThrow(() -> new RuntimeException("Credit card with id " + id + " not found"));
+        creditCardMapper.updateEntityFromDTO(request, existingCreditCard);
+        CreditCard savedEntity = creditCardRepository.save(existingCreditCard);
+
+        return creditCardMapper.mapToCreditCardResponse(savedEntity);
+    }
+
+    public void deleteCreditCard(Integer id) {
+        CreditCard existingCard = creditCardRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Credit card with id: " + id + "not found")
+        );
+        creditCardRepository.delete(existingCard);
+    }
+
     // getCreditCardById
-
-    // updateCreditCardById
-
-    // deleteCreditCardById
-
-
 }

@@ -81,7 +81,7 @@ public class Loan extends Product {
         this.maxAmount = maxAmount;
     }
 
-    public int getDurationMonths() {
+    public Integer getDurationMonths() {
         return durationMonths;
     }
 

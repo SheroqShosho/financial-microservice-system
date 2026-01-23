@@ -45,9 +45,22 @@ public class LoanService {
         return loanMapper.mapToLoanResponse(savedEntity); // Entity mappas om till response-dto och returneras
     }
 
+    public LoanResponseDTO updateLoan(Integer id, LoanRequestDTO request) {
+        log.info("Updating a loan: {}", request);
+
+        Loan existingLoan = loanRepository.findById(id).orElseThrow(() -> new RuntimeException("Loan with id " + id + " not found"));
+        loanMapper.updateEntityFromDTO(request, existingLoan);
+        Loan savedEntity = loanRepository.save(existingLoan);
+
+        return loanMapper.mapToLoanResponse(savedEntity);
+    }
+
+    public void deleteLoan(Integer id) {
+        Loan existingLoan = loanRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Loan with id: " + id + "not found")
+        );
+        loanRepository.delete(existingLoan);
+    }
+
     // getLoanById
-
-    // updateLoanById
-
-    // deleteLoanById
 }

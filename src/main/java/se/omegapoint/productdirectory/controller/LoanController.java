@@ -43,4 +43,21 @@ public class LoanController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response); // Returnerar response till client med body och statuskod
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<LoanResponseDTO> update(@PathVariable Integer id, @RequestBody LoanRequestDTO request) {
+        log.info("Update loan: {} with data {}", id, request);
+        LoanResponseDTO response = loanService.updateLoan(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        log.info("Delete credit card: {}", id);
+
+        loanService.deleteLoan(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

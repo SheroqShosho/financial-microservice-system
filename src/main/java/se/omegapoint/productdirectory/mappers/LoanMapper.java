@@ -34,4 +34,28 @@ public class LoanMapper {
         entity.setInterestRate(request.interestRate());
         return entity;
     }
+
+    public void updateEntityFromDTO(LoanRequestDTO request, Loan entity) {
+        if (request.productType() != null) {
+            entity.setProductType(request.productType());
+        }
+        if (request.productStatus() != null) {
+            entity.setProductStatus(request.productStatus());
+        }
+        if (request.loanType() != null) {
+            entity.setLoanType(request.loanType());
+        }
+        if (request.minAmount() != null) {
+            entity.setMinAmount(request.minAmount());
+        }
+        if (request.maxAmount() != null) {
+            entity.setMaxAmount(request.maxAmount());
+        }
+        if (request.durationMonths() != null) {
+            entity.setDurationMonths(request.durationMonths());
+        }
+        if (request.interestRate() != null) {
+            entity.setInterestRate(request.interestRate());
+        }
+    }
 }
