@@ -36,6 +36,14 @@ public class LoanService {
                 .toList(); // Lägger till i lista
     }
 
+    public LoanResponseDTO getLoanById(Integer id) {
+        log.info("Retrieving loan by id: {}", id);
+
+        Loan existingLoan = loanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Could not find loan with id: " + id));
+        return loanMapper.mapToLoanResponse(existingLoan);
+    }
+
     // Skapar nytt lån i databasen och returnerar response
     public LoanResponseDTO addLoan(LoanRequestDTO request) {
         log.info("Adding a loan: {}", request);

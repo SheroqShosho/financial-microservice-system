@@ -34,6 +34,16 @@ public class CreditCardController {
         return ResponseEntity.status(HttpStatus.OK).body(allCards); // Returnerar response med listan och statuskod
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CreditCardResponseDTO> getCreditCardById(@PathVariable Integer id) {
+        log.info("Get CreditCard by ID {}", id);
+
+        CreditCardResponseDTO response = creditCardService.getCreditCardById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
     // Hanterar POST-request och skapar nytt kreditkort i databas. Returnerar sedan dto-response med body och statuskod
     @PostMapping
     public ResponseEntity<CreditCardResponseDTO> create(@RequestBody CreditCardRequestDTO request) {
