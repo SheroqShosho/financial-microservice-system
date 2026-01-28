@@ -38,6 +38,7 @@ public class LoanService {
                 .toList(); // Lägger till i lista
     }
 
+    // Hämtar och returnerar specifikt lån baserat på id
     public LoanResponseDTO getLoanById(Integer id) {
         log.info("Retrieving loan by id: {}", id);
 
@@ -56,16 +57,21 @@ public class LoanService {
         return loanMapper.mapToLoanResponse(savedEntity); // Entity mappas om till response-dto och returneras
     }
 
+    // Uppdaterar specifikt lån baserat på id
     public LoanResponseDTO updateLoan(Integer id, LoanRequestDTO request) {
-        log.info("Updating a loan: {}", request);
+        log.info("Updating loan with id: {}", id);
 
-        Loan existingLoan = loanRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Loan with id " + id + " not found"));
-        loanMapper.updateEntityFromDTO(request, existingLoan);
+        Loan existingLoan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan with id " + id + " not found"));
+
+        loanMapper.updateEntityFromDTO(request, existingLoan); // Mappar om befintlig entity med ny data från requestDTO
         Loan savedEntity = loanRepository.save(existingLoan);
 
+        log.info("Successfully updated credit card with id: {}", id);
         return loanMapper.mapToLoanResponse(savedEntity);
     }
 
+    // Tar bort specifikt lån baserat på id
     public void deleteLoan(Integer id) {
         log.info("Deleting a loan with id: {}", id);
 
@@ -73,5 +79,6 @@ public class LoanService {
                 () -> new ResourceNotFoundException("Loan with id: " + id + "not found")
         );
         loanRepository.delete(existingLoan);
+        log.info("Successfully deleted loan with id: {}", id);
     }
 }
