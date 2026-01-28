@@ -38,6 +38,7 @@ public class CreditCardService {
                 .toList(); // Lägger till i lista
     }
 
+    // Hämtar och returnerar specifikt kreditkort baserat på id
     public CreditCardResponseDTO getCreditCardById(Integer id) {
         log.info("Retrieving credit card by id: {}", id);
 
@@ -56,24 +57,30 @@ public class CreditCardService {
         return creditCardMapper.mapToCreditCardResponse(savedEntity); // Entity mappas om till response-dto och returneras
     }
 
+    // Uppdaterar specifikt kreditkort baserat på id
     public CreditCardResponseDTO updateCreditCard(Integer id, CreditCardRequestDTO request) {
-        log.info("Updating credit card {}", request);
+        log.info("Updating credit card with id: {}", id);
 
         CreditCard existingCreditCard = creditCardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Credit card with id " + id + " not found"));
-        creditCardMapper.updateEntityFromDTO(request, existingCreditCard);
+
+        creditCardMapper.updateEntityFromDTO(request, existingCreditCard); // Mappar om befintlig entity med ny data från requestDTO
         CreditCard savedEntity = creditCardRepository.save(existingCreditCard);
 
+        log.info("Successfully updated credit card with id: {}", id);
         return creditCardMapper.mapToCreditCardResponse(savedEntity);
     }
 
+    // Tar bort specifikt kreditkort baserat på id
     public void deleteCreditCard(Integer id) {
         log.info("Deleting credit card by id: {}", id);
 
         CreditCard existingCard = creditCardRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Credit card with id: " + id + " not found")
         );
+
         creditCardRepository.delete(existingCard);
+        log.info("Successfully deleted credit card with id: {}", id);
     }
 
 }

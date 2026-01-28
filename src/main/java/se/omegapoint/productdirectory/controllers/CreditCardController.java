@@ -24,19 +24,22 @@ public class CreditCardController {
     // Hanterar GET-request och hämtar alla kreditkort. Returnerar dto-lista samt statuskod
     @GetMapping
     public ResponseEntity<List<CreditCardResponseDTO>> getAll() {
+        // Test för nullpointer exception för global exception handler
+//        String name = null;
+//        name.length();
 
         List<CreditCardResponseDTO> allCards = creditCardService.getAllCreditCards(); // Skapar lista via service
 
         return ResponseEntity.status(HttpStatus.OK).body(allCards); // Returnerar response med listan och statuskod
     }
 
+    // Hanterar GET-request för specifikt id. Returnerar dto samt statuskod
     @GetMapping("/{id}")
     public ResponseEntity<CreditCardResponseDTO> getCreditCardById(@PathVariable Integer id) {
 
         CreditCardResponseDTO response = creditCardService.getCreditCardById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
-
     }
 
     // Hanterar POST-request och skapar nytt kreditkort i databas. Returnerar sedan dto-response med body och statuskod
@@ -48,6 +51,7 @@ public class CreditCardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response); // Returnerar response till client med body och statuskod
     }
 
+    // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
     @PutMapping("/{id}")
     public ResponseEntity<CreditCardResponseDTO> update(@PathVariable Integer id, @RequestBody CreditCardRequestDTO request) {
 
@@ -56,6 +60,7 @@ public class CreditCardController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // Hanterar DELETE-request. Tar bort entity i databas för id't och returnerar statuskod.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
 

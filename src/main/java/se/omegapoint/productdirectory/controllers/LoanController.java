@@ -30,6 +30,7 @@ public class LoanController {
         return ResponseEntity.status(HttpStatus.OK).body(allLoans); // Returnerar response med listan och statuskod
     }
 
+    // Hanterar GET-request för specifikt id. Returnerar dto samt statuskod
     @GetMapping("/{id}")
     public ResponseEntity<LoanResponseDTO> getLoanById(@PathVariable Integer id) {
 
@@ -48,6 +49,7 @@ public class LoanController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response); // Returnerar response till client med body och statuskod
     }
 
+    // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
     @PutMapping("/{id}")
     public ResponseEntity<LoanResponseDTO> update(@PathVariable Integer id, @RequestBody LoanRequestDTO request) {
 
@@ -56,6 +58,7 @@ public class LoanController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // Hanterar DELETE-request. Tar bort entity i databas för id't och returnerar statuskod.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
 
