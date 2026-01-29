@@ -17,7 +17,7 @@ public class CreditCard extends Product {
 
     @Column
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @NotNull(message = "Creditcard type required.")
     private CreditCardType creditCardType;
 
     @Column
@@ -29,7 +29,7 @@ public class CreditCard extends Product {
     private BigDecimal creditLimit;
 
     @Column
-    @NotNull
+    @NotNull(message = "TEST NULL")
     private BigDecimal fee;
 
     @Column

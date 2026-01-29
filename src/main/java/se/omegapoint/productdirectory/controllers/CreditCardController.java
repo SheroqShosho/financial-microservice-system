@@ -1,5 +1,6 @@
 package se.omegapoint.productdirectory.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +25,6 @@ public class CreditCardController {
     // Hanterar GET-request och hämtar alla kreditkort. Returnerar dto-lista samt statuskod
     @GetMapping
     public ResponseEntity<List<CreditCardResponseDTO>> getAll() {
-        // Test för nullpointer exception för global exception handler
-//        String name = null;
-//        name.length();
 
         List<CreditCardResponseDTO> allCards = creditCardService.getAllCreditCards(); // Skapar lista via service
 
@@ -44,7 +42,7 @@ public class CreditCardController {
 
     // Hanterar POST-request och skapar nytt kreditkort i databas. Returnerar sedan dto-response med body och statuskod
     @PostMapping
-    public ResponseEntity<CreditCardResponseDTO> create(@RequestBody CreditCardRequestDTO request) {
+    public ResponseEntity<CreditCardResponseDTO> create(@RequestBody @Valid CreditCardRequestDTO request) {
 
         CreditCardResponseDTO response = creditCardService.addCreditCard(request); // Skickar request till service och får tillbaka response
 
@@ -53,7 +51,7 @@ public class CreditCardController {
 
     // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
     @PutMapping("/{id}")
-    public ResponseEntity<CreditCardResponseDTO> update(@PathVariable Integer id, @RequestBody CreditCardRequestDTO request) {
+    public ResponseEntity<CreditCardResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid CreditCardRequestDTO request) {
 
         CreditCardResponseDTO response = creditCardService.updateCreditCard(id, request);
 
