@@ -1,5 +1,6 @@
 package se.omegapoint.productdirectory.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class LoanController {
 
     // Hanterar POST-request och skapar nytt lån i databas. Returnerar sedan dto-response med body och statuskod
     @PostMapping
-    public ResponseEntity<LoanResponseDTO> create(@RequestBody LoanRequestDTO request) {
+    public ResponseEntity<LoanResponseDTO> create(@RequestBody @Valid LoanRequestDTO request) {
 
         LoanResponseDTO response = loanService.addLoan(request); // Skickar request till service och får tillbaka response
 
@@ -51,7 +52,7 @@ public class LoanController {
 
     // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
     @PutMapping("/{id}")
-    public ResponseEntity<LoanResponseDTO> update(@PathVariable Integer id, @RequestBody LoanRequestDTO request) {
+    public ResponseEntity<LoanResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid LoanRequestDTO request) {
 
         LoanResponseDTO response = loanService.updateLoan(id, request);
 
