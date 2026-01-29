@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.models.enums.ProductType;
 import se.omegapoint.productdirectory.models.loans.Loan;
 
 @Component
@@ -29,7 +30,7 @@ public class LoanMapper {
     // Mapper för request utan ID (DTO > Entity)
     public Loan mapToLoan(LoanRequestDTO request) {
         Loan entity = new Loan();
-        entity.setProductType(request.productType());
+        entity.setProductType(ProductType.LOAN);
         entity.setProductStatus(request.productStatus());
         entity.setLoanType(request.loanType());
         entity.setMinAmount(request.minAmount());
@@ -41,10 +42,10 @@ public class LoanMapper {
 
     // Mapper för att uppdatera befintlig entity i databasen - behåller befintligt värde om null skickas in
     public void updateEntityFromDTO(LoanRequestDTO request, Loan entity) {
-        if (request.productType() != null) {
-            log.info("   Field productType updated to : {}", request.productType());
-            entity.setProductType(request.productType());
-        }
+//        if (request.productType() != null) {
+//            log.info("   Field productType updated to : {}", request.productType());
+//            entity.setProductType(request.productType());
+//        }
         if (request.productStatus() != null) {
             log.info("   Field productStatus updated to : {}", request.productStatus());
             entity.setProductStatus(request.productStatus());
