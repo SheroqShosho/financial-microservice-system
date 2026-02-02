@@ -131,13 +131,55 @@ class CreditCardServiceTest {
 
     @Test
     void addCreditCardShouldAddCreditCard() {
+
+        //ARRANGE
+
+        // Mockar Request-dto
         CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
 
+        // Skapar Creditcard
         CreditCard card = new CreditCard();
 
+        // Skapar entity som repository ska returnera
         CreditCard savedCard = new CreditCard();
 
+        // Mockar response-dto
         CreditCardResponseDTO response = mock(CreditCardResponseDTO.class);
+
+        //Mappar till ett CreditCarrd entity
+        when(creditCardMapper.mapToCreditCardEntity(request)).thenReturn(card);
+
+        // Repository sparar entity och returnerar den sparade versionen
+        when(creditCardRepository.save(card)).thenReturn(savedCard);
+
+        // Mappar sparat entity till response-dto
+        when(creditCardMapper.mapToCreditCardResponse(savedCard)).thenReturn(response);
+
+        //ACT
+
+        // Anroper metoden som ska testas
+        CreditCardResponseDTO result = creditCardService.addCreditCard(request);
+
+        //ASSERT
+
+        //Kontrollerar att resultatet inte är null
+        assertNotNull(result);
+
+        //Kontrollerar att rätt response retuneras
+        assertEquals(response, result);
+
+        // Verifiera att request mappas till entity
+        verify(creditCardMapper, times(1)).mapToCreditCardEntity(request);
+
+        //Verifierar att entity sparas i repository
+        verify(creditCardRepository, times(1)).save(card);
+
+        //Verifierar att sparad entity mappas till response-dto
+        verify(creditCardMapper, times(1)).mapToCreditCardResponse(savedCard);
+
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(creditCardMapper, creditCardRepository);
+
 
     }
 
