@@ -1,0 +1,8 @@
+{
+  "productStatus": "ACTIVE",
+  "loanType": "MORTGAGE",
+  "minAmount": 10000,
+  "maxAmount": 200000,
+  "durationMonths": 120,
+  "interestRate": 4.5
+}

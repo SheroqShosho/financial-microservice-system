@@ -1,0 +1,8 @@
+{
+  "productStatus": "ACTIVE",
+  "creditCardType": "STANDARD",
+  "spentAmount": 0,
+  "creditLimit": 5000,
+  "fee": 0,
+  "interestRate": 12.5
+}
