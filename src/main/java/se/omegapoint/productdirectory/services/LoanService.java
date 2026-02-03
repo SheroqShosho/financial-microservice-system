@@ -67,7 +67,7 @@ public class LoanService {
         loanMapper.updateEntityFromDTO(request, existingLoan); // Mappar om befintlig entity med ny data från requestDTO
         Loan savedEntity = loanRepository.save(existingLoan);
 
-        log.info("Successfully updated credit card with id: {}", id);
+        log.info("Successfully updated loan with id: {}", id);
         return loanMapper.mapToLoanResponse(savedEntity);
     }
 
