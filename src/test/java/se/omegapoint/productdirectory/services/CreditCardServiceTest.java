@@ -24,14 +24,14 @@ import static org.mockito.Mockito.times;
 @DisplayName("Credit Card Services Test")
 class CreditCardServiceTest {
 
-    @InjectMocks
-    CreditCardService creditCardService;
-
     @Mock
     CreditCardRepository creditCardRepository;
 
     @Mock
     CreditCardMapper creditCardMapper;
+
+    @InjectMocks
+    CreditCardService creditCardService;
 
 
     @Test
@@ -189,82 +189,82 @@ class CreditCardServiceTest {
     @DisplayName("Hittar,uppdaterar och sparar Credit card by id. Returnerar dto ")
     void updateCreditCardByIdShouldUpdateCreditCardByIdAndReturnDTO() {
 
-    //ARRANGE
+        //ARRANGE
 
-    Integer id = 1;
+        Integer id = 1;
 
-    // Mockar request-dto
-    CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
+        // Mockar request-dto
+        CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
 
-    //Existerande kreditcard
-    CreditCard existingCard = new CreditCard();
+        //Existerande kreditcard
+        CreditCard existingCard = new CreditCard();
 
-    //Sparad entity efter uppdatering
-    CreditCard savedCard = new CreditCard();
+        //Sparad entity efter uppdatering
+        CreditCard savedCard = new CreditCard();
 
-    // Mockar response-dto
-    CreditCardResponseDTO response = mock(CreditCardResponseDTO.class);
+        // Mockar response-dto
+        CreditCardResponseDTO response = mock(CreditCardResponseDTO.class);
 
-    //Repository hittar kortet
-    when(creditCardRepository.findById(id)).thenReturn(Optional.of(existingCard));
+        //Repository hittar kortet
+        when(creditCardRepository.findById(id)).thenReturn(Optional.of(existingCard));
 
-    // Repository sparar och returnerar uppdaterad entity
-    when(creditCardRepository.save(existingCard)).thenReturn(savedCard);
+        // Repository sparar och returnerar uppdaterad entity
+        when(creditCardRepository.save(existingCard)).thenReturn(savedCard);
 
-    // Mappar sparad entity till response-dto
-    when(creditCardMapper.mapToCreditCardResponse(savedCard)).thenReturn(response);
+        // Mappar sparad entity till response-dto
+        when(creditCardMapper.mapToCreditCardResponse(savedCard)).thenReturn(response);
 
-    //ACT
+        //ACT
 
-    CreditCardResponseDTO result = creditCardService.updateCreditCard(id, request);
+        CreditCardResponseDTO result = creditCardService.updateCreditCard(id, request);
 
-    //ASSERT
+        //ASSERT
 
-    assertNotNull(result);
-    assertEquals(response, result);
+        assertNotNull(result);
+        assertEquals(response, result);
 
-    // Verifierar att kortet hämtas via id
-    verify(creditCardRepository, times(1)).findById(id);
+        // Verifierar att kortet hämtas via id
+        verify(creditCardRepository, times(1)).findById(id);
 
-    //Verifierar att befintlig entity uppdatera med data från request
-    verify(creditCardMapper, times(1)).updateEntityFromDTO(request, existingCard);
+        //Verifierar att befintlig entity uppdatera med data från request
+        verify(creditCardMapper, times(1)).updateEntityFromDTO(request, existingCard);
 
-    //Verifierar att uppdaterad entity sparas
-    verify(creditCardRepository, times(1)).save(existingCard);
+        //Verifierar att uppdaterad entity sparas
+        verify(creditCardRepository, times(1)).save(existingCard);
 
-    //Verifierar att sparad entity mappas till response-dto
-    verify(creditCardMapper, times(1)).mapToCreditCardResponse(savedCard);
+        //Verifierar att sparad entity mappas till response-dto
+        verify(creditCardMapper, times(1)).mapToCreditCardResponse(savedCard);
 
-    // Säkerställer att inga extra anrop görs
-    verifyNoMoreInteractions(creditCardRepository, creditCardMapper);
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(creditCardRepository, creditCardMapper);
     }
 
     @Test
     @DisplayName("Kastar en Exception när card by id inte hittas")
     void updateCreditCardShouldThrowResourceNotFoundExceptionWhenNotFound() {
 
-     //ARRANGE
+        //ARRANGE
 
-     Integer id = 99;
-     CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
+        Integer id = 99;
+        CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
 
-     when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
+        when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
 
-     //ACT + ASSERT
+        //ACT + ASSERT
         ResourceNotFoundException ex = assertThrows(
-             ResourceNotFoundException.class,
-             () -> creditCardService.updateCreditCard(id, request)
-     );
+                ResourceNotFoundException.class,
+                () -> creditCardService.updateCreditCard(id, request)
+        );
 
         assertEquals("Credit card with id " + id + " not found", ex.getMessage());
 
-     // Verifierar att repository anropas
-     verify(creditCardRepository, times(1)).findById(id);
+        // Verifierar att repository anropas
+        verify(creditCardRepository, times(1)).findById(id);
 
-     //Mapper och save ska int anropas när inget hittas
-     verifyNoMoreInteractions(creditCardMapper, creditCardRepository);
+        //Mapper och save ska int anropas när inget hittas
+        verifyNoMoreInteractions(creditCardMapper, creditCardRepository);
 
-     verifyNoMoreInteractions(creditCardRepository);
+        verifyNoMoreInteractions(creditCardRepository);
 
     }
 
@@ -272,40 +272,40 @@ class CreditCardServiceTest {
     @DisplayName("Raderar Credit card by id")
     void deleteCreditCardShouldDeleteCreditCardById() {
 
-    //ARRANGE
+        //ARRANGE
 
-    Integer id = 1;
-    CreditCard card =  new CreditCard();
+        Integer id = 1;
+        CreditCard card = new CreditCard();
 
-    // Repository hittar kreditkort
-    when(creditCardRepository.findById(id)).thenReturn(Optional.of(card));
+        // Repository hittar kreditkort
+        when(creditCardRepository.findById(id)).thenReturn(Optional.of(card));
 
-    //ACT
+        //ACT
 
-    creditCardService.deleteCreditCard(id);
+        creditCardService.deleteCreditCard(id);
 
-    //ASSERT
+        //ASSERT
 
-    // Verifierar att repository hämtar kortet
-    verify(creditCardRepository, times(1)).findById(id);
+        // Verifierar att repository hämtar kortet
+        verify(creditCardRepository, times(1)).findById(id);
 
-    // Verifierar att repository tar bort rätt entity
-    verify(creditCardRepository, times(1)).delete(card);
+        // Verifierar att repository tar bort rätt entity
+        verify(creditCardRepository, times(1)).delete(card);
 
-    // Säkerställer att inga extra anrop görs
-    verifyNoMoreInteractions(creditCardRepository);
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(creditCardRepository);
     }
 
     @Test
     @DisplayName("Kastar en Exception när card by id inte hittas")
     void deleteCreditCardShouldThrowResourceNotFoundExceptionWhenNotFound() {
 
-    //ARRANGE
-    Integer id = 77;
+        //ARRANGE
+        Integer id = 77;
 
-    when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
+        when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
 
-    // ACT + ASSERT
+        // ACT + ASSERT
 
         ResourceNotFoundException ex = assertThrows(
                 ResourceNotFoundException.class,

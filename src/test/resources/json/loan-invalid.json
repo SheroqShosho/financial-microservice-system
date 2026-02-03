@@ -1,0 +1,6 @@
+{
+  "minAmount": -1,
+  "maxAmount": 200000,
+  "durationMonths": 120,
+  "interestRate": 4.5
+}

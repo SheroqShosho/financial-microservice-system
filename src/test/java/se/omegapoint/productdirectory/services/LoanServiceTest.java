@@ -24,15 +24,14 @@ import static org.mockito.Mockito.times;
 @DisplayName(" Loan Services Test")
 class LoanServiceTest {
 
-    @InjectMocks
-    LoanService loanService;
-
     @Mock
     LoanRepository loanRepository;
 
     @Mock
     LoanMapper loanMapper;
 
+    @InjectMocks
+    LoanService loanService;
 
     @Test
     @DisplayName("Hämtar alla Loan")
@@ -275,7 +274,7 @@ class LoanServiceTest {
         //ARRANGE
 
         Integer id = 1;
-        Loan loan =  new Loan();
+        Loan loan = new Loan();
 
         // Repository hittar loan
         when(loanRepository.findById(id)).thenReturn(Optional.of(loan));
