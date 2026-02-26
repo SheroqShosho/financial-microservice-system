@@ -2,11 +2,8 @@ package se.omegapoint.productdirectory.models.creditcards;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import se.omegapoint.productdirectory.models.Product;
-import se.omegapoint.productdirectory.models.enums.CreditCardType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
@@ -16,13 +13,8 @@ import java.math.BigDecimal;
 public class CreditCard extends Product {
 
     @Column
-    @Enumerated(EnumType.STRING)
     @NotNull
-    private CreditCardType creditCardType;
-
-    @Column
-    @NotNull
-    private BigDecimal spentAmount;
+    private String creditCardType;
 
     @Column
     @NotNull
@@ -39,29 +31,20 @@ public class CreditCard extends Product {
     public CreditCard() {
     }
 
-    protected CreditCard(CreditCardType creditCardType, BigDecimal spentAmount, BigDecimal creditLimit, BigDecimal fee, BigDecimal interestRate, ProductType productType, ProductStatus productStatus) {
+    protected CreditCard(String creditCardType, BigDecimal creditLimit, BigDecimal fee, BigDecimal interestRate, ProductType productType, ProductStatus productStatus) {
         super(productType, productStatus);
         this.creditCardType = creditCardType;
-        this.spentAmount = spentAmount;
         this.creditLimit = creditLimit;
         this.fee = fee;
         this.interestRate = interestRate;
     }
 
-    public CreditCardType getCreditCardType() {
+    public String getCreditCardType() {
         return creditCardType;
     }
 
-    public void setCreditCardType(CreditCardType creditCardType) {
+    public void setCreditCardType(String creditCardType) {
         this.creditCardType = creditCardType;
-    }
-
-    public BigDecimal getSpentAmount() {
-        return spentAmount;
-    }
-
-    public void setSpentAmount(BigDecimal spentAmount) {
-        this.spentAmount = spentAmount;
     }
 
     public BigDecimal getCreditLimit() {

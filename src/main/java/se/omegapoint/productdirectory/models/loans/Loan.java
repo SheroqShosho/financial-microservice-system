@@ -2,11 +2,8 @@ package se.omegapoint.productdirectory.models.loans;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import se.omegapoint.productdirectory.models.Product;
-import se.omegapoint.productdirectory.models.enums.LoanType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
@@ -16,9 +13,8 @@ import java.math.BigDecimal;
 public class Loan extends Product {
 
     @Column
-    @Enumerated(EnumType.STRING)
     @NotNull
-    private LoanType loanType;
+    private String loanType;
 
     @Column
     @NotNull
@@ -40,7 +36,7 @@ public class Loan extends Product {
     }
 
     protected Loan(
-            LoanType loanType,
+            String loanType,
             BigDecimal minAmount,
             BigDecimal maxAmount,
             Integer durationMonths,
@@ -57,11 +53,11 @@ public class Loan extends Product {
         this.interestRate = interestRate;
     }
 
-    public LoanType getLoanType() {
+    public String getLoanType() {
         return loanType;
     }
 
-    public void setLoanType(LoanType loanType) {
+    public void setLoanType(String loanType) {
         this.loanType = loanType;
     }
 

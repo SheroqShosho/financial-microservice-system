@@ -2,21 +2,17 @@ package se.omegapoint.productdirectory.dtos;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import se.omegapoint.productdirectory.models.enums.LoanType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 
 import java.math.BigDecimal;
 
 public record LoanRequestDTO(
 
-//        @NotNull(message = "Is required or has an invalid format")
-//        ProductType productType,
-
         @NotNull(message = "Is required or has an invalid format")
         ProductStatus productStatus,
 
         @NotNull(message = "Is required or has an invalid format")
-        LoanType loanType,
+        String loanType,
 
         @NotNull(message = "Can not be null")
         @PositiveOrZero(message = "Can not be negative")
@@ -33,7 +29,6 @@ public record LoanRequestDTO(
         @NotNull(message = "Can not be null")
         @PositiveOrZero(message = "Can not be negative")
         BigDecimal interestRate
-)
-{
+) {
 
 }
