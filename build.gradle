@@ -59,7 +59,7 @@ dependencies {
 
 
 application {
-    mainClass = "se.omegapoint.Application"
+    mainClass = "se.omegapoint.bankservice.Application"
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("21")
