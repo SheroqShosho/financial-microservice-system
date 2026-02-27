@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
 import se.omegapoint.productdirectory.services.LoanService;
 
 import java.util.List;
@@ -38,7 +39,6 @@ public class LoanController {
         LoanResponseDTO response = loanService.getLoanById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
-
     }
 
     // Hanterar POST-request och skapar nytt lån i databas. Returnerar sedan dto-response med body och statuskod
@@ -52,7 +52,7 @@ public class LoanController {
 
     // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
     @PutMapping("/{id}")
-    public ResponseEntity<LoanResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid LoanRequestDTO request) {
+    public ResponseEntity<LoanResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid LoanUpdateDTO request) {
 
         LoanResponseDTO response = loanService.updateLoan(id, request);
 

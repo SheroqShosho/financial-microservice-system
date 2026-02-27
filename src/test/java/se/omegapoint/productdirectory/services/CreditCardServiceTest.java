@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
 import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
 import se.omegapoint.productdirectory.mappers.CreditCardMapper;
 import se.omegapoint.productdirectory.models.creditcards.CreditCard;
@@ -18,7 +19,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Credit Card Services Test")
@@ -193,8 +193,8 @@ class CreditCardServiceTest {
 
         Integer id = 1;
 
-        // Mockar request-dto
-        CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
+        // Mockar update-dto
+        CreditCardUpdateDTO request = mock(CreditCardUpdateDTO.class);
 
         //Existerande kreditcard
         CreditCard existingCard = new CreditCard();
@@ -246,7 +246,7 @@ class CreditCardServiceTest {
         //ARRANGE
 
         Integer id = 99;
-        CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
+        CreditCardUpdateDTO request = mock(CreditCardUpdateDTO.class);
 
         when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
 

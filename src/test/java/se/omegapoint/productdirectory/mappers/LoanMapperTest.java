@@ -4,15 +4,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
-import se.omegapoint.productdirectory.models.enums.LoanType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 import se.omegapoint.productdirectory.models.loans.Loan;
-import java.math.BigDecimal;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.*;
 
-public class LoanMapperTest {
+import java.math.BigDecimal;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class LoanMapperTest {
 
     private final LoanMapper loanMapper = new LoanMapper();
 
@@ -30,7 +32,7 @@ public class LoanMapperTest {
         when(entity.getProductId()).thenReturn(7);
         when(entity.getProductType()).thenReturn(ProductType.LOAN);
         when(entity.getProductStatus()).thenReturn(ProductStatus.ACTIVE);
-        when(entity.getLoanType()).thenReturn(LoanType.PRIVATE);
+        when(entity.getLoanType()).thenReturn("PRIVATE");
         when(entity.getMinAmount()).thenReturn(new BigDecimal("500"));
         when(entity.getMaxAmount()).thenReturn(new BigDecimal("20000"));
         when(entity.getDurationMonths()).thenReturn(6);
@@ -47,7 +49,7 @@ public class LoanMapperTest {
         assertThat(response.productId()).isEqualTo(7);
         assertThat(response.productType()).isEqualTo(ProductType.LOAN);
         assertThat(response.productStatus()).isEqualTo(ProductStatus.ACTIVE);
-        assertThat(response.loanType()).isEqualTo(LoanType.PRIVATE);
+        assertThat(response.loanType()).isEqualTo("PRIVATE");
         assertThat(response.minAmount()).isEqualByComparingTo(new BigDecimal("500"));
         assertThat(response.maxAmount()).isEqualByComparingTo(new BigDecimal("20000"));
         assertThat(response.durationMonths()).isEqualTo(6);
@@ -65,7 +67,7 @@ public class LoanMapperTest {
         // Skapa en request med dummy data
         LoanRequestDTO request = new LoanRequestDTO(
                 ProductStatus.ACTIVE,
-                LoanType.PRIVATE,
+                "PRIVATE",
                 new BigDecimal("0"), // minAmount
                 new BigDecimal("50000"), // maxAmount
                 6,                           // durationMonths
@@ -83,7 +85,7 @@ public class LoanMapperTest {
         // Hur vi förväntar oss att datan mappas
 
         assertThat(entity.getProductStatus()).isEqualTo(ProductStatus.ACTIVE);
-        assertThat(entity.getLoanType()).isEqualTo(LoanType.PRIVATE);
+        assertThat(entity.getLoanType()).isEqualTo("PRIVATE");
         assertThat(entity.getMinAmount()).isEqualByComparingTo(new BigDecimal("0"));
         assertThat(entity.getMaxAmount()).isEqualByComparingTo(new BigDecimal("50000"));
         assertThat(entity.getDurationMonths()).isEqualTo(6);
@@ -94,7 +96,6 @@ public class LoanMapperTest {
 
         // Kontrollerar att id är null eftersom detta ska genereras automatiskt senare
         assertThat(entity.getProductId()).isNull();
-
 
 
     }

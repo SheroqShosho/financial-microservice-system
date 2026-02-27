@@ -1,6 +1,5 @@
 {
-  "spentAmount": -1,
   "creditLimit": 5000,
-  "fee": 0,
+  "fee": -500,
   "interestRate": 12.5
 }

@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
 import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
 import se.omegapoint.productdirectory.mappers.LoanMapper;
 import se.omegapoint.productdirectory.models.loans.Loan;
@@ -18,7 +19,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName(" Loan Services Test")
@@ -193,7 +193,7 @@ class LoanServiceTest {
         Integer id = 1;
 
         // Mockar request-dto
-        LoanRequestDTO request = mock(LoanRequestDTO.class);
+        LoanUpdateDTO request = mock(LoanUpdateDTO.class);
 
         //Existerande loan
         Loan existingLoan = new Loan();
@@ -245,7 +245,7 @@ class LoanServiceTest {
         //ARRANGE
 
         Integer id = 99;
-        LoanRequestDTO request = mock(LoanRequestDTO.class);
+        LoanUpdateDTO request = mock(LoanUpdateDTO.class);
 
         when(loanRepository.findById(id)).thenReturn(Optional.empty());
 

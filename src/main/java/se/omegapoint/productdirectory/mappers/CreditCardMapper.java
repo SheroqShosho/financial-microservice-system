@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
 import se.omegapoint.productdirectory.models.creditcards.CreditCard;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
@@ -20,7 +21,6 @@ public class CreditCardMapper {
                 entity.getProductType(),
                 entity.getProductStatus(),
                 entity.getCreditCardType(),
-                entity.getSpentAmount(),
                 entity.getCreditLimit(),
                 entity.getFee(),
                 entity.getInterestRate()
@@ -33,7 +33,6 @@ public class CreditCardMapper {
         entity.setProductType(ProductType.CREDIT_CARD);
         entity.setProductStatus(request.productStatus());
         entity.setCreditCardType(request.creditCardType());
-        entity.setSpentAmount(request.spentAmount());
         entity.setCreditLimit(request.creditLimit());
         entity.setFee(request.fee());
         entity.setInterestRate(request.interestRate());
@@ -41,11 +40,8 @@ public class CreditCardMapper {
     }
 
     // Mapper för att uppdatera befintlig entity i databasen - behåller befintligt värde om null skickas in
-    public void updateEntityFromDTO(CreditCardRequestDTO request, CreditCard entity) {
-//        if (request.productType() != null) {
-//            log.info("   Field productType updated to : {}", request.productType());
-//            entity.setProductType(request.productType());
-//        }
+    public void updateEntityFromDTO(CreditCardUpdateDTO request, CreditCard entity) {
+
         if (request.productStatus() != null) {
             log.info("   Field productStatus updated to : {}", request.productStatus());
             entity.setProductStatus(request.productStatus());
@@ -53,10 +49,6 @@ public class CreditCardMapper {
         if (request.creditCardType() != null) {
             log.info("   Field creditCardType updated to : {}", request.creditCardType());
             entity.setCreditCardType(request.creditCardType());
-        }
-        if (request.spentAmount() != null) {
-            log.info("   Field spentAmount updated to : {}", request.spentAmount());
-            entity.setSpentAmount(request.spentAmount());
         }
         if (request.creditLimit() != null) {
             log.info("   Field creditLimit updated to : {}", request.creditLimit());

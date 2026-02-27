@@ -3,10 +3,8 @@ package se.omegapoint.productdirectory.models.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum ProductStatus {
-    ACTIVE, // Produkt är aktiverad
-    PENDING, // Produkt är skapad men inte aktiverad
-    SUSPENDED, // Produkt är spärrad
-    RETIRED; // Produkt är avslutad
+    ACTIVE, // Produktmall är aktiverad
+    INACTIVE; // Produktmall är inaktiverad
 
     // Gör om all input till upper case
     @JsonCreator

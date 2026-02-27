@@ -5,12 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 import se.omegapoint.productdirectory.models.loans.Loan;
 
 @Component
 public class LoanMapper {
-    
+
     private static final Logger log = LoggerFactory.getLogger(LoanMapper.class);
 
     // Mapper för response med ID (Entity > DTO)
@@ -41,11 +42,8 @@ public class LoanMapper {
     }
 
     // Mapper för att uppdatera befintlig entity i databasen - behåller befintligt värde om null skickas in
-    public void updateEntityFromDTO(LoanRequestDTO request, Loan entity) {
-//        if (request.productType() != null) {
-//            log.info("   Field productType updated to : {}", request.productType());
-//            entity.setProductType(request.productType());
-//        }
+    public void updateEntityFromDTO(LoanUpdateDTO request, Loan entity) {
+
         if (request.productStatus() != null) {
             log.info("   Field productStatus updated to : {}", request.productStatus());
             entity.setProductStatus(request.productStatus());

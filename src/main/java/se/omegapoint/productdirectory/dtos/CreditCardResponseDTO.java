@@ -1,6 +1,5 @@
 package se.omegapoint.productdirectory.dtos;
 
-import se.omegapoint.productdirectory.models.enums.CreditCardType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
@@ -10,8 +9,7 @@ public record CreditCardResponseDTO(
         Integer productId,
         ProductType productType,
         ProductStatus productStatus,
-        CreditCardType creditCardType,
-        BigDecimal spentAmount,
+        String creditCardType,
         BigDecimal creditLimit,
         BigDecimal fee,
         BigDecimal interestRate
