@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
 import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
 import se.omegapoint.productdirectory.mappers.CreditCardMapper;
 import se.omegapoint.productdirectory.models.creditcards.CreditCard;
@@ -58,7 +59,7 @@ public class CreditCardService {
     }
 
     // Uppdaterar specifikt kreditkort baserat på id
-    public CreditCardResponseDTO updateCreditCard(Integer id, CreditCardRequestDTO request) {
+    public CreditCardResponseDTO updateCreditCard(Integer id, CreditCardUpdateDTO request) {
         log.info("Updating credit card with id: {}", id);
 
         CreditCard existingCreditCard = creditCardRepository.findById(id)

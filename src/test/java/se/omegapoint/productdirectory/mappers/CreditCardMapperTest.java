@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
 import se.omegapoint.productdirectory.models.creditcards.CreditCard;
-import se.omegapoint.productdirectory.models.enums.CreditCardType;
 import se.omegapoint.productdirectory.models.enums.ProductStatus;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
@@ -15,7 +14,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreditCardMapperTest {
+class CreditCardMapperTest {
 
 
     private final CreditCardMapper creditCardMapper = new CreditCardMapper();
@@ -34,8 +33,7 @@ public class CreditCardMapperTest {
         when(entity.getProductId()).thenReturn(7);
         when(entity.getProductType()).thenReturn(ProductType.CREDIT_CARD);
         when(entity.getProductStatus()).thenReturn(ProductStatus.ACTIVE);
-        when(entity.getCreditCardType()).thenReturn(CreditCardType.GOLD);
-        when(entity.getSpentAmount()).thenReturn(new BigDecimal("500"));
+        when(entity.getCreditCardType()).thenReturn("GOLD");
         when(entity.getCreditLimit()).thenReturn(new BigDecimal("20000"));
         when(entity.getFee()).thenReturn(new BigDecimal("200"));
         when(entity.getInterestRate()).thenReturn(new BigDecimal("2"));
@@ -51,8 +49,7 @@ public class CreditCardMapperTest {
         assertThat(response.productId()).isEqualTo(7);
         assertThat(response.productType()).isEqualTo(ProductType.CREDIT_CARD);
         assertThat(response.productStatus()).isEqualTo(ProductStatus.ACTIVE);
-        assertThat(response.creditCardType()).isEqualTo(CreditCardType.GOLD);
-        assertThat(response.spentAmount()).isEqualByComparingTo(new BigDecimal("500"));
+        assertThat(response.creditCardType()).isEqualTo("GOLD");
         assertThat(response.creditLimit()).isEqualByComparingTo(new BigDecimal("20000"));
         assertThat(response.fee()).isEqualByComparingTo(new BigDecimal("200"));
         assertThat(response.interestRate()).isEqualByComparingTo(new BigDecimal("2"));
@@ -69,8 +66,7 @@ public class CreditCardMapperTest {
         // Skapa en request med dummy data
         CreditCardRequestDTO request = new CreditCardRequestDTO(
                 ProductStatus.ACTIVE,
-                CreditCardType.GOLD,
-                new BigDecimal("0"), // spentAmount
+                ("GOLD"),
                 new BigDecimal("50000"), // creditLimit
                 new BigDecimal("150"), // fee
                 new BigDecimal("3") // interestRate
@@ -87,8 +83,7 @@ public class CreditCardMapperTest {
         // Hur vi förväntar oss att datan mappas
 
         assertThat(entity.getProductStatus()).isEqualTo(ProductStatus.ACTIVE);
-        assertThat(entity.getCreditCardType()).isEqualTo(CreditCardType.GOLD);
-        assertThat(entity.getSpentAmount()).isEqualByComparingTo(new BigDecimal("0"));
+        assertThat(entity.getCreditCardType()).isEqualTo("GOLD");
         assertThat(entity.getCreditLimit()).isEqualByComparingTo(new BigDecimal("50000"));
         assertThat(entity.getFee()).isEqualByComparingTo(new BigDecimal("150"));
         assertThat(entity.getInterestRate()).isEqualByComparingTo(new BigDecimal("3"));
@@ -98,7 +93,6 @@ public class CreditCardMapperTest {
 
         // Kontrollerar att id är null eftersom detta ska genereras automatiskt senare
         assertThat(entity.getProductId()).isNull();
-
 
 
     }

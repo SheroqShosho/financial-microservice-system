@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
 import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
 import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
 import se.omegapoint.productdirectory.mappers.LoanMapper;
 import se.omegapoint.productdirectory.models.loans.Loan;
@@ -58,7 +59,7 @@ public class LoanService {
     }
 
     // Uppdaterar specifikt lån baserat på id
-    public LoanResponseDTO updateLoan(Integer id, LoanRequestDTO request) {
+    public LoanResponseDTO updateLoan(Integer id, LoanUpdateDTO request) {
         log.info("Updating loan with id: {}", id);
 
         Loan existingLoan = loanRepository.findById(id)

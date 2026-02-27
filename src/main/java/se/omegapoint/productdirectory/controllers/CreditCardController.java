@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
 import se.omegapoint.productdirectory.services.CreditCardService;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class CreditCardController {
 
     // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
     @PutMapping("/{id}")
-    public ResponseEntity<CreditCardResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid CreditCardRequestDTO request) {
+    public ResponseEntity<CreditCardResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid CreditCardUpdateDTO request) {
 
         CreditCardResponseDTO response = creditCardService.updateCreditCard(id, request);
 

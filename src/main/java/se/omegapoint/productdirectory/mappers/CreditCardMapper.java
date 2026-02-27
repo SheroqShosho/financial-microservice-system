@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
 import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
 import se.omegapoint.productdirectory.models.creditcards.CreditCard;
 import se.omegapoint.productdirectory.models.enums.ProductType;
 
@@ -39,7 +40,7 @@ public class CreditCardMapper {
     }
 
     // Mapper för att uppdatera befintlig entity i databasen - behåller befintligt värde om null skickas in
-    public void updateEntityFromDTO(CreditCardRequestDTO request, CreditCard entity) {
+    public void updateEntityFromDTO(CreditCardUpdateDTO request, CreditCard entity) {
 
         if (request.productStatus() != null) {
             log.info("   Field productStatus updated to : {}", request.productStatus());
