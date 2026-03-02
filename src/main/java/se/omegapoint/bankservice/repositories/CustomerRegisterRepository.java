@@ -1,6 +1,8 @@
 package se.omegapoint.bankservice.repositories;
 
 import jakarta.inject.Singleton;
+import se.omegapoint.bankservice.models.CreditCard;
+import se.omegapoint.bankservice.models.Loan;
 import se.omegapoint.bankservice.models.User;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -42,5 +44,19 @@ public class CustomerRegisterRepository {
                 .items()
                 .stream()
                 .toList();
+    }
+
+    public List<CreditCard> findCardsByUserId(String userId) {
+        User user = findById(userId);
+        return (user != null && user.getCreditCards() != null)
+                ? user.getCreditCards()
+                : List.of();
+    }
+
+    public List<Loan> findLoansByUserId(String userId) {
+        User user = findById(userId);
+        return (user != null && user.getLoans() != null)
+                ? user.getLoans()
+                : List.of();
     }
 }

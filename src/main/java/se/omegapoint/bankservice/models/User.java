@@ -3,6 +3,9 @@ package se.omegapoint.bankservice.models;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @DynamoDbBean
 public class User {
 
@@ -10,6 +13,8 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
+    private List<CreditCard> creditCards;
+    private List<Loan> loans;
 //    private String Country;
 //    private String City;
 //    private String Address;
@@ -23,6 +28,8 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.creditCards = new ArrayList<>();
+        this.loans = new ArrayList<>();
     }
 
     @DynamoDbPartitionKey
@@ -56,5 +63,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<CreditCard> getCreditCards() {
+        return creditCards;
+    }
+
+    public void setCreditCards(List<CreditCard> creditCards) {
+        this.creditCards = creditCards;
+    }
+
+    public List<Loan> getLoans() {
+        return loans;
+    }
+
+    public void setLoans(List<Loan> loans) {
+        this.loans = loans;
     }
 }
