@@ -13,8 +13,10 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private List<CreditCard> creditCards;
-    private List<Loan> loans;
+    private List<CreditCard> creditCards = new ArrayList<>();
+    private List<Loan> loans = new ArrayList<>();
+
+//    private String socialSecurityNumber;
 //    private String Country;
 //    private String City;
 //    private String Address;
@@ -22,6 +24,7 @@ public class User {
 //    private String phoneNumber;
 //    private String yearlyIncome;
 
+    public User() {}
 
     public User(String userId, String firstName, String lastName, String email) {
         this.userId = userId;
