@@ -8,7 +8,6 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Singleton
 public class CustomerRegisterRepository {
@@ -42,6 +41,6 @@ public class CustomerRegisterRepository {
         return userTable.scan()
                 .items()
                 .stream()
-                .collect(Collectors.toList());
+                .toList();
     }
 }

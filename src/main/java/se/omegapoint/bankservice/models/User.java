@@ -19,10 +19,10 @@ public class User {
 
 
     public User(String userId, String firstName, String lastName, String email) {
-        userId = userId;
-        firstName = firstName;
-        lastName = lastName;
-        email = email;
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
     }
 
     @DynamoDbPartitionKey
@@ -31,7 +31,7 @@ public class User {
     }
 
     public void setUserId(String userId) {
-        userId = userId;
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -39,7 +39,7 @@ public class User {
     }
 
     public void setFirstName(String firstName) {
-        firstName = firstName;
+        this.firstName = firstName;
     }
 
     public String getLastName() {
@@ -47,7 +47,7 @@ public class User {
     }
 
     public void setLastName(String lastName) {
-        lastName = lastName;
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -55,6 +55,6 @@ public class User {
     }
 
     public void setEmail(String email) {
-        email = email;
+        this.email = email;
     }
 }
