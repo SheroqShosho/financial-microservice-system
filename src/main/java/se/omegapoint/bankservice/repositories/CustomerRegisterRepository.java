@@ -53,6 +53,16 @@ public class CustomerRegisterRepository {
                 : List.of();
     }
 
+    //ToDo
+    public CreditCard findCardByUserId(String userId) {
+
+    }
+
+    //ToDo
+    public Loan findLoanByUserId(String userId) {
+
+    }
+
     public List<Loan> findLoansByUserId(String userId) {
         User user = findById(userId);
         return (user != null && user.getLoans() != null)
