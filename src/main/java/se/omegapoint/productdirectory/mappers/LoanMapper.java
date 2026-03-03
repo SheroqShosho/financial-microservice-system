@@ -23,7 +23,6 @@ public class LoanMapper {
                 entity.getLoanType(),
                 entity.getMinAmount(),
                 entity.getMaxAmount(),
-                entity.getDurationMonths(),
                 entity.getInterestRate()
         );
     }
@@ -36,7 +35,6 @@ public class LoanMapper {
         entity.setLoanType(request.loanType());
         entity.setMinAmount(request.minAmount());
         entity.setMaxAmount(request.maxAmount());
-        entity.setDurationMonths(request.durationMonths());
         entity.setInterestRate(request.interestRate());
         return entity;
     }
@@ -59,10 +57,6 @@ public class LoanMapper {
         if (request.maxAmount() != null) {
             log.info("   Field maxAmount updated to : {}", request.maxAmount());
             entity.setMaxAmount(request.maxAmount());
-        }
-        if (request.durationMonths() != null) {
-            log.info("   Field durationMonths updated to : {}", request.durationMonths());
-            entity.setDurationMonths(request.durationMonths());
         }
         if (request.interestRate() != null) {
             log.info("   Field interestRate updated to : {}", request.interestRate());

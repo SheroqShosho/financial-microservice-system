@@ -12,6 +12,5 @@ public record LoanResponseDTO(
         String loanType,
         BigDecimal minAmount,
         BigDecimal maxAmount,
-        Integer durationMonths,
         BigDecimal interestRate) {
 }

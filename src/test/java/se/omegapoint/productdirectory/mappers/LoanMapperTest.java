@@ -35,7 +35,6 @@ class LoanMapperTest {
         when(entity.getLoanType()).thenReturn("PRIVATE");
         when(entity.getMinAmount()).thenReturn(new BigDecimal("500"));
         when(entity.getMaxAmount()).thenReturn(new BigDecimal("20000"));
-        when(entity.getDurationMonths()).thenReturn(6);
         when(entity.getInterestRate()).thenReturn(new BigDecimal("2"));
 
         // ACT
@@ -52,7 +51,6 @@ class LoanMapperTest {
         assertThat(response.loanType()).isEqualTo("PRIVATE");
         assertThat(response.minAmount()).isEqualByComparingTo(new BigDecimal("500"));
         assertThat(response.maxAmount()).isEqualByComparingTo(new BigDecimal("20000"));
-        assertThat(response.durationMonths()).isEqualTo(6);
         assertThat(response.interestRate()).isEqualByComparingTo(new BigDecimal("2"));
 
 
@@ -70,7 +68,6 @@ class LoanMapperTest {
                 "PRIVATE",
                 new BigDecimal("0"), // minAmount
                 new BigDecimal("50000"), // maxAmount
-                6,                           // durationMonths
                 new BigDecimal("3") // interestRate
 
         );
@@ -88,7 +85,6 @@ class LoanMapperTest {
         assertThat(entity.getLoanType()).isEqualTo("PRIVATE");
         assertThat(entity.getMinAmount()).isEqualByComparingTo(new BigDecimal("0"));
         assertThat(entity.getMaxAmount()).isEqualByComparingTo(new BigDecimal("50000"));
-        assertThat(entity.getDurationMonths()).isEqualTo(6);
         assertThat(entity.getInterestRate()).isEqualByComparingTo(new BigDecimal("3"));
 
         // Kontrollerar att rätt produkttyp blir satt, i detta fall LOAN

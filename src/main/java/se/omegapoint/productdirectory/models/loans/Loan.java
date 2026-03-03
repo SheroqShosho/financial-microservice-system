@@ -26,10 +26,6 @@ public class Loan extends Product {
 
     @Column
     @NotNull
-    private Integer durationMonths;
-
-    @Column
-    @NotNull
     private BigDecimal interestRate;
 
     public Loan() {
@@ -39,7 +35,6 @@ public class Loan extends Product {
             String loanType,
             BigDecimal minAmount,
             BigDecimal maxAmount,
-            Integer durationMonths,
             BigDecimal interestRate,
             ProductType productType,
             ProductStatus productStatus
@@ -49,7 +44,6 @@ public class Loan extends Product {
         this.loanType = loanType;
         this.minAmount = minAmount;
         this.maxAmount = maxAmount;
-        this.durationMonths = durationMonths;
         this.interestRate = interestRate;
     }
 
@@ -75,14 +69,6 @@ public class Loan extends Product {
 
     public void setMaxAmount(BigDecimal maxAmount) {
         this.maxAmount = maxAmount;
-    }
-
-    public Integer getDurationMonths() {
-        return durationMonths;
-    }
-
-    public void setDurationMonths(Integer durationMonths) {
-        this.durationMonths = durationMonths;
     }
 
     public BigDecimal getInterestRate() {
