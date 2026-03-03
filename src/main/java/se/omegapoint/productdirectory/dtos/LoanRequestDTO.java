@@ -24,10 +24,6 @@ public record LoanRequestDTO(
 
         @NotNull(message = "Can not be null")
         @PositiveOrZero(message = "Can not be negative")
-        Integer durationMonths,
-
-        @NotNull(message = "Can not be null")
-        @PositiveOrZero(message = "Can not be negative")
         BigDecimal interestRate
 ) {
 

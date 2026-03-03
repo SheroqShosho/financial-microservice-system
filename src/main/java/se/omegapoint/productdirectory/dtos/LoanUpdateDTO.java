@@ -17,9 +17,6 @@ public record LoanUpdateDTO(
         BigDecimal maxAmount,
 
         @PositiveOrZero(message = "Can not be negative")
-        Integer durationMonths,
-
-        @PositiveOrZero(message = "Can not be negative")
         BigDecimal interestRate
 ) {
 }
