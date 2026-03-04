@@ -17,7 +17,7 @@ public class CustomerRegisterRepository {
     private final DynamoDbTable<User> userTable;
 
     public CustomerRegisterRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.userTable = enhancedClient.table("CustomerRegister",
+        this.userTable = enhancedClient.table("customerregister",
                 TableSchema.fromBean(User.class));
     }
 
@@ -53,15 +53,15 @@ public class CustomerRegisterRepository {
                 : List.of();
     }
 
-    //ToDo
-    public CreditCard findCardByUserId(String userId) {
-
-    }
-
-    //ToDo
-    public Loan findLoanByUserId(String userId) {
-
-    }
+//    //ToDo
+//    public CreditCard findCardByUserId(String userId) {
+//
+//    }
+//
+//    //ToDo
+//    public Loan findLoanByUserId(String userId) {
+//
+//    }
 
     public List<Loan> findLoansByUserId(String userId) {
         User user = findById(userId);
