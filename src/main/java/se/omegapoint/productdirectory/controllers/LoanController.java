@@ -41,6 +41,14 @@ public class LoanController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/type/{loanType}")
+    public ResponseEntity<LoanResponseDTO> getLoanByType(@PathVariable String loanType) {
+
+        LoanResponseDTO response = loanService.getLoanByLoanType(loanType);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     // Hanterar POST-request och skapar nytt lån i databas. Returnerar sedan dto-response med body och statuskod
     @PostMapping
     public ResponseEntity<LoanResponseDTO> create(@RequestBody @Valid LoanRequestDTO request) {

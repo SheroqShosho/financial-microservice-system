@@ -48,6 +48,15 @@ public class LoanService {
         return loanMapper.mapToLoanResponse(existingLoan);
     }
 
+    public LoanResponseDTO getLoanByLoanType(String loanType) {
+        log.info("Retrieving loan by loanType: {}", loanType);
+
+        Loan existingLoan = loanRepository.findByLoanType(loanType)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find loan with loanType: " + loanType));
+
+        return loanMapper.mapToLoanResponse(existingLoan);
+    }
+
     // Skapar nytt lån i databasen och returnerar response
     public LoanResponseDTO addLoan(LoanRequestDTO request) {
         log.info("Adding a loan: {}", request);
@@ -82,4 +91,6 @@ public class LoanService {
         loanRepository.delete(existingLoan);
         log.info("Successfully deleted loan with id: {}", id);
     }
+
+
 }
