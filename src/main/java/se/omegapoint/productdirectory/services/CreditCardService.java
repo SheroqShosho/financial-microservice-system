@@ -48,6 +48,14 @@ public class CreditCardService {
         return creditCardMapper.mapToCreditCardResponse(existingCard);
     }
 
+    public CreditCardResponseDTO getCreditCardByType(String creditCardType) {
+        log.info("Retrieving credit card by type: {}", creditCardType);
+
+        CreditCard existingCard = creditCardRepository.findByCreditCardType(creditCardType)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find credit card with type: " + creditCardType));
+        return creditCardMapper.mapToCreditCardResponse(existingCard);
+    }
+
     // Skapar nytt kreditkort i databasen och returnerar response
     public CreditCardResponseDTO addCreditCard(CreditCardRequestDTO request) {
         log.info("Adding credit card {}", request);

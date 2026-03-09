@@ -41,6 +41,14 @@ public class CreditCardController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/type/{creditCardType}")
+    public ResponseEntity<CreditCardResponseDTO> getCreditCardByCreditCardType(@PathVariable String creditCardType) {
+
+        CreditCardResponseDTO response = creditCardService.getCreditCardByType(creditCardType);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     // Hanterar POST-request och skapar nytt kreditkort i databas. Returnerar sedan dto-response med body och statuskod
     @PostMapping
     public ResponseEntity<CreditCardResponseDTO> create(@RequestBody @Valid CreditCardRequestDTO request) {
