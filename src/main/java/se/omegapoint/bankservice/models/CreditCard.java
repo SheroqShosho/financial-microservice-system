@@ -1,9 +1,16 @@
 package se.omegapoint.bankservice.models;
 
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
+
 import java.math.BigDecimal;
 
+@DynamoDbBean
 public class CreditCard {
 
+    private String userId;
     private String creditCardId ;
     private String creditCardType;
     private String creditLimit;
@@ -15,14 +22,38 @@ public class CreditCard {
     public CreditCard() {
     }
 
-    public CreditCard(String creditCardId, String creditCardType, String creditLimit, BigDecimal fee, BigDecimal interestRate, BigDecimal spentAmount, String status) {
+    public CreditCard(String creditCardId, String creditCardType, String creditLimit, BigDecimal fee, BigDecimal interestRate, BigDecimal spentAmount) {
         this.creditCardId = creditCardId;
         this.creditCardType = creditCardType;
         this.creditLimit = creditLimit;
         this.fee = fee;
         this.interestRate = interestRate;
         this.spentAmount = spentAmount;
-        this.status = status;
+        this.status = "ACTIVE";
+    }
+
+    @DynamoDbPartitionKey
+    @DynamoDbAttribute("pk")
+    public String getUserId() {
+        return "USER#" + userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId.replace("USER#", "");
+    }
+
+    @DynamoDbSortKey
+    @DynamoDbAttribute("sk")
+    public String getSk() {
+        return "CARD#" + creditCardType + "#" + creditCardId;
+    }
+
+    public void setSk(String sk) {
+        // SK ÄR ALLTID "CARD#"
+    }
+
+    public String getRawUserId() {
+        return userId;
     }
 
     public String getCreditCardId() {

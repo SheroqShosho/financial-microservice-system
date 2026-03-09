@@ -1,10 +1,9 @@
 package se.omegapoint.bankservice.models;
 
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-
-import java.util.ArrayList;
-import java.util.List;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
 public class User {
@@ -13,16 +12,6 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private List<CreditCard> creditCards = new ArrayList<>();
-    private List<Loan> loans = new ArrayList<>();
-
-//    private String socialSecurityNumber;
-//    private String Country;
-//    private String City;
-//    private String Address;
-//    private String ZipCode;
-//    private String phoneNumber;
-//    private String yearlyIncome;
 
     public User() {}
 
@@ -31,17 +20,26 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.creditCards = new ArrayList<>();
-        this.loans = new ArrayList<>();
     }
 
     @DynamoDbPartitionKey
+    @DynamoDbAttribute("pk")
     public String getUserId() {
-        return userId;
+        return "USER#" + userId;
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.userId = userId.replace("USER#", "");
+    }
+
+    @DynamoDbSortKey
+    @DynamoDbAttribute("sk")
+    public String getSk() {
+        return ("METADATA");
+    }
+
+    public void setSk(String sk) {
+        // SK är alltid METADATA
     }
 
     public String getFirstName() {
@@ -66,21 +64,5 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<CreditCard> getCreditCards() {
-        return creditCards;
-    }
-
-    public void setCreditCards(List<CreditCard> creditCards) {
-        this.creditCards = creditCards;
-    }
-
-    public List<Loan> getLoans() {
-        return loans;
-    }
-
-    public void setLoans(List<Loan> loans) {
-        this.loans = loans;
     }
 }

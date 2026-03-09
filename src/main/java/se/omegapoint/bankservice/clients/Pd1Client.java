@@ -10,10 +10,10 @@ import se.omegapoint.bankservice.dtos.LoanTemplateDTO;
 @Client("http://localhost:8080")
 public interface Pd1Client {
 
-        @Get("/api/loans/{loanType}")
+        @Get("/api/loans/type/{loanType}")
         Mono<LoanTemplateDTO> getLoanTemplate(@PathVariable String loanType);
 
-        @Get("/api/creditcards/{creditCardType}")
+        @Get("/api/creditcards/type/{creditCardType}")
         Mono<CreditCardTemplateDTO> getCreditCardTemplate(@PathVariable String creditCardType);
 
 }
