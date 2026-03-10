@@ -7,13 +7,13 @@ import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.CreditCardTemplateDTO;
 import se.omegapoint.bankservice.dtos.LoanTemplateDTO;
 
-@Client("http://localhost:8080")
+@Client("http://localhost:8081")
 public interface Pd1Client {
 
         @Get("/api/loans/type/{loanType}")
         Mono<LoanTemplateDTO> getLoanTemplate(@PathVariable String loanType);
 
-        @Get("/api/creditcards/type/{creditCardType}")
+        @Get("/api/creditcard/type/{creditCardType}")
         Mono<CreditCardTemplateDTO> getCreditCardTemplate(@PathVariable String creditCardType);
 
 }

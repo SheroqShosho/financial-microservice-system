@@ -13,7 +13,7 @@ public class CreditCard {
     private String userId;
     private String creditCardId ;
     private String creditCardType;
-    private String creditLimit;
+    private BigDecimal creditLimit;
     private BigDecimal fee;
     private BigDecimal interestRate;
     private BigDecimal spentAmount;
@@ -22,13 +22,14 @@ public class CreditCard {
     public CreditCard() {
     }
 
-    public CreditCard(String creditCardId, String creditCardType, String creditLimit, BigDecimal fee, BigDecimal interestRate, BigDecimal spentAmount) {
+    public CreditCard(String userId, String creditCardId, String creditCardType, BigDecimal creditLimit, BigDecimal fee, BigDecimal interestRate) {
+        this.userId = userId;
         this.creditCardId = creditCardId;
         this.creditCardType = creditCardType;
         this.creditLimit = creditLimit;
         this.fee = fee;
         this.interestRate = interestRate;
-        this.spentAmount = spentAmount;
+        this.spentAmount = BigDecimal.valueOf(0);
         this.status = "ACTIVE";
     }
 
@@ -72,11 +73,11 @@ public class CreditCard {
         this.creditCardType = creditCardType;
     }
 
-    public String getCreditLimit() {
+    public BigDecimal getCreditLimit() {
         return creditLimit;
     }
 
-    public void setCreditLimit(String creditLimit) {
+    public void setCreditLimit(BigDecimal creditLimit) {
         this.creditLimit = creditLimit;
     }
 
