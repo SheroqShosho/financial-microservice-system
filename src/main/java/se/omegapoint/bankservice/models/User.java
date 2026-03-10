@@ -42,6 +42,12 @@ public class User {
         // SK är alltid METADATA
     }
 
+    public String getRawUserId() {
+        return userId;
+    }
+
+    public void setRawUserId(String userId) {}
+
     public String getFirstName() {
         return firstName;
     }
