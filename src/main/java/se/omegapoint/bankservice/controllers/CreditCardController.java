@@ -1,11 +1,7 @@
 package se.omegapoint.bankservice.controllers;
 
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -46,5 +42,15 @@ public class CreditCardController {
         return creditCardService.getAllCreditCardsFromUser(testUserId)
                 .map(creditCardMapper::toResponseDto);
 
+    }
+
+    // Case sensitive på type i URL
+    @Delete("/{userId}/{creditCardType}/{creditCardId}")
+    public Mono<HttpResponse<Void>> deleteCreditCard(
+            @PathVariable String userId,
+            @PathVariable String creditCardType,
+            @PathVariable String creditCardId) {
+        return creditCardService.deleteCreditCardById(userId,creditCardType,creditCardId)
+                .thenReturn(HttpResponse.noContent());
     }
 }
