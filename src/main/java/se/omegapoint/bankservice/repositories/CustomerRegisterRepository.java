@@ -38,16 +38,22 @@ public class CustomerRegisterRepository {
     }
 
     public Flux<CreditCard> getAllCreditCardsFromUser(String userId) {
-
-        String partitionKey = "USER#" + userId;
-
         QueryConditional queryConditional = QueryConditional
                 .sortBeginsWith(Key.builder()
-                        .partitionValue(partitionKey)
+                        .partitionValue("USER#" + userId)
                         .sortValue("CARD#")
                         .build());
 
         return Flux.from(creditCardTable.query(queryConditional).items());
+    }
+
+    public Mono<Void> deleteCreditCardById(String userId,String creditCardType, String creditCardId) {
+        Key key = Key.builder()
+                .partitionValue("USER#" + userId)
+                .sortValue("CARD#" + creditCardType + "#" + creditCardId)
+                .build();
+        return Mono.fromFuture(creditCardTable.deleteItem(key))
+                .then();
     }
 
     // LOAN
@@ -68,6 +74,15 @@ public class CustomerRegisterRepository {
                         .build());
 
         return Flux.from(loanTable.query(queryConditional).items());
+    }
+
+    public Mono<Void> deleteLoanById(String userId,String loanType, String loanId) {
+        Key key = Key.builder()
+                .partitionValue("USER#" + userId)
+                .sortValue("LOAN#" + loanType + "#" + loanId)
+                .build();
+        return Mono.fromFuture(loanTable.deleteItem(key))
+                .then();
     }
 
 }

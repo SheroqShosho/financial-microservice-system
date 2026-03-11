@@ -41,4 +41,9 @@ public class CreditCardService {
 
         return repository.getAllCreditCardsFromUser(userId);
     }
+
+    public Mono<Void> deleteCreditCardById(String userId, String creditCardType, String creditCardId) {
+
+        return repository.deleteCreditCardById(userId, creditCardType, creditCardId);
+    }
 }

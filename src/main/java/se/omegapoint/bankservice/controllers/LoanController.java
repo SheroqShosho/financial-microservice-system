@@ -1,10 +1,7 @@
 package se.omegapoint.bankservice.controllers;
 
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -44,5 +41,15 @@ public class LoanController {
 
         return loanService.getAllLoansFromUser(testUserId)
                 .map(loanMapper::toResponseDTO);
+    }
+
+    // Case sensitive på type i URL
+    @Delete("/{userId}/{loanType}/{loanId}")
+    public Mono<HttpResponse<Void>> deleteLoan(
+            @PathVariable String userId,
+            @PathVariable String loanType,
+            @PathVariable String loanId) {
+        return loanService.deleteLoanById(userId,loanType,loanId)
+                .thenReturn(HttpResponse.noContent());
     }
 }

@@ -44,4 +44,9 @@ public class LoanService {
 
         return repository.getAllLoansFromUser(userId);
     }
+
+    public Mono<Void> deleteLoanById(String userId, String loanType, String loanId) {
+
+        return repository.deleteLoanById(userId, loanType, loanId);
+    }
 }
