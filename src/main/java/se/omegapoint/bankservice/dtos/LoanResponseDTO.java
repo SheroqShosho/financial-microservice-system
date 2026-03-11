@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 @Serdeable
 public record LoanResponseDTO(
+        String userId,
         String loanId,
         String loanStatus,
         String loanType,

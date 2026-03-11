@@ -31,4 +31,9 @@ public class CustomerRegisterRepository {
         return Mono.fromFuture(creditCardTable.putItem(creditCard))
                 .thenReturn(creditCard);
     }
+
+    public Mono<Loan> saveLoan(Loan loan) {
+        return Mono.fromFuture(loanTable.putItem(loan))
+                .thenReturn(loan);
+    }
 }
