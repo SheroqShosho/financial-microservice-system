@@ -2,6 +2,7 @@ package se.omegapoint.bankservice.repositories;
 
 import io.micronaut.context.annotation.Value;
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.models.CreditCard;
 import se.omegapoint.bankservice.models.Loan;
@@ -9,7 +10,9 @@ import se.omegapoint.bankservice.models.Profile;
 import se.omegapoint.bankservice.models.User;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 
 
 @Singleton
@@ -27,13 +30,44 @@ public class CustomerRegisterRepository {
         this.loanTable = dynamoDbEnhancedAsyncClient.table(tableName, TableSchema.fromBean(Loan.class));
     }
 
+    // CREDITCARD
+
     public Mono<CreditCard> saveCreditCard(CreditCard creditCard) {
         return Mono.fromFuture(creditCardTable.putItem(creditCard))
                 .thenReturn(creditCard);
     }
 
+    public Flux<CreditCard> getAllCreditCardsFromUser(String userId) {
+
+        String partitionKey = "USER#" + userId;
+
+        QueryConditional queryConditional = QueryConditional
+                .sortBeginsWith(Key.builder()
+                        .partitionValue(partitionKey)
+                        .sortValue("CARD#")
+                        .build());
+
+        return Flux.from(creditCardTable.query(queryConditional).items());
+    }
+
+    // LOAN
+
     public Mono<Loan> saveLoan(Loan loan) {
         return Mono.fromFuture(loanTable.putItem(loan))
                 .thenReturn(loan);
     }
+
+    public Flux<Loan> getAllLoansFromUser(String userId) {
+
+        String partitionKey = "USER#" + userId;
+
+        QueryConditional queryConditional = QueryConditional
+                .sortBeginsWith(Key.builder()
+                        .partitionValue(partitionKey)
+                        .sortValue("LOAN#")
+                        .build());
+
+        return Flux.from(loanTable.query(queryConditional).items());
+    }
+
 }
