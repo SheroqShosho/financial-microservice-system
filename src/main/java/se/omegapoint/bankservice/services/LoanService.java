@@ -1,6 +1,7 @@
 package se.omegapoint.bankservice.services;
 
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.clients.Pd1Client;
 import se.omegapoint.bankservice.dtos.LoanRequestDTO;
@@ -37,5 +38,10 @@ public class LoanService {
                     );
                     return repository.saveLoan(loan);
                 });
+    }
+
+    public Flux<Loan> getAllLoansFromUser(String userId) {
+
+        return repository.getAllLoansFromUser(userId);
     }
 }

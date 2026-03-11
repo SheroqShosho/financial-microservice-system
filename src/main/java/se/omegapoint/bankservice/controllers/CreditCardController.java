@@ -4,8 +4,10 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.CreditCardRequestDTO;
 import se.omegapoint.bankservice.dtos.CreditCardResponseDTO;
@@ -34,5 +36,15 @@ public class CreditCardController {
         return creditCardService.createCreditCard(testUserId, request.creditCardType())
                 .map(creditCardMapper::toResponseDto)
                 .map(HttpResponse::created);
+    }
+
+    @Get
+    public Flux<CreditCardResponseDTO> getAllCreditCards() {
+
+        String testUserId = "test123";
+
+        return creditCardService.getAllCreditCardsFromUser(testUserId)
+                .map(creditCardMapper::toResponseDto);
+
     }
 }

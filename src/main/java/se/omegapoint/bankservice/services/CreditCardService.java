@@ -1,6 +1,7 @@
 package se.omegapoint.bankservice.services;
 
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.clients.Pd1Client;
 import se.omegapoint.bankservice.models.CreditCard;
@@ -34,5 +35,10 @@ public class CreditCardService {
                     );
                     return repository.saveCreditCard(creditCard);
                 });
+    }
+
+    public Flux<CreditCard> getAllCreditCardsFromUser(String userId) {
+
+        return repository.getAllCreditCardsFromUser(userId);
     }
 }
