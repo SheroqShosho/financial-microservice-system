@@ -114,4 +114,13 @@ public class CustomerRegisterRepository {
                 .then();
     }
 
+
+    //PROFILE
+
+    public Mono<Profile> saveProfile(Profile profile) {
+        return Mono.fromFuture(profileTable.putItem(profile))
+                .thenReturn(profile);
+    }
+
+
 }
