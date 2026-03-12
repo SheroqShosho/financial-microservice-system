@@ -4,7 +4,10 @@ import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.clients.Pd1Client;
+import se.omegapoint.bankservice.dtos.CreditCardUpdateDTO;
 import se.omegapoint.bankservice.dtos.LoanRequestDTO;
+import se.omegapoint.bankservice.dtos.LoanUpdateDTO;
+import se.omegapoint.bankservice.models.CreditCard;
 import se.omegapoint.bankservice.models.Loan;
 import se.omegapoint.bankservice.repositories.CustomerRegisterRepository;
 
@@ -48,5 +51,17 @@ public class LoanService {
     public Mono<Void> deleteLoanById(String userId, String loanType, String loanId) {
 
         return repository.deleteLoanById(userId, loanType, loanId);
+    }
+
+    public Mono<Loan> updateLoanById(String userId, String loanType, String loanId, LoanUpdateDTO request) {
+
+        return repository.findLoanById(userId, loanType, loanId)
+                .flatMap(existing -> {
+                    if (request.loanStatus() != null) existing.setLoanStatus(request.loanStatus());
+                    if (request.interestRate() != null) existing.setInterestRate(request.interestRate());
+                    if (request.durationMonths() != null) existing.setDurationMonths(request.durationMonths());
+                    if (request.amount() != null) existing.setAmount(request.amount());
+                    return repository.updateLoan(existing);
+                });
     }
 }

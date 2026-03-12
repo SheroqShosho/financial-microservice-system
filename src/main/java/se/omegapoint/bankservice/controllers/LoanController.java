@@ -5,8 +5,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import se.omegapoint.bankservice.dtos.LoanRequestDTO;
-import se.omegapoint.bankservice.dtos.LoanResponseDTO;
+import se.omegapoint.bankservice.dtos.*;
 import se.omegapoint.bankservice.mappers.LoanMapper;
 import se.omegapoint.bankservice.services.LoanService;
 
@@ -41,6 +40,18 @@ public class LoanController {
 
         return loanService.getAllLoansFromUser(testUserId)
                 .map(loanMapper::toResponseDTO);
+    }
+
+    @Put("/{userId}/{loanType}/{loanId}")
+    public Mono<HttpResponse<LoanResponseDTO>> updateLoan(
+            @PathVariable String userId,
+            @PathVariable String loanType,
+            @PathVariable String loanId,
+            @Body LoanUpdateDTO request) {
+
+        return loanService.updateLoanById(userId, loanType, loanId, request)
+                .map(loanMapper::toResponseDTO)
+                .map(HttpResponse::ok);
     }
 
     // Case sensitive på type i URL
