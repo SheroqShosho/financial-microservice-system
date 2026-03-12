@@ -46,7 +46,7 @@ public class Profile {
     @DynamoDbSortKey
     @DynamoDbAttribute("sk")
     public String getSk() {
-        return "PROFILE";
+        return "PROFILE#";
     }
 
     public void setSk(String sk) {

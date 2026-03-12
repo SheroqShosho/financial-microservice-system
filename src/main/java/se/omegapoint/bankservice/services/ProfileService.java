@@ -1,6 +1,7 @@
 package se.omegapoint.bankservice.services;
 
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.ProfileRequestDTO;
 import se.omegapoint.bankservice.models.Profile;
@@ -28,6 +29,11 @@ public class ProfileService {
                 "ACTIVE"
         );
         return repository.saveProfile(profile);
+    }
+
+    public Flux<Profile> getUserInformation(String userId) {
+
+        return repository.getUserInformation(userId);
     }
 
 }

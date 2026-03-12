@@ -49,19 +49,19 @@ public class CustomerRegisterRepository {
 
     public Mono<CreditCard> findCreditCardById(String userId, String creditCardType, String creditCardId) {
         QueryConditional queryConditional = QueryConditional
-        .sortBeginsWith(Key.builder()
-                .partitionValue("USER#" + userId)
-                .sortValue("CARD#" +  creditCardType + "#" + creditCardId)
-                .build());
+                .sortBeginsWith(Key.builder()
+                        .partitionValue("USER#" + userId)
+                        .sortValue("CARD#" + creditCardType + "#" + creditCardId)
+                        .build());
 
-                return Mono.from(creditCardTable.query(queryConditional).items());
+        return Mono.from(creditCardTable.query(queryConditional).items());
     }
 
     public Mono<CreditCard> updateCreditCard(CreditCard creditCard) {
         return Mono.fromFuture(creditCardTable.updateItem(creditCard));
     }
 
-    public Mono<Void> deleteCreditCardById(String userId,String creditCardType, String creditCardId) {
+    public Mono<Void> deleteCreditCardById(String userId, String creditCardType, String creditCardId) {
         Key key = Key.builder()
                 .partitionValue("USER#" + userId)
                 .sortValue("CARD#" + creditCardType + "#" + creditCardId)
@@ -95,7 +95,7 @@ public class CustomerRegisterRepository {
         QueryConditional queryConditional = QueryConditional
                 .sortBeginsWith(Key.builder()
                         .partitionValue("USER#" + userId)
-                        .sortValue("LOAN#" +  loanType + "#" + loanId)
+                        .sortValue("LOAN#" + loanType + "#" + loanId)
                         .build());
 
         return Mono.from(loanTable.query(queryConditional).items());
@@ -105,7 +105,7 @@ public class CustomerRegisterRepository {
         return Mono.fromFuture(loanTable.updateItem(loan));
     }
 
-    public Mono<Void> deleteLoanById(String userId,String loanType, String loanId) {
+    public Mono<Void> deleteLoanById(String userId, String loanType, String loanId) {
         Key key = Key.builder()
                 .partitionValue("USER#" + userId)
                 .sortValue("LOAN#" + loanType + "#" + loanId)
@@ -122,5 +122,14 @@ public class CustomerRegisterRepository {
                 .thenReturn(profile);
     }
 
+    public Flux<Profile> getUserInformation(String userId) {
+        QueryConditional queryConditional = QueryConditional
+                .sortBeginsWith(Key.builder()
+                        .partitionValue("USER#" + userId)
+                        .sortValue("PROFILE#")
+                        .build());
+        return Flux.from(profileTable.query(queryConditional).items());
 
+
+    }
 }
