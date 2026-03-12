@@ -3,8 +3,10 @@ package se.omegapoint.bankservice.controllers;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.ProfileRequestDTO;
 import se.omegapoint.bankservice.dtos.ProfileResponseDTO;
@@ -13,7 +15,7 @@ import se.omegapoint.bankservice.services.ProfileService;
 
 import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
 
-@Controller
+@Controller("/profile")
 @Secured(IS_ANONYMOUS)
 public class ProfileController {
 
@@ -24,7 +26,7 @@ public class ProfileController {
         this.profileMapper = profileMapper;
     }
 
-    @Post("/profile")
+    @Post
     public Mono<HttpResponse<ProfileResponseDTO>> addProfile(@Body ProfileRequestDTO request) {
 
         String testUserId = "test123";
@@ -33,6 +35,15 @@ public class ProfileController {
                 .map(profileMapper::toResponseDto)
                 .map(HttpResponse::created);
 
+    }
+
+    @Get
+    public Flux<ProfileResponseDTO> getUserInformation() {
+
+        String testUserId = "test123";
+
+        return profileService.getUserInformation(testUserId)
+                .map(profileMapper::toResponseDto);
     }
 
 }
