@@ -35,6 +35,7 @@ public class Profile {
     }
 
     @DynamoDbPartitionKey
+    @DynamoDbAttribute("pk")
     public String getUserId() {
         return "USER#" + userId;
     }
