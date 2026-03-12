@@ -7,7 +7,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.CreditCardRequestDTO;
 import se.omegapoint.bankservice.dtos.CreditCardResponseDTO;
+import se.omegapoint.bankservice.dtos.CreditCardUpdateDTO;
 import se.omegapoint.bankservice.mappers.CreditCardMapper;
+import se.omegapoint.bankservice.models.CreditCard;
 import se.omegapoint.bankservice.services.CreditCardService;
 
 import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
@@ -42,6 +44,18 @@ public class CreditCardController {
         return creditCardService.getAllCreditCardsFromUser(testUserId)
                 .map(creditCardMapper::toResponseDto);
 
+    }
+
+    @Put("/{userId}/{creditCardType}/{creditCardId}")
+    public Mono<HttpResponse<CreditCardResponseDTO>> updateCreditCard(
+            @PathVariable String userId,
+            @PathVariable String creditCardType,
+            @PathVariable String creditCardId,
+            @Body CreditCardUpdateDTO request) {
+
+        return creditCardService.updateCreditCardById(userId, creditCardType, creditCardId, request)
+                .map(creditCardMapper::toResponseDto)
+                .map(HttpResponse::ok);
     }
 
     // Case sensitive på type i URL

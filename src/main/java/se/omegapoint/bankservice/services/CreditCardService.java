@@ -4,6 +4,7 @@ import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.clients.Pd1Client;
+import se.omegapoint.bankservice.dtos.CreditCardUpdateDTO;
 import se.omegapoint.bankservice.models.CreditCard;
 import se.omegapoint.bankservice.repositories.CustomerRegisterRepository;
 
@@ -46,4 +47,21 @@ public class CreditCardService {
 
         return repository.deleteCreditCardById(userId, creditCardType, creditCardId);
     }
+
+    public Mono<CreditCard> updateCreditCardById(String userId, String creditCardType, String creditCardId, CreditCardUpdateDTO request) {
+
+        return repository.findCreditCardById(userId, creditCardType, creditCardId)
+                .flatMap(existing -> {
+                    if (request.creditLimit() != null) existing.setCreditLimit(request.creditLimit());
+                    if (request.fee() != null) existing.setFee(request.fee());
+                    if (request.interestRate() != null) existing.setInterestRate(request.interestRate());
+                    if (request.status() != null) existing.setStatus(request.status());
+                    return repository.updateCreditCard(existing);
+                });
+
+
+
+
+    }
+
 }
