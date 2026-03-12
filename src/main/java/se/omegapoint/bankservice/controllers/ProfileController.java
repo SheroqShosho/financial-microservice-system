@@ -1,15 +1,13 @@
 package se.omegapoint.bankservice.controllers;
 
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.ProfileRequestDTO;
 import se.omegapoint.bankservice.dtos.ProfileResponseDTO;
+import se.omegapoint.bankservice.dtos.ProfileUpdateDTO;
 import se.omegapoint.bankservice.mappers.ProfileMapper;
 import se.omegapoint.bankservice.services.ProfileService;
 
@@ -46,4 +44,15 @@ public class ProfileController {
                 .map(profileMapper::toResponseDto);
     }
 
+    @Put("/{userId}/{socialSecurityNumber}")
+    public Mono<HttpResponse<ProfileResponseDTO>> updateProfile(
+            @PathVariable String userId,
+            @PathVariable String socialSecurityNumber,
+            @Body ProfileUpdateDTO request) {
+
+        return profileService.updateProfileBySocialSecurityNumber(userId, socialSecurityNumber, request)
+                .map(profileMapper::toResponseDto)
+                .map(HttpResponse::ok);
+
+    }
 }

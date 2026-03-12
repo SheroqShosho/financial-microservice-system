@@ -129,7 +129,17 @@ public class CustomerRegisterRepository {
                         .sortValue("PROFILE#")
                         .build());
         return Flux.from(profileTable.query(queryConditional).items());
-
-
     }
-}
+
+    public Mono<Profile> findProfileBySocialSecurityNumber(String userId, String socialSecurityNumber) {
+        Key key = Key.builder()
+                .partitionValue("USER#" + userId)
+                .sortValue("PROFILE#" + socialSecurityNumber)
+                .build();
+        return Mono.fromFuture(profileTable.getItem(key));
+    }
+
+    public Mono<Profile> updateProfile(Profile profile) {
+        return Mono.fromFuture(profileTable.updateItem(profile));
+    }
+    }
