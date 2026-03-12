@@ -91,6 +91,20 @@ public class CustomerRegisterRepository {
         return Flux.from(loanTable.query(queryConditional).items());
     }
 
+    public Mono<Loan> findLoanById(String userId, String loanType, String loanId) {
+        QueryConditional queryConditional = QueryConditional
+                .sortBeginsWith(Key.builder()
+                        .partitionValue("USER#" + userId)
+                        .sortValue("LOAN#" +  loanType + "#" + loanId)
+                        .build());
+
+        return Mono.from(loanTable.query(queryConditional).items());
+    }
+
+    public Mono<Loan> updateLoan(Loan loan) {
+        return Mono.fromFuture(loanTable.updateItem(loan));
+    }
+
     public Mono<Void> deleteLoanById(String userId,String loanType, String loanId) {
         Key key = Key.builder()
                 .partitionValue("USER#" + userId)
