@@ -52,6 +52,11 @@ public class ProfileService {
                     return repository.updateProfile(existing);
                 });
     }
+
+    public Mono<Void> deleteProfileById(String userId, String socialSecurityNumber) {
+
+        return repository.deleteProfileById(userId, socialSecurityNumber);
+    }
 }
 
 

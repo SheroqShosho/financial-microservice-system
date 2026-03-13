@@ -142,4 +142,13 @@ public class CustomerRegisterRepository {
     public Mono<Profile> updateProfile(Profile profile) {
         return Mono.fromFuture(profileTable.updateItem(profile));
     }
+
+    public Mono<Void> deleteProfileById(String userId, String socialSecurityNumber) {
+        Key key = Key.builder()
+                .partitionValue("USER#" + userId)
+                .sortValue("PROFILE#" +  socialSecurityNumber)
+                .build();
+        return Mono.fromFuture(profileTable.deleteItem(key))
+                .then();
+    }
     }
