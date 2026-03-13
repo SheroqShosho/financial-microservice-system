@@ -55,4 +55,12 @@ public class ProfileController {
                 .map(HttpResponse::ok);
 
     }
+
+    @Delete("/{userId}/{socialSecurityNumber}")
+    public Mono<HttpResponse<Void>> deleteProfile(
+            @PathVariable String userId,
+            @PathVariable String socialSecurityNumber) {
+        return profileService.deleteProfileById(userId, socialSecurityNumber)
+                .thenReturn(HttpResponse.noContent());
+    }
 }
