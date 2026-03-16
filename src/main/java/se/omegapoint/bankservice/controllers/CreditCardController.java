@@ -9,7 +9,6 @@ import se.omegapoint.bankservice.dtos.CreditCardRequestDTO;
 import se.omegapoint.bankservice.dtos.CreditCardResponseDTO;
 import se.omegapoint.bankservice.dtos.CreditCardUpdateDTO;
 import se.omegapoint.bankservice.mappers.CreditCardMapper;
-import se.omegapoint.bankservice.models.CreditCard;
 import se.omegapoint.bankservice.services.CreditCardService;
 
 import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
