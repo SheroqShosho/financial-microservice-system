@@ -4,10 +4,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.annotation.Client;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateRequestDTO;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateResponseDTO;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateUpdateDTO;
-import se.omegapoint.bankservice.dtos.LoanTemplateDTO;
+import se.omegapoint.bankservice.dtos.*;
 
 
 @Client("http://localhost:8081")
@@ -15,7 +12,20 @@ public interface Pd1Client {
 
         //LOAN
         @Get("/api/loan/type/{loanType}")
-        Mono<LoanTemplateDTO> getLoanTemplate(@PathVariable String loanType);
+        Mono<LoanTemplateRequestDTO> getLoanTemplate(@PathVariable String loanType);
+
+        @Get("/api/loan")
+        Flux<LoanTemplateResponseDTO> getAllLoanTemplates();
+
+        @Post("/api/loan")
+        Mono<LoanTemplateResponseDTO> createLoanTemplate(@Body LoanTemplateRequestDTO loanTemplateRequestDTO);
+
+        @Put("/api/loan/{id}")
+        Mono<LoanTemplateResponseDTO> updateLoanTemplate(@PathVariable String id, @Body LoanTemplateUpdateDTO loanTemplateUpdateDTO);
+
+        @Delete("/api/loan/{id}")
+        Mono<Void> deleteLoanTemplate(@PathVariable String id);
+
 
         //CREDITCARD
         @Get("/api/creditcard/type/{creditCardType}")
