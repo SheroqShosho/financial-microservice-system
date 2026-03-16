@@ -5,9 +5,7 @@ import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.clients.Pd1Client;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateRequestDTO;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateResponseDTO;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateUpdateDTO;
+import se.omegapoint.bankservice.dtos.*;
 
 @Singleton
 public class TemplateService {
@@ -18,6 +16,8 @@ public class TemplateService {
     public TemplateService(Pd1Client pd1Client) {
         this.pd1Client = pd1Client;
     }
+
+    // CREDITCARD
 
     public Flux<CreditCardTemplateResponseDTO> getAll() {
         return pd1Client.getAllCreditCardTemplates();
@@ -34,4 +34,23 @@ public class TemplateService {
     public Mono<Void> deleteCreditCardTemplate(String id) {
         return pd1Client.deleteCreditCardTemplate(id);
     }
+
+    // LOAN
+
+    public Flux<LoanTemplateResponseDTO> getAllLoanTemplates() {
+        return pd1Client.getAllLoanTemplates();
+    }
+
+    public Mono<LoanTemplateResponseDTO> createLoanTemplate(LoanTemplateRequestDTO loanTemplateRequestDTO) {
+        return pd1Client.createLoanTemplate(loanTemplateRequestDTO);
+    }
+
+    public Mono<LoanTemplateResponseDTO> updateLoanTemplate(String id, LoanTemplateUpdateDTO loanTemplateUpdateDTO) {
+        return pd1Client.updateLoanTemplate(id, loanTemplateUpdateDTO);
+    }
+
+    public Mono<Void> deleteLoanTemplate(String id) {
+        return pd1Client.deleteLoanTemplate(id);
+    }
 }
+

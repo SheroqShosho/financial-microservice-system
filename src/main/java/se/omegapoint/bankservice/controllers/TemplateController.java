@@ -4,9 +4,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateRequestDTO;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateResponseDTO;
-import se.omegapoint.bankservice.dtos.CreditCardTemplateUpdateDTO;
+import se.omegapoint.bankservice.dtos.*;
 import se.omegapoint.bankservice.services.TemplateService;
 
 import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
@@ -21,6 +19,8 @@ public class TemplateController {
     public TemplateController(TemplateService templateService) {
         this.templateService = templateService;
     }
+
+    // CREDITCARD
 
     @Get("/creditcards")
     public Flux<CreditCardTemplateResponseDTO> getCreditCardTemplates() {
@@ -42,6 +42,28 @@ public class TemplateController {
         return templateService.deleteCreditCardTemplate(id);
     }
 
+    // LOAN
+
+    @Get("/loans")
+    public Flux<LoanTemplateResponseDTO> getLoanTemplates() {
+        return templateService.getAllLoanTemplates();
+    }
+
+    @Post("/loans")
+    public Mono<LoanTemplateResponseDTO> createLoanTemplate(@Body LoanTemplateRequestDTO loanTemplateRequestDTO) {
+        return templateService.createLoanTemplate(loanTemplateRequestDTO);
+    }
+
+    @Put("/loans/{id}")
+    public Mono<LoanTemplateResponseDTO> updateLoanTemplate(@PathVariable String id, @Body LoanTemplateUpdateDTO loanTemplateUpdateDTO) {
+        return templateService.updateLoanTemplate(id,loanTemplateUpdateDTO);
+    }
+
+    @Delete("/loans/{id}")
+    public Mono<Void> deleteLoanTemplate(@PathVariable String id) {
+        return templateService.deleteLoanTemplate(id);
+
+    }
 }
 
 
