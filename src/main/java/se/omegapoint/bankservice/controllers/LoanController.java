@@ -1,8 +1,11 @@
 package se.omegapoint.bankservice.controllers;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.*;
@@ -15,8 +18,10 @@ import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
 @Secured(IS_ANONYMOUS)
 public class LoanController {
 
+    private static final Logger log = LoggerFactory.getLogger(LoanController.class);
     private final LoanService loanService;
     private final LoanMapper loanMapper;
+
 
     public LoanController(final LoanService loanService, final LoanMapper loanMapper) {
         this.loanService = loanService;
@@ -24,43 +29,55 @@ public class LoanController {
     }
 
     @Post
-    public Mono<HttpResponse<LoanResponseDTO>> addLoan(@Body LoanRequestDTO request) {
+    public Mono<MutableHttpResponse<LoanResponseDTO>> addLoan(@Body LoanRequestDTO request) {
+        log.info("Request: Create loan with type: {} ", request.loanType());
 
         String testUserId = "test123";
 
         return loanService.createLoan(testUserId, request)
                 .map(loanMapper::toResponseDTO)
-                .map(HttpResponse::created);
+                .map(HttpResponse::created)
+                .doOnSuccess(response -> log.info("Response: Loan created with status {}", response.status()));
+
     }
 
     @Get
     public Flux<LoanResponseDTO> getAllLoans() {
+        log.info("Request: Get all loans");
 
         String testUserId = "test123";
 
         return loanService.getAllLoansFromUser(testUserId)
-                .map(loanMapper::toResponseDTO);
+                .map(loanMapper::toResponseDTO)
+                .doOnComplete(() -> log.info("Response: All loans retrieved successfully"));
     }
 
     @Put("/{userId}/{loanType}/{loanId}")
-    public Mono<HttpResponse<LoanResponseDTO>> updateLoan(
+    public Mono<MutableHttpResponse<LoanResponseDTO>> updateLoan(
             @PathVariable String userId,
             @PathVariable String loanType,
             @PathVariable String loanId,
             @Body LoanUpdateDTO request) {
 
+        log.info("Request: Update loan: {}", loanId);
+
         return loanService.updateLoanById(userId, loanType, loanId, request)
                 .map(loanMapper::toResponseDTO)
-                .map(HttpResponse::ok);
+                .map(HttpResponse::ok)
+                .doOnSuccess(response -> log.info("Response: Loan: {} updated successfully", loanId));
     }
 
     // Case sensitive på type i URL
     @Delete("/{userId}/{loanType}/{loanId}")
-    public Mono<HttpResponse<Void>> deleteLoan(
+    public Mono<MutableHttpResponse<Void>> deleteLoan(
             @PathVariable String userId,
             @PathVariable String loanType,
             @PathVariable String loanId) {
+
+        log.info("Request: Delete loan: {}", loanId);
+
         return loanService.deleteLoanById(userId,loanType,loanId)
-                .thenReturn(HttpResponse.noContent());
+                .thenReturn(HttpResponse.<Void>noContent())
+                .doOnSuccess(response -> log.info("Response: Loan: {} successfully deleted", loanId));
     }
 }
