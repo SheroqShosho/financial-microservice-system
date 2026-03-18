@@ -37,7 +37,8 @@ public class LoanController {
         return loanService.createLoan(testUserId, request)
                 .map(loanMapper::toResponseDTO)
                 .map(HttpResponse::created)
-                .doOnSuccess(response -> log.info("Response: Loan created with status {}", response.status()));
+                .doOnSuccess(response -> log.info("Response: Loan created with status {}", response.status()))
+                .doOnError(e -> log.error("Error creating loan for userId={}", testUserId, e));
 
     }
 
@@ -49,7 +50,28 @@ public class LoanController {
 
         return loanService.getAllLoansFromUser(testUserId)
                 .map(loanMapper::toResponseDTO)
-                .doOnComplete(() -> log.info("Response: All loans retrieved successfully"));
+                .doOnComplete(() -> log.info("Response: All loans retrieved successfully"))
+                .doOnError(e -> log.error("Error fetching all loans for userId={}", testUserId, e));
+    }
+
+    @Get("/{userId}/{loanType}/{loanId}")
+    public Mono<MutableHttpResponse<LoanResponseDTO>> geLoanById(
+            @PathVariable String userId,
+            @PathVariable String loanType,
+            @PathVariable String loanId) {
+
+        log.info("Request: Get loan with type: {} and id: {}", loanType, loanId);
+
+
+
+        return loanService.getLoanById(userId, loanType, loanId)
+                .map (loanMapper::toResponseDTO)
+                .map(HttpResponse::ok)
+                .doOnSuccess(response -> log.info("Response: Loan with id: {} retrieved successfully)", loanId))
+                .doOnError(e -> log.error("Error fetching loan with id={}", loanId));
+
+
+
     }
 
     @Put("/{userId}/{loanType}/{loanId}")
@@ -64,7 +86,8 @@ public class LoanController {
         return loanService.updateLoanById(userId, loanType, loanId, request)
                 .map(loanMapper::toResponseDTO)
                 .map(HttpResponse::ok)
-                .doOnSuccess(response -> log.info("Response: Loan: {} updated successfully", loanId));
+                .doOnSuccess(response -> log.info("Response: Loan: {} updated successfully", loanId))
+                .doOnError(e -> log.error("Error fetching loan with id={}", loanId));
     }
 
     // Case sensitive på type i URL
@@ -78,6 +101,7 @@ public class LoanController {
 
         return loanService.deleteLoanById(userId,loanType,loanId)
                 .thenReturn(HttpResponse.<Void>noContent())
-                .doOnSuccess(response -> log.info("Response: Loan: {} successfully deleted", loanId));
+                .doOnSuccess(response -> log.info("Response: Loan: {} successfully deleted", loanId))
+                .doOnError(e -> log.error("Error fetching loan with id={}", loanId));
     }
 }
