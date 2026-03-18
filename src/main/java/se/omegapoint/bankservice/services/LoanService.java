@@ -64,6 +64,22 @@ public class LoanService {
 
     }
 
+    public Mono<Loan> getLoanById(String userId, String loanType, String loanId) {
+        log.info("Fetching loan for userId={}, id={}", userId, loanId);
+
+        return repository.findLoanById(userId, loanType, loanId)
+
+                .doOnSuccess(loan -> {
+                    if (loan != null) {
+                        log.info("Loan found for userId={}, id={}", userId, loanId);
+                    } else {
+                        log.warn("Loan not found for userId={}, id={}", userId, loanId);
+                    }
+                })
+
+                .doOnError(error -> log.error("Error fetching loan for userId={}, id={}: {}", userId, loanId, error.getMessage()));
+    }
+
     public Mono<Void> deleteLoanById(String userId, String loanType, String loanId) {
         log.info("Deleting loan: {} for user: {}" , loanId, userId);
 

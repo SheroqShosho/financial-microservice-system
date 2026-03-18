@@ -66,6 +66,25 @@ public class CreditCardController {
 
     }
 
+    @Get("/{userId}/{creditCardType}/{creditCardId}")
+    public Mono<CreditCardResponseDTO> getCreditCardById(
+            @PathVariable String userId,
+            @PathVariable String creditCardType,
+            @PathVariable String creditCardId) {
+
+        log.info("Retrieving credit card for userId: {}", userId);
+
+        return creditCardService.getCreditCardById(userId, creditCardType, creditCardId)
+                .map(creditCardMapper::toResponseDto)
+                .doOnSuccess(res ->
+                            log.info("Successfully retrieved credit card with id: {}", creditCardId)
+                        )
+                .doOnError(error ->
+                            log.error("Error retrieving credit card with id: {}", creditCardId, error)
+                        );
+
+    }
+
     @Put("/{userId}/{creditCardType}/{creditCardId}")
     public Mono<MutableHttpResponse<CreditCardResponseDTO>> updateCreditCard(
             @PathVariable String userId,
