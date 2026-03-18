@@ -27,10 +27,10 @@ public class LoanService {
     }
 
     public Mono<Loan> createLoan(String userId, LoanRequestDTO request) {
-        log.info("Skapar lån för användare: {}", userId);
+        log.info("Creating loan for user: {}", userId);
 
         return pd1Client.getLoanTemplate(request.loanType())
-                .doOnNext(template -> log.debug("Mall hämtad"))
+                .doOnNext(template -> log.debug("Template received"))
 
                 .flatMap(template -> {
                     Loan loan = new Loan(
@@ -43,55 +43,55 @@ public class LoanService {
                             request.amount()
 
                     );
-                    log.debug("Sparar lån till DynamoDB för userId {}", userId);
+                    log.debug("Saving loan to DynamoDB for userId {}", userId);
 
                     return repository.saveLoan(loan)
 
-                            .doOnSuccess(savedLoan -> log.info("Lån skapat och sparat! ID: {}",  savedLoan.getLoanId()));
+                            .doOnSuccess(savedLoan -> log.info("Loan created and saved! ID: {}",  savedLoan.getLoanId()));
                 })
 
-                .doOnError(error -> log.error("Kunde inte skapa lån för {}: {}", userId, error.getMessage()));
+                .doOnError(error -> log.error("Could not create loan for {}: {}", userId, error.getMessage()));
     }
 
     public Flux<Loan> getAllLoansFromUser(String userId) {
-        log.info("Hämtar alla lån från användare: {}", userId);
+        log.info("Fetching all loans from user: {}", userId);
 
         return repository.getAllLoansFromUser(userId)
 
-        .doOnComplete(() -> log.info("Lån hämtade framgångsrikt för användare: {}", userId))
+        .doOnComplete(() -> log.info("Loans received successfully for user: {}", userId))
 
-                .doOnError(error -> log.error("Kunde inte hämta lån för {}: {}", userId, error.getMessage()));
+                .doOnError(error -> log.error("Could not fetch loan for: {}: {}", userId, error.getMessage()));
 
     }
 
     public Mono<Void> deleteLoanById(String userId, String loanType, String loanId) {
-        log.info("Tar bort lån: {} för användare: {}" , loanId, userId);
+        log.info("Deleting loan: {} for user: {}" , loanId, userId);
 
         return repository.deleteLoanById(userId, loanType, loanId)
 
-                .doOnSuccess(v -> log.info("Lån: {} raderat för användare: {} ",  loanId, userId))
+                .doOnSuccess(v -> log.info("Loan: {} deleted for user: {} ",  loanId, userId))
 
-                .doOnError(error -> log.error("Kunde inte radera lån: {}, orsak: {}", loanId, error.getMessage()));
+                .doOnError(error -> log.error("Could not delete loan: {}, reason: {}", loanId, error.getMessage()));
     }
 
     public Mono<Loan> updateLoanById(String userId, String loanType, String loanId, LoanUpdateDTO request) {
-        log.info("Uppdaterar lån: {} för användare: {}", loanId , userId);
+        log.info("Updating loan: {} for user: {}", loanId , userId);
 
         return repository.findLoanById(userId, loanType, loanId)
 
-                .switchIfEmpty(Mono.error(new RuntimeException("Lånet hittades inte")))
-                .doOnError(error -> log.warn("Update misslyckades: {} hittades inte för användare: {}", loanId, userId))
+                .switchIfEmpty(Mono.error(new RuntimeException("Loan not found")))
+                .doOnError(error -> log.warn("Update failed: {} could not be found for user: {}", loanId, userId))
 
-                .flatMap(existing -> {log.debug("Hittade befintligt lån. Applicerar ändringar från request.");
+                .flatMap(existing -> {log.debug("Found existing loan. Applying changes from request.");
 
                     if (request.loanStatus() != null) existing.setLoanStatus(request.loanStatus());
                     if (request.interestRate() != null) existing.setInterestRate(request.interestRate());
                     if (request.durationMonths() != null) existing.setDurationMonths(request.durationMonths());
                     if (request.amount() != null) existing.setAmount(request.amount());
                     return repository.updateLoan(existing)
-                            .doOnSuccess(updatedLoan -> log.info("Lån {} uppdaterat framgångsrikt", loanId));
+                            .doOnSuccess(updatedLoan -> log.info("Loan {} updated successfully", loanId));
                 })
 
-                .doOnError(error -> log.error("Tekniskt fel vid uppdatering av lån {}: {}", loanId, error.getMessage()));
+                .doOnError(error -> log.error("Technical problem with update for loan {}: {}", loanId, error.getMessage()));
     }
 }
