@@ -28,7 +28,7 @@ public class CustomerRegisterRepository {
 
     public CustomerRegisterRepository(
             DynamoDbEnhancedAsyncClient dynamoDbEnhancedAsyncClient,
-            @Value("${aws.dynamodb.table-name:customerregister}") String tableName
+            @Value("${aws.dynamodb.table-name}") String tableName
     ) {
         this.userTable = dynamoDbEnhancedAsyncClient.table(tableName, TableSchema.fromBean(User.class));
         this.profileTable = dynamoDbEnhancedAsyncClient.table(tableName, TableSchema.fromBean(Profile.class));

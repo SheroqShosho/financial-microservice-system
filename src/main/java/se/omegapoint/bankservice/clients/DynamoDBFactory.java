@@ -1,6 +1,7 @@
 package se.omegapoint.bankservice.clients;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Value;
 import jakarta.inject.Singleton;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
@@ -13,17 +14,17 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class DynamoDBFactory {
 
     @Singleton
-    public DynamoDbClient ddbClient() {
+    public DynamoDbClient ddbClient(@Value("${aws.region}") String region) {
         return DynamoDbClient.builder()
-                .region(Region.EU_NORTH_1)
+                .region(Region.of(region))
                 .credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .build();
     }
 
     @Singleton
-    public DynamoDbAsyncClient ddbAsyncClient() {
+    public DynamoDbAsyncClient ddbAsyncClient(@Value("${aws.region}") String region) {
         return DynamoDbAsyncClient.builder()
-                .region(Region.EU_NORTH_1)
+                .region(Region.of(region))
                 .credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .build();
     }

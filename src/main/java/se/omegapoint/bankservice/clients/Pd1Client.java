@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.*;
 
 
-@Client("http://localhost:8081")
+@Client("${pd1.url}")
 public interface Pd1Client {
 
         //LOAN
