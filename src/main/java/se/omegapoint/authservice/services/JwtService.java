@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import se.omegapoint.authservice.models.User;
 
 
@@ -12,6 +13,7 @@ import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 
+@Service
 public class JwtService {
 
     @Value("${jwt.secret}")
@@ -22,6 +24,10 @@ public class JwtService {
 
     private SecretKey secretKey;
 
+    public long getExpiration() {
+        return expiration;
+    }
+
     // Körs efter att @Value-fälten injicerats, bygger secretKey från application.properties
     @PostConstruct
     private void init() {
@@ -30,7 +36,7 @@ public class JwtService {
     }
 
     // Genererar ett JWT access token för en användare
-    public String generateTokenToken(User user){
+    public String generateToken(User user){
         return Jwts.builder()
                 .subject(String.valueOf(user.getUserId()))
                 .claim("email", user.getEmail())
@@ -54,7 +60,7 @@ public class JwtService {
         }
     }
 
-    // Parsar tokenet och returnerar all data som finns i payload
+    // Parsar tokenet och returnerar all data som finns i tokenet som exempelvis sub, email, name.
     private Claims extractClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)

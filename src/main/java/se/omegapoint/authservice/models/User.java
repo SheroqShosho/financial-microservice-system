@@ -108,6 +108,7 @@ public class User {
         return createdAt;
     }
 
+    //
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,6 +117,7 @@ public class User {
         return Objects.equals(userId, user.userId) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(googleId, user.googleId) && role == user.role && Objects.equals(createdAt, user.createdAt);
     }
 
+    //
     @Override
     public int hashCode() {
         return Objects.hash(userId, email);
