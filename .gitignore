@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 .env
 docker-compose.yml
+/project_dump.txt
 
 ### STS ###
 .apt_generated
@@ -37,3 +38,4 @@ out/
 
 ### VS Code ###
 .vscode/
+
