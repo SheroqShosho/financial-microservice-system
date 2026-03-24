@@ -49,8 +49,12 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    public void revokeByUser(User user) {
-        refreshTokenRepository.deleteByUser(user);
+    @Transactional
+    public void revokeByToken(String token) {
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Token hittades inte"));
+
+        refreshTokenRepository.delete(refreshToken);
     }
 
 

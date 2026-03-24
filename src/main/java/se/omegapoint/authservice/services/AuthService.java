@@ -39,8 +39,9 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(User user){
-        refreshTokenService.revokeByUser(user);
+    public void logout(String token){
+
+        refreshTokenService.revokeByToken(token);
     }
 
 
