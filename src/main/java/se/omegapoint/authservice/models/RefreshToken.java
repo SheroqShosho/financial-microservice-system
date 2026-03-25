@@ -58,6 +58,7 @@ public class RefreshToken {
         this.user = user;
     }
 
+    // Jämför två RefreshToken-objekt för logisk likhet baserat på ID och token.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,6 +67,7 @@ public class RefreshToken {
         return Objects.equals(tokenId, that.tokenId) && Objects.equals(token, that.token);
     }
 
+    // Returnerar hashkod som är förenlig med equals för RefreshToken.
     @Override
     public int hashCode() {
         return Objects.hash(tokenId, token);

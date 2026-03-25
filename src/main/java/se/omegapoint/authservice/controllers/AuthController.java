@@ -24,20 +24,23 @@ public class AuthController {
         this.authService = authService;
     }
 
+    // Tar emot Google ID-token och returnerar access/refresh token.
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> loginWithGoogle(@Valid @RequestBody GoogleTokenRequestDTO request) {
-        log.info("request för login");
+        log.info("Login request received");
 
         AuthResponseDTO response = authService.loginWithGoogle(request.idToken());
         return ResponseEntity.ok(response);
     }
 
+    // Tar emot refresh token och returnerar ett nytt token-par.
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponseDTO> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
         AuthResponseDTO response = authService.refreshAccessToken(request.refreshToken());
         return ResponseEntity.ok(response);
     }
 
+    // Tar emot refresh token och loggar ut användaren genom att återkalla token.
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Valid @RequestBody RefreshTokenRequestDTO request) {
         authService.logout(request.refreshToken());
