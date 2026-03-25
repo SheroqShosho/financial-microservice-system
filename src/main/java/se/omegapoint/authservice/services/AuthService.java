@@ -55,7 +55,6 @@ public class AuthService {
                 .orElseGet(() -> {
                     User newUser = new User(
                             googleUser.email(),
-                            "",
                             googleUser.firstName(),
                             googleUser.lastName(),
                             Role.USER

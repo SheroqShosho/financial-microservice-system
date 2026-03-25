@@ -16,9 +16,6 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
-    private String password;
-
     private String firstName;
     private String lastName;
 
@@ -32,9 +29,8 @@ public class User {
 
     public User() {}
 
-    public User(String email, String password, String firstName, String lastName, Role role) {
+    public User(String email, String firstName, String lastName, Role role) {
         this.email = email;
-        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
@@ -62,14 +58,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstName() {
@@ -114,7 +102,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(userId, user.userId) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(googleId, user.googleId) && role == user.role && Objects.equals(createdAt, user.createdAt);
+        return Objects.equals(userId, user.userId) && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(googleId, user.googleId) && role == user.role && Objects.equals(createdAt, user.createdAt);
     }
 
     //
