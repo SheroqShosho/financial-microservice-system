@@ -13,14 +13,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // Konfigurerar säkerhetskedjan för API:et.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // Stänger av CSRF eftersom API:et använder stateless token-baserad auth.
                 .csrf(csrf -> csrf.disable())
 
+                // Ingen HTTP-session ska skapas eller användas.
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                // Tillåter auth-endpoints utan inloggning, kräver auth för övriga routes.
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated());

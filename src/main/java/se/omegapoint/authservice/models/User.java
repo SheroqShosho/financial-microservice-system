@@ -96,7 +96,7 @@ public class User {
         return createdAt;
     }
 
-    //
+    // Jämför två User-objekt för logisk likhet baserat på modellens fält.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -105,7 +105,7 @@ public class User {
         return Objects.equals(userId, user.userId) && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(googleId, user.googleId) && role == user.role && Objects.equals(createdAt, user.createdAt);
     }
 
-    //
+    // Returnerar hashkod som är förenlig med equals för User.
     @Override
     public int hashCode() {
         return Objects.hash(userId, email);

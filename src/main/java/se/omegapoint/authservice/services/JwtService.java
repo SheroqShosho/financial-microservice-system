@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import se.omegapoint.authservice.models.User;
@@ -15,6 +17,8 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     @Value("${JWT_SECRET}")
     private String secret;
@@ -28,15 +32,17 @@ public class JwtService {
         return expiration;
     }
 
-    // Körs efter att @Value-fälten injicerats, bygger secretKey från application.properties
+    // Bygger HMAC-nyckeln när konfigurationsvärdena har injicerats.
     @PostConstruct
     private void init() {
         byte[] keyBytes = Base64.getDecoder().decode(secret);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+        logger.info("JWT service initialized");
     }
 
-    // Genererar ett JWT access token för en användare
+    // Genererar en signerad access token för en användare.
     public String generateToken(User user){
+        logger.debug("Generating JWT for userId={}", user.getUserId());
         return Jwts.builder()
                 .subject(String.valueOf(user.getUserId()))
                 .claim("email", user.getEmail())
@@ -47,20 +53,22 @@ public class JwtService {
                 .compact();
     }
 
-    // Returnerar true om tokenet är giltigt, annars false
+    // Validerar tokens signatur och utgångstid, returnerar true om giltig.
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token);
+            logger.debug("JWT validation succeeded");
             return true;
         } catch (Exception e) {
+            logger.warn("JWT validation failed: {}", e.getMessage());
             return false;
         }
     }
 
-    // Parsar tokenet och returnerar all data som finns i tokenet som exempelvis sub, email, name.
+    // Parsar token och returnerar claims-payload.
     private Claims extractClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
@@ -69,17 +77,17 @@ public class JwtService {
                 .getPayload();
     }
 
-    // Hämtar userId ur tokenet
+    // Hämtar användar-ID från tokenens subject.
     public Long extractUserId(String token) {
         return Long.valueOf(extractClaims(token).getSubject());
     }
 
-    // Hämtar email ur tokenet
+    // Hämtar e-post-claim från token.
     public String extractEmail(String token) {
         return extractClaims(token).get("email", String.class);
     }
 
-    // Hämtar sole ur tokenet
+    // Hämtar roll-claim från token.
     public String extractRole(String token) {
         return extractClaims(token).get("role", String.class);
     }
