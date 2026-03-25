@@ -30,12 +30,12 @@ public class AuthService {
 
         User user = findOrCreateUser(googleUser);
 
-        return buildAuthResponse(user);
+        return createNewSessionResponse(user);
     }
 
     public AuthResponseDTO refreshAccessToken(String refreshToken){
         RefreshToken token = refreshTokenService.validateRefreshToken(refreshToken);
-        return buildAuthResponse(token.getUser());
+        return createRefreshResponse(token.getUser(), token);
     }
 
     @Transactional
@@ -65,10 +65,24 @@ public class AuthService {
                 });
     }
 
-    private AuthResponseDTO buildAuthResponse(User user){
+    private AuthResponseDTO createNewSessionResponse(User user){
         String accessToken = jwtService.generateToken(user);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
-        return new AuthResponseDTO(accessToken, refreshToken.getToken(), jwtService.getExpiration());
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
+
+        return new AuthResponseDTO(
+                accessToken,
+                newRefreshToken.getToken(),
+                jwtService.getExpiration()
+        );
+    }
+
+    private AuthResponseDTO createRefreshResponse(User user, RefreshToken existingToken) {
+        String accessToken = jwtService.generateToken(user);
+
+        return new AuthResponseDTO(
+                accessToken,
+                existingToken.getToken(),
+                jwtService.getExpiration());
     }
 
 
