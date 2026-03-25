@@ -14,7 +14,7 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     @Value("${JWT_REFRESH_EXPIRATION}")
-    private long refreshtokenexpiration;
+    private long refreshTokenExpiration;
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -22,7 +22,7 @@ public class RefreshTokenService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    // skapar refreshtoken
+    // skapar refresh token
     @Transactional
     public RefreshToken createRefreshToken(User user) {
 
@@ -31,12 +31,12 @@ public class RefreshTokenService {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiryDate(java.time.Instant.now().plusMillis(refreshtokenexpiration));
+        refreshToken.setExpiryDate(java.time.Instant.now().plusMillis(refreshTokenExpiration));
 
         return refreshTokenRepository.save(refreshToken);
     }
 
-    //Validerar refreshtoken, kollar om den finns och inte har gått ut
+    //Validerar refresh token, kollar om den finns och inte har gått ut
     public RefreshToken validateRefreshToken(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
