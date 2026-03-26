@@ -53,10 +53,12 @@ public class AuthService {
                     return userRepository.save(existingUser);
                 })
                 .orElseGet(() -> {
+                    String lastName = (googleUser.lastName() != null) ? googleUser.lastName() : "";
+
                     User newUser = new User(
                             googleUser.email(),
                             googleUser.firstName(),
-                            googleUser.lastName(),
+                            lastName,
                             Role.USER
                     );
                     newUser.setGoogleId(googleUser.googleId());
