@@ -9,7 +9,6 @@ import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.models.CreditCard;
 import se.omegapoint.bankservice.models.Loan;
 import se.omegapoint.bankservice.models.Profile;
-import se.omegapoint.bankservice.models.User;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -21,7 +20,6 @@ public class CustomerRegisterRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerRegisterRepository.class);
 
-    private final DynamoDbAsyncTable<User> userTable;
     private final DynamoDbAsyncTable<Profile> profileTable;
     private final DynamoDbAsyncTable<CreditCard> creditCardTable;
     private final DynamoDbAsyncTable<Loan> loanTable;
@@ -30,7 +28,6 @@ public class CustomerRegisterRepository {
             DynamoDbEnhancedAsyncClient dynamoDbEnhancedAsyncClient,
             @Value("${aws.dynamodb.table-name}") String tableName
     ) {
-        this.userTable = dynamoDbEnhancedAsyncClient.table(tableName, TableSchema.fromBean(User.class));
         this.profileTable = dynamoDbEnhancedAsyncClient.table(tableName, TableSchema.fromBean(Profile.class));
         this.creditCardTable = dynamoDbEnhancedAsyncClient.table(tableName, TableSchema.fromBean(CreditCard.class));
         this.loanTable = dynamoDbEnhancedAsyncClient.table(tableName, TableSchema.fromBean(Loan.class));

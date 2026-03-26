@@ -27,6 +27,8 @@ public class ProfileService {
 
         Profile profile = new Profile(
                 userId,
+                request.firstName(),
+                request.lastName(),
                 request.socialSecurityNumber(),
                 request.country(),
                 request.city(),

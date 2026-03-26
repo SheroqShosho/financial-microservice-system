@@ -4,6 +4,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -14,10 +15,10 @@ import se.omegapoint.bankservice.dtos.CreditCardUpdateDTO;
 import se.omegapoint.bankservice.mappers.CreditCardMapper;
 import se.omegapoint.bankservice.services.CreditCardService;
 
-import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
+import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
 
 @Controller("/creditcard")
-@Secured(IS_ANONYMOUS)
+@Secured(IS_AUTHENTICATED)
 public class CreditCardController {
 
     private static final Logger log = LoggerFactory.getLogger(CreditCardController.class);
@@ -31,37 +32,37 @@ public class CreditCardController {
     }
 
     @Post
-    public Mono<MutableHttpResponse<CreditCardResponseDTO>> addCreditCard(@Body CreditCardRequestDTO request) {
+    public Mono<MutableHttpResponse<CreditCardResponseDTO>> addCreditCard(@Body CreditCardRequestDTO request, Authentication authentication) {
 
-        String testUserId = "test123";
+        String userId = authentication.getName();
 
-        log.info("Creating credit card for userId: {}, type: {}", testUserId, request.creditCardType());
+        log.info("Creating credit card for userId: {}, type: {}", userId, request.creditCardType());
 
-        return creditCardService.createCreditCard(testUserId, request.creditCardType())
+        return creditCardService.createCreditCard(userId, request.creditCardType())
                 .map(creditCardMapper::toResponseDto)
                 .map(HttpResponse::created)
                 .doOnSuccess(res ->
-                        log.info("Successfully created credit card for userId: {}", testUserId)
+                        log.info("Successfully created credit card for userId: {}", userId)
                 )
                 .doOnError(error ->
-                        log.error("Error creating credit card for userId: {}", testUserId, error)
+                        log.error("Error creating credit card for userId: {}", userId, error)
                 );
     }
 
     @Get
-    public Flux<CreditCardResponseDTO> getAllCreditCards() {
+    public Flux<CreditCardResponseDTO> getAllCreditCards(Authentication authentication) {
 
-        String testUserId = "test123";
+        String userId = authentication.getName();
 
-        log.info("Retrieving all credit cards for userId: {}", testUserId);
+        log.info("Retrieving all credit cards for userId: {}", userId);
 
-        return creditCardService.getAllCreditCardsFromUser(testUserId)
+        return creditCardService.getAllCreditCardsFromUser(userId)
                 .map(creditCardMapper::toResponseDto)
                 .doOnComplete(()->
-                            log.info("Finished retrieving credit cards for userId: {}", testUserId)
+                            log.info("Finished retrieving credit cards for userId: {}", userId)
                         )
                 .doOnError(error ->
-                            log.error("Error retrieving credit cards for userId: {}", testUserId, error)
+                            log.error("Error retrieving credit cards for userId: {}", userId, error)
                         );
 
     }

@@ -4,6 +4,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -15,9 +16,10 @@ import se.omegapoint.bankservice.mappers.ProfileMapper;
 import se.omegapoint.bankservice.services.ProfileService;
 
 import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
+import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
 
 @Controller("/profile")
-@Secured(IS_ANONYMOUS)
+@Secured(IS_AUTHENTICATED)
 public class ProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileController.class);
@@ -30,29 +32,29 @@ public class ProfileController {
     }
 
     @Post
-    public Mono<MutableHttpResponse<ProfileResponseDTO>> addProfile(@Body ProfileRequestDTO request) {
-        String testUserId = "test123";
+    public Mono<MutableHttpResponse<ProfileResponseDTO>> addProfile(@Body ProfileRequestDTO request, Authentication authentication) {
+        String userId = authentication.getName();
 
-        LOG.info("HTTP POST /profile for userId={}", testUserId);
+        LOG.info("HTTP POST /profile for userId={}", userId);
 
-        return profileService.createProfile(testUserId, request)
+        return profileService.createProfile(userId, request)
                 .map(profileMapper::toResponseDto)
                 .map(HttpResponse::created)
-                .doOnSuccess(response -> LOG.debug("Created profile for userId={}", testUserId))
-                .doOnError(e -> LOG.error("Error in POST /profile for userId={}", testUserId, e));
+                .doOnSuccess(response -> LOG.debug("Created profile for userId={}", userId))
+                .doOnError(e -> LOG.error("Error in POST /profile for userId={}", userId, e));
     }
 
     @Get
-    public Flux<ProfileResponseDTO> getUserInformation() {
-        String testUserId = "test123";
+    public Flux<ProfileResponseDTO> getUserInformation(Authentication authentication) {
+        String userId = authentication.getName();
 
-        LOG.info("HTTP GET /profile for userId={}", testUserId);
+        LOG.info("HTTP GET /profile for userId={}", userId);
 
-        return profileService.getUserInformation(testUserId)
+        return profileService.getUserInformation(userId)
                 .map(profileMapper::toResponseDto)
                 .doOnNext(response -> LOG.debug("Returning profile response: {}", response))
-                .doOnComplete(() -> LOG.debug("Completed GET /profile for userId={}", testUserId))
-                .doOnError(e -> LOG.error("Error in GET /profile for userId={}", testUserId, e));
+                .doOnComplete(() -> LOG.debug("Completed GET /profile for userId={}", userId))
+                .doOnError(e -> LOG.error("Error in GET /profile for userId={}", userId, e));
     }
 
     @Put("/{userId}/{socialSecurityNumber}")
