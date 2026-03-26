@@ -10,9 +10,10 @@ import se.omegapoint.bankservice.dtos.*;
 import se.omegapoint.bankservice.services.TemplateService;
 
 import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
+import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
 
 @Controller("/template")
-@Secured(IS_ANONYMOUS)
+@Secured(IS_AUTHENTICATED)
 public class TemplateController {
 
     private static final Logger LOG = LoggerFactory.getLogger(TemplateController.class);

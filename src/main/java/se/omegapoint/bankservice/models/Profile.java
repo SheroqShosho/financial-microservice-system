@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 public class Profile {
 
     private String userId;
+    private String firstName;
+    private String lastName;
     private String socialSecurityNumber;
     private String country;
     private String city;
@@ -22,8 +24,10 @@ public class Profile {
 
     public Profile() {}
 
-    public Profile(String userId, String socialSecurityNumber, String country, String city, String address, String zipCode, String phoneNumber, BigDecimal yearlyIncome, String status) {
+    public Profile(String userId, String firstName, String lastName, String socialSecurityNumber, String country, String city, String address, String zipCode, String phoneNumber, BigDecimal yearlyIncome, String status) {
         this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.socialSecurityNumber = socialSecurityNumber;
         this.country = country;
         this.city = city;
@@ -55,6 +59,22 @@ public class Profile {
 
     public String getRawUserId() {
         return userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getSocialSecurityNumber() {

@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class DynamoDBFactory {
 
     @Singleton
-    public DynamoDbClient ddbClient(@Value("${aws.region}") String region) {
+    public DynamoDbClient ddbClient(@Value("${AWS_REGION}") String region) {
         return DynamoDbClient.builder()
                 .region(Region.of(region))
                 .credentialsProvider(DefaultCredentialsProvider.builder().build())
@@ -22,7 +22,7 @@ public class DynamoDBFactory {
     }
 
     @Singleton
-    public DynamoDbAsyncClient ddbAsyncClient(@Value("${aws.region}") String region) {
+    public DynamoDbAsyncClient ddbAsyncClient(@Value("${AWS_REGION}") String region) {
         return DynamoDbAsyncClient.builder()
                 .region(Region.of(region))
                 .credentialsProvider(DefaultCredentialsProvider.builder().build())
