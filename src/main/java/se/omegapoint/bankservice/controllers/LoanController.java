@@ -5,6 +5,7 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -13,10 +14,9 @@ import se.omegapoint.bankservice.dtos.*;
 import se.omegapoint.bankservice.mappers.LoanMapper;
 import se.omegapoint.bankservice.services.LoanService;
 
-import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
 
 @Controller("/loan")
-@Secured(IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class LoanController {
 
     private static final Logger log = LoggerFactory.getLogger(LoanController.class);

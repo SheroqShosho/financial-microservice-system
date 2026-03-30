@@ -11,46 +11,93 @@ import se.omegapoint.bankservice.dtos.LoanUpdateDTO;
 import se.omegapoint.bankservice.models.Loan;
 import se.omegapoint.bankservice.repositories.CustomerRegisterRepository;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Singleton
 public class LoanService {
 
     private static final Logger log =  LoggerFactory.getLogger(LoanService.class);
+    private final ExchangeRateService exchangeService;
     private final CustomerRegisterRepository repository;
     private final Pd1Client pd1Client;
 
-    public LoanService(CustomerRegisterRepository customerRegisterRepository, Pd1Client pd1Client) {
+    public LoanService(ExchangeRateService exchangeService, CustomerRegisterRepository customerRegisterRepository, Pd1Client pd1Client) {
+        this.exchangeService = exchangeService;
         this.repository = customerRegisterRepository;
         this.pd1Client = pd1Client;
+
 
     }
 
     public Mono<Loan> createLoan(String userId, LoanRequestDTO request) {
         log.info("Creating loan for user: {}", userId);
 
-        return pd1Client.getLoanTemplate(request.loanType())
-                .doOnNext(template -> log.debug("Template received"))
+        String currency = request.currency() != null ? request.currency() : "SEK";
 
-                .flatMap(template -> {
+        if (currency.equals("SEK")) {
+            return pd1Client.getLoanTemplate(request.loanType())
+                    .doOnSuccess(template ->
+                            log.info("Template fetched from PD1: type={} interestRate={}",
+                                    template.loanType(), template.interestRate()))
+                    .doOnError(e ->
+                            log.error("Failed to fetch template from PD1: {}", e.getMessage()))
+                    .flatMap(template -> {
+                        Loan loan = new Loan(
+                                userId,
+                                UUID.randomUUID().toString(),
+                                "ACTIVE",
+                                template.loanType(),
+                                template.interestRate(),
+                                request.durationMonths(),
+                                request.amount()
+                        );
+                        return repository.saveLoan(loan);
+                    })
+                    .doOnSuccess(loan ->
+                            log.info("Loan created with id={}", loan.getLoanId()))
+                    .doOnError(e ->
+                            log.error("Failed to create loan for userId={}", userId, e));
+        }
+
+        return Mono.zip(
+                        pd1Client.getLoanTemplate(request.loanType())
+                                .doOnSuccess(template ->
+                                        log.info("Template fetched from PD1: type={} interestRate={}",
+                                                template.loanType(), template.interestRate()))
+                                .doOnError(e ->
+                                        log.error("Failed to fetch template from PD1: {}", e.getMessage())),
+                        exchangeService.getRates(currency, "SEK")
+                                .doOnSuccess(rates ->
+                                        log.info("Exchange rates fetched: from={} rates={}",
+                                                currency, rates.rates()))
+                                .doOnError(e ->
+                                        log.error("Failed to fetch exchange rates: {}", e.getMessage()))
+                )
+                .doOnSuccess(tuple ->
+                        log.info("Both PD1 template and exchange rates fetched successfully"))
+                .flatMap(tuple -> {
+                    BigDecimal exchangeRate = tuple.getT2().rates().get("SEK");
+                    BigDecimal amountInSek = request.amount().multiply(exchangeRate);
+
+                    log.info("Converting {} {} to {} SEK with rate {}",
+                            request.amount(), currency, amountInSek, exchangeRate);
+
                     Loan loan = new Loan(
                             userId,
                             UUID.randomUUID().toString(),
                             "ACTIVE",
-                            template.loanType(),
-                            template.interestRate(),
+                            tuple.getT1().loanType(),
+                            tuple.getT1().interestRate(),
                             request.durationMonths(),
-                            request.amount()
-
+                            amountInSek
                     );
-                    log.debug("Saving loan to DynamoDB for userId {}", userId);
-
-                    return repository.saveLoan(loan)
-
-                            .doOnSuccess(savedLoan -> log.info("Loan created and saved! ID: {}",  savedLoan.getLoanId()));
+                    return repository.saveLoan(loan);
                 })
-
-                .doOnError(error -> log.error("Could not create loan for {}: {}", userId, error.getMessage()));
+                .doOnSuccess(loan ->
+                        log.info("Loan created with id={}", loan.getLoanId()))
+                .doOnError(e ->
+                        log.error("Failed to create loan for userId={}", userId, e));
     }
 
     public Flux<Loan> getAllLoansFromUser(String userId) {
