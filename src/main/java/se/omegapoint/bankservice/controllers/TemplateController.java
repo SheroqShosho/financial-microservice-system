@@ -2,6 +2,7 @@ package se.omegapoint.bankservice.controllers;
 
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -9,11 +10,8 @@ import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.*;
 import se.omegapoint.bankservice.services.TemplateService;
 
-import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
-import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
-
 @Controller("/template")
-@Secured(IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class TemplateController {
 
     private static final Logger LOG = LoggerFactory.getLogger(TemplateController.class);
@@ -36,6 +34,7 @@ public class TemplateController {
     }
 
     @Post("/creditcards")
+    @Secured("ADMIN")
     public Mono<CreditCardTemplateResponseDTO> createCreditCardTemplate(@Body CreditCardTemplateRequestDTO request) {
         LOG.info("HTTP POST /template/creditcards");
 
@@ -45,6 +44,7 @@ public class TemplateController {
     }
 
     @Put("/creditcards/{id}")
+    @Secured("ADMIN")
     public Mono<CreditCardTemplateResponseDTO> updateCreditCardTemplate(
             @PathVariable String id,
             @Body CreditCardTemplateUpdateDTO request) {
@@ -57,6 +57,7 @@ public class TemplateController {
     }
 
     @Delete("/creditcards/{id}")
+    @Secured("ADMIN")
     public Mono<Void> deleteCreditCardTemplate(@PathVariable String id) {
         LOG.info("HTTP DELETE /template/creditcards/{}", id);
 
@@ -77,6 +78,7 @@ public class TemplateController {
     }
 
     @Post("/loans")
+    @Secured("ADMIN")
     public Mono<LoanTemplateResponseDTO> createLoanTemplate(@Body LoanTemplateRequestDTO request) {
         LOG.info("HTTP POST /template/loans");
 
@@ -86,6 +88,7 @@ public class TemplateController {
     }
 
     @Put("/loans/{id}")
+    @Secured("ADMIN")
     public Mono<LoanTemplateResponseDTO> updateLoanTemplate(
             @PathVariable String id,
             @Body LoanTemplateUpdateDTO request) {
@@ -98,6 +101,7 @@ public class TemplateController {
     }
 
     @Delete("/loans/{id}")
+    @Secured("ADMIN")
     public Mono<Void> deleteLoanTemplate(@PathVariable String id) {
         LOG.info("HTTP DELETE /template/loans/{}", id);
 

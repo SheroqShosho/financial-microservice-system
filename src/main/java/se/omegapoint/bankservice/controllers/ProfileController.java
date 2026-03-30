@@ -5,9 +5,9 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.ProfileRequestDTO;
 import se.omegapoint.bankservice.dtos.ProfileResponseDTO;
@@ -15,11 +15,8 @@ import se.omegapoint.bankservice.dtos.ProfileUpdateDTO;
 import se.omegapoint.bankservice.mappers.ProfileMapper;
 import se.omegapoint.bankservice.services.ProfileService;
 
-import static io.micronaut.security.rules.SecurityRule.IS_ANONYMOUS;
-import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
-
 @Controller("/profile")
-@Secured(IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class ProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileController.class);
@@ -45,19 +42,39 @@ public class ProfileController {
     }
 
     @Get
-    public Flux<ProfileResponseDTO> getUserInformation(Authentication authentication) {
+    public Mono<MutableHttpResponse<ProfileResponseDTO>> getUserInformation(
+            Authentication authentication) {
         String userId = authentication.getName();
 
         LOG.info("HTTP GET /profile for userId={}", userId);
 
         return profileService.getUserInformation(userId)
                 .map(profileMapper::toResponseDto)
-                .doOnNext(response -> LOG.debug("Returning profile response: {}", response))
-                .doOnComplete(() -> LOG.debug("Completed GET /profile for userId={}", userId))
-                .doOnError(e -> LOG.error("Error in GET /profile for userId={}", userId, e));
+                .map(HttpResponse::ok)
+                .doOnSuccess(response -> LOG.debug("Completed GET /profile for userId={}", userId))
+                .onErrorResume(e -> {
+                    LOG.error("Error in GET /profile for userId={}", userId, e);
+                    return Mono.just(HttpResponse.serverError());
+                });
+    }
+
+    @Get("/{userId}")
+    @Secured("ADMIN")
+    public Mono<MutableHttpResponse<ProfileResponseDTO>> getProfileForSpecificUser(
+            @PathVariable String userId) {
+
+        return profileService.getUserInformation(userId)
+                .map(profileMapper::toResponseDto)
+                .map(HttpResponse::ok)
+                .doOnSuccess(response -> LOG.debug("Retrieved profile for userId={}", userId))
+                .onErrorResume(e -> {
+                    LOG.error("Error in GET /profile/{}", userId, e);
+                    return Mono.just(HttpResponse.serverError());
+                });
     }
 
     @Put("/{userId}/{socialSecurityNumber}")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<ProfileResponseDTO>> updateProfile(
             @PathVariable String userId,
             @PathVariable String socialSecurityNumber,
@@ -73,6 +90,7 @@ public class ProfileController {
     }
 
     @Delete("/{userId}/{socialSecurityNumber}")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<Void>> deleteProfile(
             @PathVariable String userId,
             @PathVariable String socialSecurityNumber) {
