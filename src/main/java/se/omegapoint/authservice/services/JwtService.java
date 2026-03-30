@@ -14,6 +14,7 @@ import se.omegapoint.authservice.models.User;
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -46,7 +47,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(String.valueOf(user.getUserId()))
                 .claim("email", user.getEmail())
-                .claim("role", user.getRole().name())
+                .claim("roles", List.of(user.getRole().name()))
                 .claim("firstName", user.getFirstName())
                 .claim("lastName", user.getLastName())
                 .issuedAt(new Date())
