@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 @Serdeable
 public record CreditCardTemplateResponseDTO(
+        String productId,
         String productType,
         String creditCardType,
         BigDecimal creditLimit,

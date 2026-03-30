@@ -5,6 +5,7 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -15,10 +16,8 @@ import se.omegapoint.bankservice.dtos.CreditCardUpdateDTO;
 import se.omegapoint.bankservice.mappers.CreditCardMapper;
 import se.omegapoint.bankservice.services.CreditCardService;
 
-import static io.micronaut.security.rules.SecurityRule.IS_AUTHENTICATED;
-
 @Controller("/creditcard")
-@Secured(IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class CreditCardController {
 
     private static final Logger log = LoggerFactory.getLogger(CreditCardController.class);
@@ -50,7 +49,7 @@ public class CreditCardController {
     }
 
     @Get
-    public Flux<CreditCardResponseDTO> getAllCreditCards(Authentication authentication) {
+    public Flux<CreditCardResponseDTO> getAllCreditCardsFromUser(Authentication authentication) {
 
         String userId = authentication.getName();
 
@@ -68,6 +67,7 @@ public class CreditCardController {
     }
 
     @Get("/{userId}/{creditCardType}/{creditCardId}")
+    @Secured("ADMIN")
     public Mono<CreditCardResponseDTO> getCreditCardById(
             @PathVariable String userId,
             @PathVariable String creditCardType,
@@ -86,7 +86,29 @@ public class CreditCardController {
 
     }
 
+    @Get("/{creditCardType}/{creditCardId}")
+    public Mono<CreditCardResponseDTO> getCreditCardById(
+            @PathVariable String creditCardType,
+            @PathVariable String creditCardId,
+            Authentication authentication) {
+
+        String userId = authentication.getName();
+
+        log.info("Retrieving credit card for userId: {}", userId);
+
+        return creditCardService.getCreditCardById(userId, creditCardType, creditCardId)
+                .map(creditCardMapper::toResponseDto)
+                .doOnSuccess(res ->
+                        log.info("Successfully retrieved credit card with id: {}", creditCardId)
+                )
+                .doOnError(error ->
+                        log.error("Error retrieving credit card with id: {}", creditCardId, error)
+                );
+
+    }
+
     @Put("/{userId}/{creditCardType}/{creditCardId}")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<CreditCardResponseDTO>> updateCreditCard(
             @PathVariable String userId,
             @PathVariable String creditCardType,
@@ -111,6 +133,7 @@ public class CreditCardController {
 
     // Case sensitive på type i URL
     @Delete("/{userId}/{creditCardType}/{creditCardId}")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<Void>> deleteCreditCard(
             @PathVariable String userId,
             @PathVariable String creditCardType,

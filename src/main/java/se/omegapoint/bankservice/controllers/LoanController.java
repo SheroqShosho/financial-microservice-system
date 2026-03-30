@@ -58,6 +58,7 @@ public class LoanController {
     }
 
     @Get("/{userId}/{loanType}/{loanId}")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<LoanResponseDTO>> getLoanById(
             @PathVariable String userId,
             @PathVariable String loanType,
@@ -72,7 +73,25 @@ public class LoanController {
                 .doOnError(e -> log.error("Error fetching loan with id={}", loanId));
     }
 
+    @Get("/{loanType}/{loanId}")
+    public Mono<MutableHttpResponse<LoanResponseDTO>> getLoanById(
+            @PathVariable String loanType,
+            @PathVariable String loanId,
+            Authentication authentication) {
+
+        String userId = authentication.getName();
+
+        log.info("Request: Get loan with type: {} and id: {}", loanType, loanId);
+
+        return loanService.getLoanById(userId, loanType, loanId)
+                .map (loanMapper::toResponseDTO)
+                .map(HttpResponse::ok)
+                .doOnSuccess(response -> log.info("Response: Loan with id: {} retrieved successfully)", loanId))
+                .doOnError(e -> log.error("Error fetching loan with id={}", loanId));
+    }
+
     @Put("/{userId}/{loanType}/{loanId}")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<LoanResponseDTO>> updateLoan(
             @PathVariable String userId,
             @PathVariable String loanType,
@@ -90,6 +109,7 @@ public class LoanController {
 
     // Case sensitive på type i URL
     @Delete("/{userId}/{loanType}/{loanId}")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<Void>> deleteLoan(
             @PathVariable String userId,
             @PathVariable String loanType,

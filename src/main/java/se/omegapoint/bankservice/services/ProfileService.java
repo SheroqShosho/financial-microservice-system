@@ -3,7 +3,6 @@ package se.omegapoint.bankservice.services;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.ProfileRequestDTO;
 import se.omegapoint.bankservice.dtos.ProfileUpdateDTO;
@@ -43,15 +42,10 @@ public class ProfileService {
                 .doOnError(e -> LOG.error("Error creating profile for userId={}", userId, e));
     }
 
-
-    public Flux<Profile> getUserInformation(String userId) {
-
-        LOG.info("Retrieving profile information for userId {}", userId);
-
+    public Mono<Profile> getUserInformation(String userId) {
         return repository.getUserInformation(userId)
-                .doOnNext(profile -> LOG.debug("Found profile: {}", profile))
-                .doOnComplete(() -> LOG.debug("Completed fetching profiles for userId={}", userId))
-                .doOnError(e -> LOG.error("Error fetching profiles for userId={}", userId, e));
+                .doOnSuccess(profile -> LOG.debug("Found profile for userId={}", userId))
+                .doOnError(e -> LOG.error("Error fetching profile for userId={}", userId, e));
     }
 
     public Mono<Profile> updateProfileBySocialSecurityNumber(String userId, String socialSecurityNumber, ProfileUpdateDTO request) {

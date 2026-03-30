@@ -176,7 +176,7 @@ public class CustomerRegisterRepository {
                 .thenReturn(profile);
     }
 
-    public Flux<Profile> getUserInformation(String userId) {
+    public Mono<Profile> getUserInformation(String userId) {
         LOG.info("Fetching profile information for userId={}", userId);
 
         QueryConditional queryConditional = QueryConditional
@@ -185,9 +185,9 @@ public class CustomerRegisterRepository {
                         .sortValue("PROFILE#")
                         .build());
 
-        return Flux.from(profileTable.query(queryConditional).items())
+        return Mono.from(profileTable.query(queryConditional).items())
                 .doOnNext(profile -> LOG.debug("Found profile: {}", profile))
-                .doOnComplete(() -> LOG.debug("Completed fetching profile information for userId={}", userId))
+                .doOnSuccess((e) -> LOG.debug("Completed fetching profile information for userId={}", userId))
                 .doOnError(e -> LOG.error("Error fetching profile information for userId={}", userId, e));
     }
 
