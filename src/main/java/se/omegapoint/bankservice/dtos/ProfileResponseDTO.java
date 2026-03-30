@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 @Serdeable
 public record ProfileResponseDTO (
          String userId,
+         String firstName,
+         String lastName,
          String socialSecurityNumber,
          String country,
          String city,
