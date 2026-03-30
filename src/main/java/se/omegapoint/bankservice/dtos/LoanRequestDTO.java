@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 public record LoanRequestDTO(
         String loanType,
         Integer durationMonths,
-        BigDecimal amount
+        BigDecimal amount,
+        String currency
 ) {
 }
