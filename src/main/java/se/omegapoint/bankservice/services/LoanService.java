@@ -21,83 +21,82 @@ public class LoanService {
     private final ExchangeRateService exchangeService;
     private final CustomerRegisterRepository repository;
     private final Pd1Client pd1Client;
+    private final WeatherService weatherService;
 
-    public LoanService(ExchangeRateService exchangeService, CustomerRegisterRepository customerRegisterRepository, Pd1Client pd1Client) {
+    public LoanService(ExchangeRateService exchangeService, CustomerRegisterRepository customerRegisterRepository, Pd1Client pd1Client, WeatherService weatherService) {
         this.exchangeService = exchangeService;
         this.repository = customerRegisterRepository;
         this.pd1Client = pd1Client;
-
-
+        this.weatherService = weatherService;
     }
 
-    public Mono<Loan> createLoan(String userId, LoanRequestDTO request) {
+    public Mono<Loan> createLoan(String userId, LoanRequestDTO request, String city) {
         log.info("Creating loan for user: {}", userId);
 
         String currency = request.currency() != null ? request.currency() : "SEK";
 
         if (currency.equals("SEK")) {
-            return pd1Client.getLoanTemplate(request.loanType())
-                    .doOnSuccess(template ->
-                            log.info("Template fetched from PD1: type={} interestRate={}",
-                                    template.loanType(), template.interestRate()))
-                    .doOnError(e ->
-                            log.error("Failed to fetch template from PD1: {}", e.getMessage()))
-                    .flatMap(template -> {
+            return Mono.zip(
+                            pd1Client.getLoanTemplate(request.loanType())
+                                    .doOnSuccess(t -> log.info("Template fetched from PD1: type={} interestRate={}", t.loanType(), t.interestRate()))
+                                    .doOnError(e -> log.error("Failed to fetch template from PD1: {}", e.getMessage())),
+                            weatherService.getWeather(city)
+                                    .doOnSuccess(temp -> log.info("Temperature fetched for city={}: {}°C", city, temp))
+                    )
+                    .doOnSuccess(tuple -> log.info("PD1 template and weather fetched successfully"))
+                    .flatMap(tuple -> {
+                        BigDecimal adjustedInterestRate = tuple.getT1().interestRate()
+                                .add(BigDecimal.valueOf(weatherService.calculateInterestAdjustment(tuple.getT2())));
+                        log.info("Temperature={}°C, adjustedInterestRate={}", tuple.getT2(), adjustedInterestRate);
+
                         Loan loan = new Loan(
                                 userId,
                                 UUID.randomUUID().toString(),
                                 "ACTIVE",
-                                template.loanType(),
-                                template.interestRate(),
+                                tuple.getT1().loanType(),
+                                adjustedInterestRate,
                                 request.durationMonths(),
                                 request.amount()
                         );
                         return repository.saveLoan(loan);
                     })
-                    .doOnSuccess(loan ->
-                            log.info("Loan created with id={}", loan.getLoanId()))
-                    .doOnError(e ->
-                            log.error("Failed to create loan for userId={}", userId, e));
+                    .doOnSuccess(loan -> log.info("Loan created with id={}", loan.getLoanId()))
+                    .doOnError(e -> log.error("Failed to create loan for userId={}", userId, e));
         }
 
         return Mono.zip(
                         pd1Client.getLoanTemplate(request.loanType())
-                                .doOnSuccess(template ->
-                                        log.info("Template fetched from PD1: type={} interestRate={}",
-                                                template.loanType(), template.interestRate()))
-                                .doOnError(e ->
-                                        log.error("Failed to fetch template from PD1: {}", e.getMessage())),
+                                .doOnSuccess(t -> log.info("Template fetched from PD1: type={} interestRate={}", t.loanType(), t.interestRate()))
+                                .doOnError(e -> log.error("Failed to fetch template from PD1: {}", e.getMessage())),
                         exchangeService.getRates(currency, "SEK")
-                                .doOnSuccess(rates ->
-                                        log.info("Exchange rates fetched: from={} rates={}",
-                                                currency, rates.rates()))
-                                .doOnError(e ->
-                                        log.error("Failed to fetch exchange rates: {}", e.getMessage()))
+                                .doOnSuccess(r -> log.info("Exchange rates fetched: from={} rates={}", currency, r.rates()))
+                                .doOnError(e -> log.error("Failed to fetch exchange rates: {}", e.getMessage())),
+                        weatherService.getWeather(city)
+                                .doOnSuccess(temp -> log.info("Temperature fetched for city={}: {}°C", city, temp))
                 )
-                .doOnSuccess(tuple ->
-                        log.info("Both PD1 template and exchange rates fetched successfully"))
+                .doOnSuccess(tuple -> log.info("PD1 template, exchange rates and weather fetched successfully"))
                 .flatMap(tuple -> {
                     BigDecimal exchangeRate = tuple.getT2().rates().get("SEK");
                     BigDecimal amountInSek = request.amount().multiply(exchangeRate);
+                    log.info("Converting {} {} to {} SEK with rate {}", request.amount(), currency, amountInSek, exchangeRate);
 
-                    log.info("Converting {} {} to {} SEK with rate {}",
-                            request.amount(), currency, amountInSek, exchangeRate);
+                    BigDecimal adjustedInterestRate = tuple.getT1().interestRate()
+                            .add(BigDecimal.valueOf(weatherService.calculateInterestAdjustment(tuple.getT3())));
+                    log.info("Temperature={}°C, adjustedInterestRate={}", tuple.getT3(), adjustedInterestRate);
 
                     Loan loan = new Loan(
                             userId,
                             UUID.randomUUID().toString(),
                             "ACTIVE",
                             tuple.getT1().loanType(),
-                            tuple.getT1().interestRate(),
+                            adjustedInterestRate,
                             request.durationMonths(),
                             amountInSek
                     );
                     return repository.saveLoan(loan);
                 })
-                .doOnSuccess(loan ->
-                        log.info("Loan created with id={}", loan.getLoanId()))
-                .doOnError(e ->
-                        log.error("Failed to create loan for userId={}", userId, e));
+                .doOnSuccess(loan -> log.info("Loan created with id={}", loan.getLoanId()))
+                .doOnError(e -> log.error("Failed to create loan for userId={}", userId, e));
     }
 
     public Flux<Loan> getAllLoansFromUser(String userId) {
