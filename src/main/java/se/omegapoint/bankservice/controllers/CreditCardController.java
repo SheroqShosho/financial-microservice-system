@@ -10,11 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import se.omegapoint.bankservice.dtos.CreditCardRequestDTO;
+import se.omegapoint.bankservice.dtos.CreditCardApplicationDTO;
 import se.omegapoint.bankservice.dtos.CreditCardResponseDTO;
 import se.omegapoint.bankservice.dtos.CreditCardUpdateDTO;
 import se.omegapoint.bankservice.mappers.CreditCardMapper;
 import se.omegapoint.bankservice.services.CreditCardService;
+import se.omegapoint.bankservice.services.ProfileService;
 
 @Controller("/creditcard")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -24,28 +25,42 @@ public class CreditCardController {
 
     private final CreditCardService creditCardService;
     private final CreditCardMapper creditCardMapper;
+    private final ProfileService profileService;
 
-    public CreditCardController(CreditCardService creditCardService, CreditCardMapper creditCardMapper) {
+    public CreditCardController(CreditCardService creditCardService, CreditCardMapper creditCardMapper, ProfileService profileService) {
         this.creditCardService = creditCardService;
         this.creditCardMapper = creditCardMapper;
+        this.profileService = profileService;
     }
 
     @Post
-    public Mono<MutableHttpResponse<CreditCardResponseDTO>> addCreditCard(@Body CreditCardRequestDTO request, Authentication authentication) {
-
+    public Mono<MutableHttpResponse<CreditCardResponseDTO>> addCreditCardWithProfile(
+            @Body CreditCardApplicationDTO request,
+            Authentication authentication
+    ) {
         String userId = authentication.getName();
-
-        log.info("Creating credit card for userId: {}, type: {}", userId, request.creditCardType());
-
-        return creditCardService.createCreditCard(userId, request.creditCardType())
+        if (request == null || request.creditcard() == null) {
+            log.warn("CreditCardApplicationDTO or creditcard is null for userId={}", userId);
+            return Mono.error(new IllegalArgumentException("Credit card information is required"));
+        }
+        return profileService.getUserInformation(userId)
+                .flatMap(existingProfile -> {
+                    log.info("Existing profile found for userId={}", userId);
+                    return creditCardService.createCreditCard(userId, request.creditcard().creditCardType());
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    if (request.profile() == null) {
+                        log.warn("No profile found and no profile data provided for userId={}", userId);
+                        return Mono.error(new IllegalArgumentException("Profile information is required for first-time credit card application"));
+                    }
+                    log.info("No existing profile for userId={}, creating new profile", userId);
+                    return profileService.createProfile(userId, request.profile())
+                            .flatMap(savedProfile -> creditCardService.createCreditCard(userId, request.creditcard().creditCardType()));
+                }))
                 .map(creditCardMapper::toResponseDto)
                 .map(HttpResponse::created)
-                .doOnSuccess(res ->
-                        log.info("Successfully created credit card for userId: {}", userId)
-                )
-                .doOnError(error ->
-                        log.error("Error creating credit card for userId: {}", userId, error)
-                );
+                .doOnSuccess(response -> log.info("Response: Credit card created with status {}", response.status()))
+                .doOnError(e -> log.error("Error creating credit card for userId={}", userId, e));
     }
 
     @Get
