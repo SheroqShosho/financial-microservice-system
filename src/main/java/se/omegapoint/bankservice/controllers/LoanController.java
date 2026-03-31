@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import se.omegapoint.bankservice.dtos.*;
 import se.omegapoint.bankservice.mappers.LoanMapper;
 import se.omegapoint.bankservice.services.LoanService;
+import se.omegapoint.bankservice.services.ProfileService;
 
 
 @Controller("/loan")
@@ -22,28 +23,44 @@ public class LoanController {
     private static final Logger log = LoggerFactory.getLogger(LoanController.class);
     private final LoanService loanService;
     private final LoanMapper loanMapper;
+    private final ProfileService profileService;
 
 
-    public LoanController(final LoanService loanService, final LoanMapper loanMapper) {
+    public LoanController(final LoanService loanService, final LoanMapper loanMapper, final ProfileService profileService) {
         this.loanService = loanService;
         this.loanMapper = loanMapper;
+        this.profileService = profileService;
     }
 
     @Post
     public Mono<MutableHttpResponse<LoanResponseDTO>> addLoan(
-            @Body LoanRequestDTO request,
+            @Body LoanApplicationDTO request,
             Authentication authentication
     ) {
-        log.info("Request: Create loan with type: {} ", request.loanType());
+        log.info("Request: Create loan with type: {} ", request.loan().loanType());
 
         String userId = authentication.getName();
 
-        return loanService.createLoan(userId, request)
+        return profileService.getUserInformation(userId)
+                .flatMap(existingProfile -> {
+                    log.info("Existing profile found for userId={}, using city={}", userId, existingProfile.getCity());
+                    return loanService.createLoan(userId, request.loan(), existingProfile.getCity());
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    if (request.profile() == null) {
+                        log.warn("No profile found and no profile data provided for userId={}", userId);
+                        return Mono.error(new IllegalArgumentException("Profile information is required for first-time loan application"));
+                    }
+                    log.info("No existing profile for userId={}, creating new profile", userId);
+                    return profileService.createProfile(userId, request.profile())
+                            .flatMap(savedProfile -> loanService.createLoan(userId, request.loan(), savedProfile.getCity()));
+                }))
                 .map(loanMapper::toResponseDTO)
                 .map(HttpResponse::created)
                 .doOnSuccess(response -> log.info("Response: Loan created with status {}", response.status()))
                 .doOnError(e -> log.error("Error creating loan for userId={}", userId, e));
     }
+
 
     @Get
     public Flux<LoanResponseDTO> getAllLoansFromUser(Authentication authentication) {
