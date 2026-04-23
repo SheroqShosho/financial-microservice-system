@@ -14,3 +14,4 @@ out/
 .classpath
 .factorypath
 .env
+/project_dump.txt
