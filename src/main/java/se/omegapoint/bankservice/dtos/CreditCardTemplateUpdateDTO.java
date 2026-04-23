@@ -9,6 +9,7 @@ public record CreditCardTemplateUpdateDTO (
         BigDecimal creditLimit,
         BigDecimal fee,
         BigDecimal interestRate,
-        String status
+        String status,
+        String description
 ) {
 }
