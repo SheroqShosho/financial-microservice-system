@@ -37,7 +37,8 @@ public class Loan extends Product {
             BigDecimal maxAmount,
             BigDecimal interestRate,
             ProductType productType,
-            ProductStatus productStatus
+            ProductStatus productStatus,
+            String description
     ) {
 
         super(productType, productStatus);
@@ -45,6 +46,7 @@ public class Loan extends Product {
         this.minAmount = minAmount;
         this.maxAmount = maxAmount;
         this.interestRate = interestRate;
+        this.setDescription(description);
     }
 
     public String getLoanType() {

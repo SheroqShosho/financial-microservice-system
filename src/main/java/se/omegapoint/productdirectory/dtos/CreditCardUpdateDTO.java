@@ -17,6 +17,8 @@ public record CreditCardUpdateDTO(
         BigDecimal fee,
 
         @PositiveOrZero(message = "Can not be negative")
-        BigDecimal interestRate
+        BigDecimal interestRate,
+
+        String description
 ) {
 }

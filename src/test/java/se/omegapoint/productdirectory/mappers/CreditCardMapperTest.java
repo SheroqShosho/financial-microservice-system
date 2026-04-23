@@ -37,6 +37,7 @@ class CreditCardMapperTest {
         when(entity.getCreditLimit()).thenReturn(new BigDecimal("20000"));
         when(entity.getFee()).thenReturn(new BigDecimal("200"));
         when(entity.getInterestRate()).thenReturn(new BigDecimal("2"));
+        when(entity.getDescription()).thenReturn("Premium credit card with rewards");
 
         // ACT
 
@@ -53,6 +54,7 @@ class CreditCardMapperTest {
         assertThat(response.creditLimit()).isEqualByComparingTo(new BigDecimal("20000"));
         assertThat(response.fee()).isEqualByComparingTo(new BigDecimal("200"));
         assertThat(response.interestRate()).isEqualByComparingTo(new BigDecimal("2"));
+        assertThat(response.description()).isEqualTo("Premium credit card with rewards");
 
 
     }
@@ -69,8 +71,8 @@ class CreditCardMapperTest {
                 ("GOLD"),
                 new BigDecimal("50000"), // creditLimit
                 new BigDecimal("150"), // fee
-                new BigDecimal("3") // interestRate
-
+                new BigDecimal("3"), // interestRate
+                "Premium gold credit card"  // description
         );
 
         // ACT
@@ -87,6 +89,7 @@ class CreditCardMapperTest {
         assertThat(entity.getCreditLimit()).isEqualByComparingTo(new BigDecimal("50000"));
         assertThat(entity.getFee()).isEqualByComparingTo(new BigDecimal("150"));
         assertThat(entity.getInterestRate()).isEqualByComparingTo(new BigDecimal("3"));
+        assertThat(entity.getDescription()).isEqualTo("Premium gold credit card");
 
         // Kontrollerar att rätt produkttyp blir satt, i detta fall CREDIT_CARD
         assertThat(entity.getProductType()).isEqualTo(ProductType.CREDIT_CARD);

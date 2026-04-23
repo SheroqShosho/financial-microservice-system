@@ -24,6 +24,10 @@ public abstract class Product {
     @NotNull
     private ProductStatus productStatus;
 
+    @Column
+    @NotNull
+    private String description;
+
     protected Product() {
     }
 
@@ -50,5 +54,13 @@ public abstract class Product {
 
     public void setProductStatus(ProductStatus productStatus) {
         this.productStatus = productStatus;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

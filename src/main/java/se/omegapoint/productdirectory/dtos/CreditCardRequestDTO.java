@@ -24,7 +24,10 @@ public record CreditCardRequestDTO(
 
         @NotNull(message = "Can not be null")
         @PositiveOrZero(message = "Can not be negative")
-        BigDecimal interestRate
+        BigDecimal interestRate,
+
+        @NotNull(message = "Is required or has an invalid format")
+        String description
 ) {
 
 
