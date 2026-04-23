@@ -22,7 +22,7 @@ export default async function CardDetailPage({ params }: { params: Promise<{ typ
   if (!card) {
     return (
       <main className="p-10 bg-white min-h-screen text-gray-900">
-        <h1 className="text-2xl font-bold">Kortet "{resolvedParams.type}" hittades inte.</h1>
+        <h1 className="text-2xl font-bold">Kortet &quot;{resolvedParams.type}&quot; hittades inte.</h1>
         <p className="mt-2 text-gray-600">Kontrollera att namnet stämmer i URL:en.</p>
       </main>
     );
@@ -31,6 +31,11 @@ export default async function CardDetailPage({ params }: { params: Promise<{ typ
   return (
     <main className="p-10 min-h-screen bg-white text-gray-900">
       <h1 className="text-4xl font-bold text-blue-900 mb-4">{card.creditCardType}</h1>
+      <h1 className="text-1xl font-bold text-gray-800 mb-4">Fee: {card.fee}</h1>
+      <h1 className="text-1xl font-bold text-gray-800 mb-4">Ränta: {card.interestRate}</h1>
+      <h1 className="text-1xl font-bold text-gray-800 mb-4">Kostnad: {card.creditLimit}</h1>
+      <p className="text-1xl font-bold text-gray-800 mb-4">Beskrivning: {card.description}</p>
+
       {/* Resten av din UI-kod... */}
     </main>
   );

@@ -21,7 +21,7 @@ export default async function CreditCardTemplatesPage() {
       <header className="mb-10">
         <h1 className="text-4xl font-bold text-blue-900">Kreditkortsmallar</h1>
         <p className="text-lg text-gray-600 mt-2">
-          Här listas alla tillgängliga korttyper som är markerade som aktiva i systemet.
+          Här listas alla tillgängliga korttyper.
         </p>
       </header>
 

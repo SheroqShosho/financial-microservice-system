@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ikano Bank Kopia", // Uppdatera titeln här
+  title: "OmegaBank", // Uppdatera titeln här
   description: "Ett praktikprojekt i Next.js",
 };
 

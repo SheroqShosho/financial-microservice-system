@@ -4,4 +4,5 @@ export interface CreditCardTemplateDTO {
   fee: number;
   creditLimit: number;
   productStatus: "ACTIVE"|"INACTIVE";
+  description: string;
 }
