@@ -2,7 +2,7 @@ import CreditCardBox from "@/components/CreditCardTemplate";
 import { CreditCardTemplateDTO } from "@/types/creditcard";
 
 async function getTemplates(): Promise<CreditCardTemplateDTO[]> {
-  const res = await fetch ('http://localhost:8081/api/creditcard', {
+  const res = await fetch ('http://localhost:8080/template/creditcards', {
     cache: 'no-store'
   });
 

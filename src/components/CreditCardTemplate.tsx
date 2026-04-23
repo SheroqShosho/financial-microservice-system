@@ -1,11 +1,16 @@
 import { CreditCardTemplateDTO } from "@/types/creditcard";
+import Link from "next/link";
 
 interface Props {
   card: CreditCardTemplateDTO;
 }
 
 export default function CreditCardBox({ card }: Props) {
+  const cardUrl = card.creditCardType.toLowerCase(); 
   return (
+
+    <Link href = {`/creditcardtemplates/${cardUrl}`}>
+
     <div className="border p-4 rounded-lg shadow-sm bg-white">
       {/* Tydligt och bra: card.någonting */}
       <h2 className="text-xl font-bold text-gray-800">{card.creditCardType}</h2>
@@ -22,5 +27,6 @@ export default function CreditCardBox({ card }: Props) {
         </span>
       </div>
     </div>
+    </Link>
   )
 }
