@@ -11,7 +11,7 @@ import se.omegapoint.bankservice.dtos.*;
 import se.omegapoint.bankservice.services.TemplateService;
 
 @Controller("/template")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_ANONYMOUS)
 public class TemplateController {
 
     private static final Logger LOG = LoggerFactory.getLogger(TemplateController.class);

@@ -11,6 +11,7 @@ public record CreditCardTemplateResponseDTO(
         String creditCardType,
         BigDecimal creditLimit,
         BigDecimal fee,
-        BigDecimal interestRate
+        BigDecimal interestRate,
+        String productStatus
 ) {
 }
