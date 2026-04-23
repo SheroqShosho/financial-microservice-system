@@ -14,6 +14,7 @@ export default function CreditCardBox({ card }: Props) {
     <div className="border p-4 rounded-lg shadow-sm bg-white">
       {/* Tydligt och bra: card.någonting */}
       <h2 className="text-xl font-bold text-gray-800">{card.creditCardType}</h2>
+      <p className="text-gray-600 text-sm mt-1">{card.description}</p>
       
       <div className="flex flex-col mt-4">
         <span className="text-gray-800">Ränta: {card.interestRate}%</span>
