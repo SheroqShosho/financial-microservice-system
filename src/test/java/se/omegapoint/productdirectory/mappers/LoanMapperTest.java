@@ -36,6 +36,7 @@ class LoanMapperTest {
         when(entity.getMinAmount()).thenReturn(new BigDecimal("500"));
         when(entity.getMaxAmount()).thenReturn(new BigDecimal("20000"));
         when(entity.getInterestRate()).thenReturn(new BigDecimal("2"));
+        when(entity.getDescription()).thenReturn("Personal loan for private use");
 
         // ACT
 
@@ -52,6 +53,7 @@ class LoanMapperTest {
         assertThat(response.minAmount()).isEqualByComparingTo(new BigDecimal("500"));
         assertThat(response.maxAmount()).isEqualByComparingTo(new BigDecimal("20000"));
         assertThat(response.interestRate()).isEqualByComparingTo(new BigDecimal("2"));
+        assertThat(response.description()).isEqualTo("Personal loan for private use");
 
 
     }
@@ -68,8 +70,8 @@ class LoanMapperTest {
                 "PRIVATE",
                 new BigDecimal("0"), // minAmount
                 new BigDecimal("50000"), // maxAmount
-                new BigDecimal("3") // interestRate
-
+                new BigDecimal("3"), // interestRate
+                "Personal loan for private use"  // description
         );
 
         // ACT
@@ -86,6 +88,7 @@ class LoanMapperTest {
         assertThat(entity.getMinAmount()).isEqualByComparingTo(new BigDecimal("0"));
         assertThat(entity.getMaxAmount()).isEqualByComparingTo(new BigDecimal("50000"));
         assertThat(entity.getInterestRate()).isEqualByComparingTo(new BigDecimal("3"));
+        assertThat(entity.getDescription()).isEqualTo("Personal loan for private use");
 
         // Kontrollerar att rätt produkttyp blir satt, i detta fall LOAN
         assertThat(entity.getProductType()).isEqualTo(ProductType.LOAN);

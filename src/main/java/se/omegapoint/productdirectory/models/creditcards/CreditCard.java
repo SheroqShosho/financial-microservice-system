@@ -31,12 +31,13 @@ public class CreditCard extends Product {
     public CreditCard() {
     }
 
-    protected CreditCard(String creditCardType, BigDecimal creditLimit, BigDecimal fee, BigDecimal interestRate, ProductType productType, ProductStatus productStatus) {
+    protected CreditCard(String creditCardType, BigDecimal creditLimit, BigDecimal fee, BigDecimal interestRate, ProductType productType, ProductStatus productStatus, String description) {
         super(productType, productStatus);
         this.creditCardType = creditCardType;
         this.creditLimit = creditLimit;
         this.fee = fee;
         this.interestRate = interestRate;
+        this.setDescription(description);
     }
 
     public String getCreditCardType() {
