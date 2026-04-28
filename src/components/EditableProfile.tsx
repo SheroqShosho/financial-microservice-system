@@ -12,6 +12,7 @@ export default function EditableProfile({ initialData }: { initialData: MyPagesD
         setProfile({ ...profile, [e.target.name]: e.target.value });
     };
 
+    //TODO : LÄGG IN Authorization token flöde under content type application json
     const handleSave = async () => {
         setIsSaving(true);
         try {
@@ -21,6 +22,8 @@ export default function EditableProfile({ initialData }: { initialData: MyPagesD
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    firstName: profile.firstName,
+                    lastName: profile.lastName,
                     country: profile.country,
                     city: profile.city,
                     address: profile.address,
