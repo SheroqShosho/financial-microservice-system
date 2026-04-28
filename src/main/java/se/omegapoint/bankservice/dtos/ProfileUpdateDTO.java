@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 @Serdeable
 public record ProfileUpdateDTO (
+         String firstName,
+         String lastName,
          String country,
          String city,
          String address,

@@ -2,8 +2,6 @@ package se.omegapoint.bankservice.controllers;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;

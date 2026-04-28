@@ -54,6 +54,8 @@ public class ProfileService {
 
         return repository.findProfileBySocialSecurityNumber(userId, socialSecurityNumber)
                 .flatMap(existing -> {
+                    if (request.firstName() != null) existing.setFirstName(request.firstName());
+                    if (request.lastName() != null) existing.setLastName(request.lastName());
                     if (request.country() != null) existing.setCountry(request.country());
                     if (request.city() != null) existing.setCity(request.city());
                     if (request.address() != null) existing.setAddress(request.address());
