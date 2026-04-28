@@ -3,11 +3,6 @@ import Link from 'next/link';
 const Header = () => {
   return (
     <header className="w-full border-b bg-gray-50 border-gray-200 font-sans">
-      {/* Top Bar */}
-      <div className="flex justify-start gap-8 px-8 py-2 text-sm border-b border-gray-100">
-        <Link href="/privat" className="font-bold border-b-2 text-gray-900 border-black pb-1">PRIVAT</Link>
-        <Link href="/foretag" className="text-gray-900 hover:text-black">FÖRETAG</Link>
-      </div>
 
       {/* Main Nav */}
       <div className="flex items-center justify-between px-8 py-4">
@@ -27,10 +22,9 @@ const Header = () => {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex gap-6 text-sm font-medium">
-            <Link className="text-gray-900" href="/privatlan">Privatlån</Link>
-            <Link className="text-gray-900" href="/bolan">Bolån</Link>
+            <Link className="text-gray-900" href="/loantemplates">Lån</Link>
             <Link className="text-gray-900" href="/creditcardtemplates">Kreditkort</Link>
-            <Link className="text-gray-900" href="/mina-sidor">Mina sidor</Link>
+            <Link className="text-gray-900" href="/mypages">Mina sidor</Link>
           </nav>
         </div>
 
