@@ -17,14 +17,14 @@ async function getUserData(username: string): Promise<MyPagesDTO | null> {
             city: backendData.profile.city,
             zipCode: backendData.profile.zipCode,
             country: backendData.profile.country,
-            creditCards: backendData.creditCards,
-            loans: backendData.loans
+            creditCards: backendData.creditCards ?? [],
+            loans: backendData.loans ?? []
         };
     } catch (e) { return null; }
 }
 
 export default async function MyPages() {
-    const data = await getUserData("test123");
+    const data = await getUserData("4");
     if (!data) return <div className="p-10">Kunde inte hämta data.</div>;
 
     return (
