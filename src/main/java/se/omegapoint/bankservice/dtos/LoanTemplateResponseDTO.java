@@ -12,6 +12,7 @@ public record LoanTemplateResponseDTO(
         String loanType,
         BigDecimal minAmount,
         BigDecimal maxAmount,
-        BigDecimal interestRate)
+        BigDecimal interestRate,
+        String description)
  {
 }

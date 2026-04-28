@@ -11,7 +11,8 @@ public record LoanTemplateUpdateDTO(
         String loanType,
         BigDecimal minAmount,
         BigDecimal maxAmount,
-        BigDecimal interestRate
+        BigDecimal interestRate,
+        String description
 
 ) {
 }

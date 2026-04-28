@@ -10,7 +10,7 @@ public record LoanTemplateRequestDTO(
         String loanType,
         BigDecimal minAmount,
         BigDecimal maxAmount,
-        BigDecimal interestRate
-        //String productStatus, ska vi ha med denna för validering av mallen ifall den är aktiv eller inactive?
+        BigDecimal interestRate,
+        String description
 ){
 }

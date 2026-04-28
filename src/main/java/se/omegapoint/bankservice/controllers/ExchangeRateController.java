@@ -15,7 +15,7 @@ import se.omegapoint.bankservice.services.ExchangeRateService;
 
 
 @Controller("exchange")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_ANONYMOUS)
 public class ExchangeRateController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExchangeRateController.class);

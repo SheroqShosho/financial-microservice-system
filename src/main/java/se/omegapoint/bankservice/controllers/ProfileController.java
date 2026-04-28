@@ -16,7 +16,7 @@ import se.omegapoint.bankservice.mappers.ProfileMapper;
 import se.omegapoint.bankservice.services.ProfileService;
 
 @Controller("/profile")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_ANONYMOUS)
 public class ProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileController.class);
@@ -59,7 +59,7 @@ public class ProfileController {
     }
 
     @Get("/{userId}")
-    @Secured("ADMIN")
+//    @Secured("ADMIN")
     public Mono<MutableHttpResponse<ProfileResponseDTO>> getProfileForSpecificUser(
             @PathVariable String userId) {
 
@@ -74,7 +74,7 @@ public class ProfileController {
     }
 
     @Put("/{userId}/{socialSecurityNumber}")
-    @Secured("ADMIN")
+//    @Secured("ADMIN")
     public Mono<MutableHttpResponse<ProfileResponseDTO>> updateProfile(
             @PathVariable String userId,
             @PathVariable String socialSecurityNumber,
@@ -90,7 +90,7 @@ public class ProfileController {
     }
 
     @Delete("/{userId}/{socialSecurityNumber}")
-    @Secured("ADMIN")
+//    @Secured("ADMIN")
     public Mono<MutableHttpResponse<Void>> deleteProfile(
             @PathVariable String userId,
             @PathVariable String socialSecurityNumber) {
