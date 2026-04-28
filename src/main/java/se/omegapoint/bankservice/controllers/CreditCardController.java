@@ -18,7 +18,7 @@ import se.omegapoint.bankservice.services.CreditCardService;
 import se.omegapoint.bankservice.services.ProfileService;
 
 @Controller("/creditcard")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_ANONYMOUS)
 public class CreditCardController {
 
     private static final Logger log = LoggerFactory.getLogger(CreditCardController.class);
@@ -82,7 +82,7 @@ public class CreditCardController {
     }
 
     @Get("/{userId}/{creditCardType}/{creditCardId}")
-    @Secured("ADMIN")
+//    @Secured("ADMIN")
     public Mono<CreditCardResponseDTO> getCreditCardById(
             @PathVariable String userId,
             @PathVariable String creditCardType,
@@ -123,7 +123,7 @@ public class CreditCardController {
     }
 
     @Put("/{userId}/{creditCardType}/{creditCardId}")
-    @Secured("ADMIN")
+//    @Secured("ADMIN")
     public Mono<MutableHttpResponse<CreditCardResponseDTO>> updateCreditCard(
             @PathVariable String userId,
             @PathVariable String creditCardType,
@@ -148,7 +148,7 @@ public class CreditCardController {
 
     // Case sensitive på type i URL
     @Delete("/{userId}/{creditCardType}/{creditCardId}")
-    @Secured("ADMIN")
+//    @Secured("ADMIN")
     public Mono<MutableHttpResponse<Void>> deleteCreditCard(
             @PathVariable String userId,
             @PathVariable String creditCardType,

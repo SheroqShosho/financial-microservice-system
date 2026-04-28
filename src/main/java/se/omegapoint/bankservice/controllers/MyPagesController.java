@@ -2,6 +2,8 @@ package se.omegapoint.bankservice.controllers;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
@@ -23,7 +25,7 @@ import java.util.List;
 
 
 @Controller("/mypages")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_ANONYMOUS)
 public class MyPagesController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyPagesController.class);
@@ -89,8 +91,8 @@ public class MyPagesController {
     }
 
     @Get("/{userId}")
-    @Secured("ADMIN")
-    public Mono<MutableHttpResponse<MyPagesResponseDTO>> getMyPages(@PathVariable String userId) {
+//    @Secured("ADMIN")
+    public Mono<MutableHttpResponse<MyPagesResponseDTO>> getUserPages(@PathVariable String userId) {
 
         return Mono.zip(profileService.getUserInformation(userId)
                                 .onErrorResume(e -> {
