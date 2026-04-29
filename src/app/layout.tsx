@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Script from 'next/script';
 // Importera dina nya komponenter här
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -37,7 +38,11 @@ export default function RootLayout({
         {/* 'flex-grow' ser till att main-ytan tar upp all plats så footern hamnar längst ner */}
         <main className="flex-grow">
           {children}
-          
+
+          <Script
+              src="https://accounts.google.com/gsi/client"
+              strategy="beforeInteractive"
+          />
         </main>
 
         {/* Footern ligger längst ner på alla sidor */}
