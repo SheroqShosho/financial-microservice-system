@@ -23,7 +23,7 @@ import java.util.List;
 
 
 @Controller("/mypages")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class MyPagesController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyPagesController.class);

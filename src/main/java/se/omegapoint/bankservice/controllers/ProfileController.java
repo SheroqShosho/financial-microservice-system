@@ -16,7 +16,7 @@ import se.omegapoint.bankservice.mappers.ProfileMapper;
 import se.omegapoint.bankservice.services.ProfileService;
 
 @Controller("/profile")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class ProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileController.class);

@@ -17,7 +17,7 @@ import se.omegapoint.bankservice.services.ProfileService;
 
 
 @Controller("/loan")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class LoanController {
 
     private static final Logger log = LoggerFactory.getLogger(LoanController.class);
