@@ -85,7 +85,7 @@ export default async function LoanDetailPage({
                     </p>
 
                     <Link
-                        href="#ansok"
+                        href="/mypages/loans/apply"
                         className="inline-block w-fit bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded transition-colors text-sm"
                     >
                         Ansök nu
@@ -193,10 +193,10 @@ export default async function LoanDetailPage({
                     </p>
                     <div className="flex gap-3 flex-wrap">
                         <Link
-                            href="/"
+                            href="/mypages/loans/apply"
                             className="bg-white text-red-600 font-bold px-5 py-2.5 rounded hover:bg-red-50 transition text-sm"
                         >
-                            Logga in och ansök
+                            Ansök
                         </Link>
                         <Link
                             href="/"
