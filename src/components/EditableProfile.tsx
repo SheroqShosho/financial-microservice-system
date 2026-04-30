@@ -12,14 +12,16 @@ export default function EditableProfile({ initialData }: { initialData: MyPagesD
         setProfile({ ...profile, [e.target.name]: e.target.value });
     };
 
-    //TODO : LÄGG IN Authorization token flöde under content type application json
     const handleSave = async () => {
         setIsSaving(true);
         try {
+            const token = localStorage.getItem("accessToken");
+
             const res = await fetch(`http://localhost:8080/profile/${profile.username}/${profile.socialSecurityNumber}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     firstName: profile.firstName,
