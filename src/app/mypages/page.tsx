@@ -35,16 +35,19 @@ export default function MyPages() {
                 }
 
                 const backendData = await res.json();
+                const profile = backendData.profile || {};
+
+                console.log("Backend response:", backendData);
 
                 setData({
-                    username: backendData.profile.userId,
-                    firstName: backendData.profile.firstName,
-                    lastName: backendData.profile.lastName,
-                    socialSecurityNumber: backendData.profile.socialSecurityNumber,
-                    address: backendData.profile.address,
-                    city: backendData.profile.city,
-                    zipCode: backendData.profile.zipCode,
-                    country: backendData.profile.country,
+                    username: profile.userId ?? "Användarnamn saknas",
+                    firstName: profile.firstName ?? "",
+                    lastName: profile.lastName ?? "",
+                    socialSecurityNumber: profile.socialSecurityNumber ?? "",
+                    address: profile.address ?? "",
+                    city: profile.city ?? "",
+                    zipCode: profile.zipCode ?? "",
+                    country: profile.country ?? "",
                     creditCards: backendData.creditCards ?? [],
                     loans: backendData.loans ?? []
                 });
