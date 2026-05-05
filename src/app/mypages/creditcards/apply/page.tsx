@@ -152,7 +152,7 @@ export default function ApplyCreditCardPage() {
             <div className="w-full max-w-4xl mx-auto">
                 <header className="mb-6">
                     <h1 className="text-2xl font-bold mb-2">Ansök om Kreditkort</h1>
-                    <Link href="/mypages/creditcards" className="text-blue-600 hover:underline">Tillbaka till Mina Kreditkort</Link>
+                    <Link href="/creditcardtemplates" className="text-blue-600 hover:underline">Tillbaka till kreditkort</Link>
                 </header>
 
                 <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border-2 border-black shadow-sm space-y-6">

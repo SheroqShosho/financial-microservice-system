@@ -184,30 +184,30 @@ export default async function LoanDetailPage({
             </section>
 
             {/* ── CTA ── */}
-            <section id="ansok" className="px-12 md:px-20 py-14 bg-red-600 text-white">
-                <div className="max-w-xl">
-                    <h2 className="text-2xl font-extrabold mb-2">Redo att ansöka?</h2>
-                    <p className="text-red-100 text-sm mb-6">
-                        Logga in med ditt Google-konto för att skicka in din låneansökan.
-                        Det tar bara några minuter.
-                    </p>
-                    <div className="flex gap-3 flex-wrap">
+            <section id="ansok" className="px-10 md:px-20 py-12 bg-gray-950 text-white">
+                <div className="max-w-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div>
+                        <h2 className="text-xl font-extrabold mb-1">Redo att ansöka?</h2>
+                        <p className="text-gray-400 text-sm">
+                            Logga in med ditt Google-konto för att skicka in din låneansökan på under fem minuter.
+                        </p>
+                    </div>
+                    <div className="flex gap-3 flex-shrink-0">
                         <Link
                             href="/mypages/loans/apply"
-                            className="bg-white text-red-600 font-bold px-5 py-2.5 rounded hover:bg-red-50 transition text-sm"
+                            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded transition-colors text-sm"
                         >
-                            Ansök
+                            Ansök nu
                         </Link>
                         <Link
-                            href="/"
-                            className="border border-white text-white font-bold px-5 py-2.5 rounded hover:bg-red-700 transition text-sm"
+                            href="/loantemplates"
+                            className="border border-white/20 text-white font-bold px-6 py-3 rounded hover:bg-white/10 transition-colors text-sm"
                         >
                             ← Tillbaka
                         </Link>
                     </div>
                 </div>
             </section>
-
         </main>
     );
 }

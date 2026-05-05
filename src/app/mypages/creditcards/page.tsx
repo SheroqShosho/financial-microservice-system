@@ -12,13 +12,10 @@ export default function CreditCardsDetailPage() {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
-
                 if (!token) {
-                    console.log("No access token found");
                     setIsLoading(false);
                     return;
                 }
-
                 const res = await fetch("http://localhost:8080/mypages", {
                     method: "GET",
                     headers: {
@@ -26,15 +23,11 @@ export default function CreditCardsDetailPage() {
                         "Content-Type": "application/json"
                     }
                 });
-
                 if (!res.ok) {
-                    console.error("Failed to fetch user data:", res.status);
                     setIsLoading(false);
                     return;
                 }
-
                 const backendData = await res.json();
-
                 setData({
                     username: backendData.profile.userId,
                     firstName: backendData.profile.firstName,
@@ -53,51 +46,103 @@ export default function CreditCardsDetailPage() {
                 setIsLoading(false);
             }
         };
-
         fetchUserData();
     }, []);
 
-    if (isLoading) {
-        return <div className="p-10 text-center">Laddar...</div>;
-    }
+    if (isLoading) return <div className="p-20 text-center font-bold tracking-widest uppercase text-xs">Laddar...</div>;
+    if (!data) return <div className="p-20 text-center text-sm">Kunde inte hämta data.</div>;
 
-    if (!data) {
-        return <div className="p-10">Kunde inte hämta data. Logga in igen.</div>;
-    }
+    const getCardStyle = (type: string) => {
+        const t = type.toLowerCase();
+
+        if (t.includes("standard")) {
+            return "bg-zinc-900 text-white shadow-zinc-950/30";
+        }
+
+        if (t.includes("platinum")) {
+            return "bg-gradient-to-br from-[#37475a] to-[#2c3e50] text-white shadow-slate-900/30";
+        }
+
+        if (t.includes("gold")) {
+            return "bg-gradient-to-br from-amber-400 via-amber-600 to-amber-700 text-white shadow-amber-900/20";
+        }
+
+        return "bg-gray-200 text-gray-800";
+    };
 
     return (
-        <main className="p-4 md:p-8 bg-gray-50 min-h-screen text-gray-800">
-            <div className="w-full max-w-6xl mx-auto">
-                <header className="mb-6">
-                    <h1 className="text-2xl font-bold">Mina Kreditkort - Detaljer</h1>
-                    <div className="flex gap-4 mt-3">
-                        <Link href="/mypages" className="text-blue-600 hover:underline">Tillbaka till Mina Sidor</Link>
-                        <Link href="/mypages/creditcards/apply" className="text-green-600 hover:underline font-bold">+ Ansök om Kreditkort</Link>
-                    </div>
-                </header>
+        <main className="min-h-screen bg-gray-50/30 pb-20 flex flex-col items-center">
+            {/* Header */}
+            <header className="w-full bg-white border-b border-gray-100 px-8 py-12 mb-12 flex justify-center">
+                <div className="w-full max-w-4xl">
+                    <Link href="/mypages" className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 flex items-center gap-2 mb-4 hover:opacity-70 transition-opacity">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M15 19l-7-7 7-7" /></svg>
+                        Tillbaka till Mina Sidor
+                    </Link>
+                    <h1 className="text-4xl font-black tracking-tight text-gray-900">Mina Kreditkort</h1>
+                </div>
+            </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {data.creditCards.map((card) => (
-                        <div key={card.creditCardId} className="bg-white p-5 rounded-xl border-2 border-black shadow-sm">
-                            <h3 className="text-lg font-bold mb-3">{card.creditCardType}</h3>
-                            <div className="space-y-2 text-sm">
-                                <p><strong>Kort-ID:</strong> {card.creditCardId}</p>
-                                <p><strong>Status:</strong> {card.status}</p>
-                                <p><strong>Spenderat:</strong> {card.spentAmount} kr</p>
-                                <p><strong>Tillgängligt:</strong> {card.availableAmount} kr</p>
-                                <p><strong>Kreditgräns:</strong> {card.creditLimit} kr</p>
-                                <p><strong>Ränta:</strong> {card.interestRate}%</p>
-                                <p><strong>Årsavgift:</strong> {card.fee} kr</p>
+            {/* Kortlista */}
+            <div className="w-full max-w-4xl px-8 flex flex-col gap-10">
+                {data.creditCards.map((card) => (
+                    <div key={card.creditCardId} className="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 flex flex-col lg:flex-row items-center gap-12 transition-all hover:shadow-md">
+
+                        {/* Visuellt Kort */}
+                        <div className={`${getCardStyle(card.creditCardType)} w-full md:w-80 h-52 rounded-[28px] p-8 flex flex-col justify-between shrink-0 shadow-xl relative overflow-hidden`}>
+                            <div className="flex justify-between items-start">
+                                <span className="text-[10px] font-black tracking-[0.2em] uppercase opacity-60">Omega Bank</span>
+                                <div className="w-10 h-7 bg-white/20 rounded-md border border-white/10" />
+                            </div>
+                            <div>
+                                <p className="text-xl font-medium tracking-[0.2em] mb-2">•••• •••• •••• {card.creditCardId.slice(-4)}</p>
+                                <p className="text-[10px] uppercase font-black tracking-widest opacity-60">{card.creditCardType}</p>
                             </div>
                         </div>
-                    ))}
-                </div>
 
-                {data.creditCards.length === 0 && (
-                    <div className="bg-white p-8 rounded-lg border text-center shadow-sm">
-                        <p className="text-gray-500 italic">Inga kreditkort att visa.</p>
+                        {/* Attribut-lista matchad mot bilden */}
+                        <div className="flex-1 w-full space-y-4">
+                            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-6">{card.creditCardType}</h2>
+
+                            <div className="space-y-3">
+                                <div className="flex flex-col sm:flex-row sm:justify-between border-b border-gray-50 pb-2">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Kort-ID</span>
+                                    <span className="text-sm font-mono font-medium text-gray-700 break-all">{card.creditCardId}</span>
+                                </div>
+
+                                <div className="flex justify-between border-b border-gray-50 pb-2">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Status</span>
+                                    <span className="text-[11px] font-black uppercase text-green-600 bg-green-50 px-2 py-0.5 rounded">{card.status}</span>
+                                </div>
+
+                                <div className="flex justify-between border-b border-gray-50 pb-2">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Spenderat</span>
+                                    <span className="text-sm font-bold text-red-600">{card.spentAmount.toLocaleString('sv-SE')} kr</span>
+                                </div>
+
+                                <div className="flex justify-between border-b border-gray-50 pb-2">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Tillgängligt</span>
+                                    <span className="text-sm font-black text-gray-900">{card.availableAmount.toLocaleString('sv-SE')} kr</span>
+                                </div>
+
+                                <div className="flex justify-between border-b border-gray-50 pb-2">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Kreditgräns</span>
+                                    <span className="text-sm font-bold text-gray-700">{card.creditLimit.toLocaleString('sv-SE')} kr</span>
+                                </div>
+
+                                <div className="flex justify-between border-b border-gray-50 pb-2">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Ränta</span>
+                                    <span className="text-sm font-bold text-gray-700">{card.interestRate}%</span>
+                                </div>
+
+                                <div className="flex justify-between">
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">Årsavgift</span>
+                                    <span className="text-sm font-bold text-gray-700">{card.fee} kr</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                )}
+                ))}
             </div>
         </main>
     );

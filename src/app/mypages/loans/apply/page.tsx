@@ -159,7 +159,7 @@ export default function ApplyLoanPage() {
             <div className="w-full max-w-4xl mx-auto">
                 <header className="mb-6">
                     <h1 className="text-2xl font-bold mb-2">Ansök om Lån</h1>
-                    <Link href="/mypages/loans" className="text-blue-600 hover:underline">Tillbaka till Mina Lån</Link>
+                    <Link href="/loantemplates" className="text-blue-600 hover:underline">Tillbaka till lån</Link>
                 </header>
 
                 <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border-2 border-black shadow-sm space-y-6">
