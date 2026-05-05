@@ -39,14 +39,15 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
 
-          <Script
-              src="https://accounts.google.com/gsi/client"
-              strategy="beforeInteractive"
-          />
+
         </main>
 
         {/* Footern ligger längst ner på alla sidor */}
         <Footer />
+        <Script
+            src="https://accounts.google.com/gsi/client"
+            strategy="afterInteractive"
+        />
       </body>
     </html>
   );

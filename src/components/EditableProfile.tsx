@@ -17,7 +17,9 @@ export default function EditableProfile({ initialData }: { initialData: MyPagesD
         try {
             const token = localStorage.getItem("accessToken");
 
-            const res = await fetch(`http://localhost:8080/profile/${profile.username}/${profile.socialSecurityNumber}`, {
+            console.log("Uppdaterar profil för ID:", profile.username);
+
+            const res = await fetch(`http://localhost:8080/profile/${profile.username}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

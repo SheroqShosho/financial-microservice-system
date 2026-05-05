@@ -1,43 +1,61 @@
+"use client";
+
 import Link from 'next/link';
 import LoginButton from "@/components/layout/LoginButton";
-
+import { useEffect, useState } from "react";
 
 const Header = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="w-full border-b bg-gray-50 border-gray-200 font-sans">
+      <header
+          className="w-full fixed top-0 left-0 z-50 font-sans transition-all duration-300"
+          style={{
+            background: scrolled ? "#003349" : "transparent",
+            borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
+            backdropFilter: scrolled ? "none" : "none",
+          }}
+      >
+        <div className="flex items-center justify-between px-8 md:px-16 py-5">
 
-        {/* Main Nav */}
-        <div className="flex items-center justify-between px-8 py-4">
-          <div className="flex items-center gap-12">
-            {/* Burger Menu Placeholder */}
-            <div className="flex flex-col gap-1.5 cursor-pointer group">
-              <span className="w-8 h-0.5 bg-black"></span>
-              <span className="w-8 h-0.5 bg-black"></span>
-              <span className="w-8 h-0.5 bg-black"></span>
-              <span className="text-[10px] font-bold mt-1 text-center text-gray-900">MENY</span>
-            </div>
+          {/* Vänster: logo + nav */}
+          <div className="flex items-center gap-10">
 
-            {/* Logo Placeholder */}
-            <div className="relative w-32 h-12 flex items-center justify-center">
-              <Link href="/" className="font-bold text-center text-gray-900 leading-tight z-10 bg-gray-50 px-1">OMEGA<br/>BANK</Link>
-            </div>
+            {/* Logo */}
+            <Link href="/" className="font-bold uppercase"
+                  style={{ fontFamily: "'Georgia', serif", letterSpacing: "0.18em", fontSize: "1.05rem", color: "#ffffff", textDecoration: "none" }}>
+              Omega<span style={{ color: "#a8cdd9" }}>Bank</span>
+            </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden md:flex gap-6 text-sm font-medium">
-            <Link className="text-gray-900" href="/loantemplates">Lån</Link>
-            <Link className="text-gray-900" href="/creditcardtemplates">Kreditkort</Link>
-            <Link className="text-gray-900" href="/mypages">Mina sidor</Link>
-          </nav>
-        </div>
+            {/* Nav */}
+            <nav className="hidden md:flex gap-8">
+              <Link href="/loantemplates"
+                    style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,255,255,0.65)", textDecoration: "none" }}
+                    className="hover:text-white">Lån</Link>
+              <Link href="/creditcardtemplates"
+                    style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,255,255,0.65)", textDecoration: "none" }}
+                    className="hover:text-white">Kreditkort</Link>
+              <Link href="/mypages"
+                    style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,255,255,0.65)", textDecoration: "none" }}
+                    className="hover:text-white">Mina sidor</Link>
+            </nav>
+          </div>
 
+          {/* Höger */}
           <div className="flex items-center gap-6">
-            <Link href="/kundservice" className="text-sm text-gray-900 font-medium">Kundservice</Link>
-
-            {/* Här har jag bytt ut din gamla knapp mot LoginButton-komponenten */}
+            <Link href="/kundservice"
+                  style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,255,255,0.55)", textDecoration: "none" }}
+                  className="hidden md:block hover:text-white">Kundservice</Link>
             <LoginButton />
           </div>
-        </div>
 
+        </div>
       </header>
   );
 };
