@@ -179,34 +179,26 @@ public class CustomerRegisterRepository {
     public Mono<Profile> getUserInformation(String userId) {
         LOG.info("Fetching profile information for userId={}", userId);
 
-        QueryConditional queryConditional = QueryConditional
-                .sortBeginsWith(Key.builder()
-                        .partitionValue("USER#" + userId)
-                        .sortValue("PROFILE#")
-                        .build());
-
-        return Mono.from(profileTable.query(queryConditional).items())
-                .doOnNext(profile -> LOG.debug("Found profile: {}", profile))
-                .doOnSuccess((e) -> LOG.debug("Completed fetching profile information for userId={}", userId))
-                .doOnError(e -> LOG.error("Error fetching profile information for userId={}", userId, e));
+        // Use findProfileByUserId instead to ensure consistency with exact "PROFILE" SK
+        return findProfileByUserId(userId);
     }
 
-    public Mono<Profile> findProfileBySocialSecurityNumber(String userId, String socialSecurityNumber) {
-        LOG.info("Fetching profile for userId={}, socialSecurityNumber={}", userId, socialSecurityNumber);
+    public Mono<Profile> findProfileByUserId(String userId) {
+        LOG.info("Fetching profile for userId={}", userId);
 
         Key key = Key.builder()
                 .partitionValue("USER#" + userId)
-                .sortValue("PROFILE#" + socialSecurityNumber)
+                .sortValue("PROFILE")
                 .build();
 
         return Mono.fromFuture(profileTable.getItem(key))
                 .doOnNext(profile -> LOG.debug("Found profile: {}", profile))
                 .doOnSuccess(profile -> {
                     if (profile == null) {
-                        LOG.debug("No profile found for userId={}, socialSecurityNumber={}", userId, socialSecurityNumber);
+                        LOG.debug("No profile found for userId={}", userId);
                     }
                 })
-                .doOnError(e -> LOG.error("Error fetching profile for userId={}, socialSecurityNumber={}", userId, socialSecurityNumber, e));
+                .doOnError(e -> LOG.error("Error fetching profile for userId={}", userId, e));
     }
 
     public Mono<Profile> updateProfile(Profile profile) {
@@ -217,17 +209,17 @@ public class CustomerRegisterRepository {
                 .doOnError(e -> LOG.error("Error updating profile for userId={}", profile.getUserId(), e));
     }
 
-    public Mono<Void> deleteProfileById(String userId, String socialSecurityNumber) {
-        LOG.info("Deleting profile for userId={}, socialSecurityNumber={}", userId, socialSecurityNumber);
+    public Mono<Void> deleteProfileById(String userId) {
+        LOG.info("Deleting profile for userId={}", userId);
 
         Key key = Key.builder()
                 .partitionValue("USER#" + userId)
-                .sortValue("PROFILE#" + socialSecurityNumber)
+                .sortValue("PROFILE")
                 .build();
 
         return Mono.fromFuture(profileTable.deleteItem(key))
                 .doOnSuccess(deletedProfile -> LOG.debug("Deleted profile: {}", deletedProfile))
-                .doOnError(e -> LOG.error("Error deleting profile for userId={}, socialSecurityNumber={}", userId, socialSecurityNumber, e))
+                .doOnError(e -> LOG.error("Error deleting profile for userId={}", userId, e))
                 .then();
     }
 }
