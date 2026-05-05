@@ -1,4 +1,4 @@
-"use client"; // Viktigt! Detta gör att vi kan använda knappar och inputs
+"use client";
 
 import { useState } from "react";
 import { MyPagesDTO } from "@/types/user";
@@ -30,11 +30,12 @@ export default function EditableProfile({ initialData }: { initialData: MyPagesD
                     city: profile.city,
                     address: profile.address,
                     zipCode: profile.zipCode,
-                    phoneNumber: "",
+                    phoneNumber: "", // Behålls tomma enligt din existerande kod
                     yearlyIncome: 0,
                     status: "ACTIVE"
                 }),
             });
+
             if (res.ok) {
                 setIsEditing(false);
                 alert('Profil uppdaterad!');
@@ -52,43 +53,133 @@ export default function EditableProfile({ initialData }: { initialData: MyPagesD
     };
 
     return (
-        <section className="bg-white p-5 rounded-xl border-2 border-black shadow-sm h-full flex flex-col justify-between">
-            <div className="space-y-3 text-sm">
-                <h2 className="text-lg font-bold mb-3 border-b pb-1 uppercase tracking-tight text-gray-800">Profil</h2>
-
-                {[
-                    { label: "Namn", name: "firstName", val: profile.firstName },
-                    { label: "Efternamn", name: "lastName", val: profile.lastName },
-                    { label: "Adress", name: "address", val: profile.address },
-                    { label: "Stad", name: "city", val: profile.city },
-                    { label: "Postnr", name: "zipCode", val: profile.zipCode },
-                    { label: "Land", name: "country", val: profile.country },
-                ].map((field) => (
-                    <div key={field.name}>
-                        <label className="block text-[10px] uppercase font-bold text-gray-500">{field.label}</label>
-                        {isEditing ? (
-                            <input
-                                name={field.name}
-                                value={field.val}
-                                onChange={handleChange}
-                                className="w-full border-b border-blue-500 bg-blue-50 outline-none p-1 text-gray-900"
-                            />
-                        ) : (
-                            <p className="text-gray-900 font-medium">{field.val}</p>
-                        )}
-                    </div>
-                ))}
+        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 h-full flex flex-col transition-all hover:shadow-md">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-10 border-b border-gray-50 pb-4">
+                <div>
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Din Profil</h2>
+                    <p className="text-[9px] font-mono text-gray-300 mt-1 uppercase tracking-tight">{profile.username}</p>
+                </div>
+                {!isSaving && (
+                    <button
+                        onClick={isEditing ? () => setIsEditing(false) : () => setIsEditing(true)}
+                        className="text-[10px] font-black uppercase tracking-widest text-red-600 hover:opacity-70 transition-opacity"
+                    >
+                        {isEditing ? "Avbryt" : "Redigera"}
+                    </button>
+                )}
             </div>
 
-            <button
-                onClick={isEditing ? handleSave : () => setIsEditing(true)}
-                disabled={isSaving}
-                className={`mt-6 py-2 px-6 border-2 border-black rounded-full font-bold transition-all ${
-                    isEditing ? "bg-black text-white" : "hover:bg-gray-100"
-                } ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-                {isSaving ? "Sparar..." : isEditing ? "Spara" : "Ändra"}
-            </button>
-        </section>
+            <div className="space-y-8 flex-1">
+                {/* Namn-sektion */}
+                <div className="grid grid-cols-2 gap-6">
+                    <div className="flex flex-col">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Förnamn</label>
+                        {isEditing ? (
+                            <input
+                                name="firstName"
+                                value={profile.firstName}
+                                onChange={handleChange}
+                                className="border-b-2 border-black py-1 focus:outline-none text-sm font-bold bg-transparent"
+                            />
+                        ) : (
+                            <span className="text-sm font-bold text-gray-900">{profile.firstName}</span>
+                        )}
+                    </div>
+                    <div className="flex flex-col">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Efternamn</label>
+                        {isEditing ? (
+                            <input
+                                name="lastName"
+                                value={profile.lastName}
+                                onChange={handleChange}
+                                className="border-b-2 border-black py-1 focus:outline-none text-sm font-bold bg-transparent"
+                            />
+                        ) : (
+                            <span className="text-sm font-bold text-gray-900">{profile.lastName}</span>
+                        )}
+                    </div>
+                </div>
+
+                {/* Personnummer (Skrivskyddat) */}
+                <div className="flex flex-col">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Personnummer</label>
+                    <span className="text-sm font-medium text-gray-500">{profile.socialSecurityNumber}</span>
+                </div>
+
+                {/* Adress-sektion */}
+                <div className="space-y-6 pt-4 border-t border-gray-50">
+                    <div className="flex flex-col">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Gatuadress</label>
+                        {isEditing ? (
+                            <input
+                                name="address"
+                                value={profile.address}
+                                onChange={handleChange}
+                                className="border-b-2 border-black py-1 focus:outline-none text-sm font-bold bg-transparent"
+                            />
+                        ) : (
+                            <span className="text-sm font-bold text-gray-900">{profile.address}</span>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                        <div className="flex flex-col">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Postnummer</label>
+                            {isEditing ? (
+                                <input
+                                    name="zipCode"
+                                    value={profile.zipCode}
+                                    onChange={handleChange}
+                                    className="border-b-2 border-black py-1 focus:outline-none text-sm font-bold bg-transparent"
+                                />
+                            ) : (
+                                <span className="text-sm font-bold text-gray-900">{profile.zipCode}</span>
+                            )}
+                        </div>
+                        <div className="flex flex-col">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Stad</label>
+                            {isEditing ? (
+                                <input
+                                    name="city"
+                                    value={profile.city}
+                                    onChange={handleChange}
+                                    className="border-b-2 border-black py-1 focus:outline-none text-sm font-bold bg-transparent"
+                                />
+                            ) : (
+                                <span className="text-sm font-bold text-gray-900">{profile.city}</span>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Land</label>
+                        {isEditing ? (
+                            <input
+                                name="country"
+                                value={profile.country}
+                                onChange={handleChange}
+                                className="border-b-2 border-black py-1 focus:outline-none text-sm font-bold bg-transparent"
+                            />
+                        ) : (
+                            <span className="text-sm font-bold text-gray-900">{profile.country}</span>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Spara-knapp */}
+            {isEditing && (
+                <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className={`w-full mt-10 py-4 bg-black text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-lg shadow-gray-200 active:scale-95 ${
+                        isSaving ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-800"
+                    }`}
+                >
+                    {isSaving ? "Sparar..." : "Spara ändringar"}
+                </button>
+            )}
+        </div>
     );
 }

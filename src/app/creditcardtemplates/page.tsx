@@ -46,7 +46,7 @@ export default async function CreditCardTemplatesPage() {
 
             {/* Bottom CTA strip */}
             <section className="px-10 md:px-20 py-12 bg-gray-950 text-white">
-                <div className="max-w-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div className="max-w-2xl flex flex-col md:flex-row items-start md:items-center justify-start gap-15">
                     <div>
                         <h2 className="text-xl font-extrabold mb-1">Inte säker på vilket kort?</h2>
                         <p className="text-gray-400 text-sm">Kontakta vår rådgivning – vi hjälper dig välja rätt.</p>
