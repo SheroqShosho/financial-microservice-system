@@ -84,7 +84,7 @@ export default function LoginButton() {
 
     if (isLoggedIn) {
         return (
-            <button onClick={handleLogout} className="py-2 px-4 bg-red-600 text-white rounded-full">
+            <button onClick={handleLogout} className="py-2 px-4 bg-white text-[#003349] rounded-full">
                 Logga ut
             </button>
         );

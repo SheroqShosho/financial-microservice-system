@@ -1,0 +1,81 @@
+/* ── CTA-knapp ── */
+.ctaButton {
+    display: inline-block;
+    font-family: sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    padding: 1rem 2rem;
+    border-radius: 2px;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: #003349;
+    color: #ffffff;
+    transition: background 0.2s, color 0.2s;
+}
+.ctaButton:hover {
+    background: #ffffff;
+    color: #003349;
+}
+
+/* ── Grid ── */
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3.25rem;
+}
+
+@media (max-width: 640px) {
+    .cardGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Card ── */
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.4rem;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 3.5rem 2rem;
+    color: #1a1a1a;
+    transition:
+            transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+            box-shadow 0.22s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+}
+
+.card:hover .cardIcon {
+    color: #003349;
+}
+
+.card:hover .cardLabel {
+    color: #003349;
+}
+
+/* ── Icon ── */
+.cardIcon {
+    width: 3.5rem;
+    height: 3.5rem;
+    color: #888;
+    transition: color 0.22s ease;
+}
+
+/* ── Label ── */
+.cardLabel {
+    font-family: sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #111;
+    letter-spacing: 0.01em;
+    transition: color 0.22s ease;
+}
