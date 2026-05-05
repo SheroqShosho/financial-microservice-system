@@ -13,7 +13,6 @@ export default function MyPages() {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
-
                 if (!token) {
                     console.log("No access token found");
                     setIsLoading(false);
@@ -57,87 +56,102 @@ export default function MyPages() {
                 setIsLoading(false);
             }
         };
-
         fetchUserData();
     }, []);
 
-    if (isLoading) {
-        return <div className="p-10 text-center">Laddar...</div>;
-    }
-
-    if (!data) {
-        return <div className="p-10">Kunde inte hämta data. Logga in igen.</div>;
-    }
+    if (isLoading) return <div className="p-20 text-center font-bold tracking-widest uppercase text-xs">Laddar din profil...</div>;
+    if (!data) return <div className="p-20 text-center">Sessionen har gått ut. Logga in igen.</div>;
 
     return (
-        <main className="p-4 md:p-8 bg-gray-50 min-h-screen text-gray-800 flex flex-col items-center">
-            <div className="w-full max-w-6xl">
-                <h1 className="text-2xl font-bold mb-6 p-10">Välkommen till mina sidor, {data.firstName}</h1>
+        <main className="min-h-screen bg-gray-50/50 text-gray-900 pb-20">
+            {/* Hero Header */}
+            <section className="bg-white border-b border-gray-100 px-8 py-14 mb-12">
+                <div className="max-w-6xl mx-auto">
+                    <p className="text-red-600 font-black tracking-[0.2em] uppercase text-[10px] mb-3">Dashboard</p>
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-gray-900">
+                        Välkommen, <span className="text-red-600">{data.firstName}</span>.
+                    </h1>
+                    <p className="text-gray-500 mt-3 text-lg font-medium">Här är en överblick av din ekonomi hos Omega Bank.</p>
+                </div>
+            </section>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="max-w-6xl mx-auto px-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-                    {/* Kreditkort - Hela rutan är nu en länk */}
-                    <div className="group">
-                        <section
-                            className="bg-white p-5 rounded-xl border-2 border-black shadow-sm h-full flex flex-col justify-between">
-                            <div>
-                                <h2 className="text-lg font-bold mb-3 border-b pb-1 uppercase tracking-tight">Kreditkort</h2>
-                                <div className="space-y-4">
-                                    {data.creditCards.map((card) => (
-                                        <div key={card.creditCardId} className="text-sm">
-                                            <h3 className="font-bold">{card.creditCardType}</h3>
-                                            <p>Spenderat: <span
-                                                className="font-semibold text-gray-900">{card.spentAmount} kr</span></p>
-                                            <p>Tillgängligt: <span
-                                                className="font-semibold text-gray-900">{card.availableAmount} kr</span></p>
-                                            <p>Kreditgräns: <span
-                                                className="font-semibold text-gray-900">{card.creditLimit} kr</span></p>
-                                            <p>Ränta: <span
-                                                className="font-semibold text-gray-900">{card.interestRate}%</span></p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <Link href="/mypages/creditcards" className="inline-block w-full">
-                                <button className="mt-8 w-full py-2 px-6 border-2 border-black rounded-full font-bold transition-all hover:bg-black hover:text-white">
-                                    Se mer
-                                </button>
-                            </Link>
-                        </section>
-                    </div>
-
-                    {/* Lån - Hela rutan är nu en länk */}
-                    <div className="group">
-                        <section
-                            className="bg-white p-5 rounded-xl border-2 border-black shadow-sm h-full flex flex-col justify-between">
+                    {/* Kreditkort-sektion */}
+                    <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 flex flex-col justify-between transition-all hover:shadow-xl group">
                         <div>
-                                <h2 className="text-lg font-bold mb-3 border-b pb-1 uppercase tracking-tight">Lån</h2>
-                                <div className="space-y-4">
-                                    {data.loans.map((loan) => (
-                                        <div key={loan.loanId} className="text-sm">
-                                            <h3 className="font-bold">{loan.loanType}</h3>
-                                            <p>Lånesumma: <span className="font-semibold text-gray-900">{loan.amount} kr</span></p>
-                                            <p>Nästa betalning: <span className="font-semibold text-gray-900">
-                                                {((loan.amount * (loan.interestRate / 100))/ 12).toLocaleString('sv-SE', {
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2
-                                                })} kr</span></p>
-                                            <p>Ränta: <span className="font-semibold text-gray-900">{loan.interestRate}%</span></p>
-                                        </div>
-                                    ))}
+                            <div className="flex justify-between items-start mb-8">
+                                <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Kreditkort</h2>
+                                <div className="p-2.5 bg-red-50 rounded-xl text-red-600">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                        <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
                                 </div>
                             </div>
-                            <div className="flex gap-2 mt-8">
-                                <Link href="/mypages/loans" className="flex-1">
-                                    <button className="w-full py-2 px-6 border-2 border-black rounded-full font-bold transition-all hover:bg-black hover:text-white">
-                                        Se mer
-                                    </button>
-                                </Link>
+                            <div className="space-y-8">
+                                {data.creditCards.length > 0 ? data.creditCards.map((card) => (
+                                    <div key={card.creditCardId} className="group/item">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <h3 className="font-bold text-gray-900">{card.creditCardType}</h3>
+                                            <span className="text-[10px] font-bold text-gray-400">AKTIVT</span>
+                                        </div>
+                                        <div className="flex justify-between items-end">
+                                            <p className="text-[10px] text-gray-400 uppercase font-black tracking-tighter">Tillgängligt</p>
+                                            <p className="font-black text-xl text-gray-900">{card.availableAmount.toLocaleString('sv-SE')} kr</p>
+                                        </div>
+                                        <div className="w-full bg-gray-100 h-2 rounded-full mt-3 overflow-hidden">
+                                            <div
+                                                className="bg-red-600 h-full rounded-full transition-all duration-1000"
+                                                style={{ width: `${Math.min((card.spentAmount / card.creditLimit) * 100, 100)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                )) : <p className="text-gray-400 italic text-sm">Inga aktiva kort</p>}
                             </div>
-                        </section>
+                        </div>
+                        <Link href="/mypages/creditcards" className="mt-10">
+                            <button className="w-full py-4 bg-black text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-zinc-800 transition-all active:scale-[0.98] shadow-lg shadow-black/5">
+                                Hantera Kreditkort
+                            </button>
+                        </Link>
                     </div>
 
-                    {/* Profil - Använder vår nya interaktiva komponent */}
+                    {/* Lån-sektion */}
+                    <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 flex flex-col justify-between transition-all hover:shadow-xl">
+                        <div>
+                            <div className="flex justify-between items-start mb-8">
+                                <h2 className="text-xs font-black uppercase tracking-widest text-gray-400">Dina Lån</h2>
+                                <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                                        <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div className="space-y-8">
+                                {data.loans.length > 0 ? data.loans.map((loan) => (
+                                    <div key={loan.loanId} className="group/item">
+                                        <h3 className="font-bold text-gray-900 mb-2">{loan.loanType}</h3>
+                                        <div className="flex justify-between items-baseline mb-1">
+                                            <p className="text-[10px] text-gray-400 uppercase font-black tracking-tighter">Aktuell skuld</p>
+                                            <p className="font-black text-xl text-gray-900">{loan.amount.toLocaleString('sv-SE')} kr</p>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[11px]">
+                                            <span className="text-gray-400">Ränta: {loan.interestRate}%</span>
+                                            <span className="text-blue-600 font-bold">Månadsbet: {((loan.amount * (loan.interestRate / 100))/ 12).toFixed(0)} kr</span>
+                                        </div>
+                                    </div>
+                                )) : <p className="text-gray-400 italic text-sm">Inga aktiva lån</p>}
+                            </div>
+                        </div>
+                        <Link href="/mypages/loans" className="mt-10">
+                            <button className="w-full py-4 bg-white border border-gray-200 text-gray-900 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-gray-50 transition-all active:scale-[0.98]">
+                                Se Lånedetaljer
+                            </button>
+                        </Link>
+                    </div>
+
+                    {/* Profil - EditableProfile */}
                     <EditableProfile initialData={data} />
 
                 </div>

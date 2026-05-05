@@ -52,7 +52,7 @@ export default async function CardDetailPage({ params }: { params: Promise<{ typ
                     <p className="text-gray-600 text-lg max-w-md mb-8 leading-relaxed">{card.description}</p>
 
                     <Link
-                        href="#ansok"
+                        href="/mypages/creditcards/apply"
                         className="inline-block w-fit bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded transition-colors text-sm"
                     >
                         Ansök nu
@@ -126,16 +126,26 @@ export default async function CardDetailPage({ params }: { params: Promise<{ typ
                 </div>
             </section>
 
-            {/* CTA */}
-            <section id="ansok" className="px-12 md:px-20 py-14 bg-gray-950 text-white">
-                <div className="max-w-xl">
-                    <h2 className="text-2xl font-extrabold mb-2">Redo att ansöka?</h2>
-                    <p className="text-gray-400 text-sm mb-6">Logga in med ditt Google-konto och ansök om ditt {card.creditCardType}-kort på bara några minuter.</p>
-                    <div className="flex gap-3 flex-wrap">
-                        <Link href="/mypages/creditcards/apply" className="bg-red-600 text-white font-bold px-5 py-2.5 rounded hover:bg-red-700 transition text-sm">
-                            Logga in och ansök
-                        </Link>
-                        <Link href="/creditcardtemplates" className="border border-white/30 text-white font-bold px-5 py-2.5 rounded hover:bg-white/10 transition text-sm">
+            {/* Bottom CTA strip */}
+            <section className="px-10 md:px-20 py-12 bg-gray-950 text-white">
+                <div className="max-w-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div>
+                        <h2 className="text-xl font-extrabold mb-1">Redo att ansöka?</h2>
+                        <p className="text-gray-400 text-sm">Logga in med ditt Google-konto för att skicka in din kreditkortansökan på under fem minuter.</p>
+                    </div>
+
+                    {/* Knapp-grupp som matchar lån-sektionen */}
+                    <div className="flex gap-3 flex-shrink-0">
+                        <a
+                            href="/mypages/creditcards/apply"
+                            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded transition-colors text-sm"
+                        >
+                            Ansök nu
+                        </a>
+                        <Link
+                            href="/creditcardtemplates"
+                            className="border border-white/20 text-white font-bold px-6 py-3 rounded hover:bg-white/10 transition-colors text-sm"
+                        >
                             ← Tillbaka
                         </Link>
                     </div>

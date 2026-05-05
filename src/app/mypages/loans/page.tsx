@@ -12,13 +12,10 @@ export default function LoansDetailPage() {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
-
                 if (!token) {
-                    console.log("No access token found");
                     setIsLoading(false);
                     return;
                 }
-
                 const res = await fetch("http://localhost:8080/mypages", {
                     method: "GET",
                     headers: {
@@ -26,15 +23,11 @@ export default function LoansDetailPage() {
                         "Content-Type": "application/json"
                     }
                 });
-
                 if (!res.ok) {
-                    console.error("Failed to fetch user data:", res.status);
                     setIsLoading(false);
                     return;
                 }
-
                 const backendData = await res.json();
-
                 setData({
                     username: backendData.profile.userId,
                     firstName: backendData.profile.firstName,
@@ -53,53 +46,67 @@ export default function LoansDetailPage() {
                 setIsLoading(false);
             }
         };
-
         fetchUserData();
     }, []);
 
-    if (isLoading) {
-        return <div className="p-10 text-center">Laddar...</div>;
-    }
-
-    if (!data) {
-        return <div className="p-10">Kunde inte hämta data. Logga in igen.</div>;
-    }
+    if (isLoading) return <div className="p-20 text-center font-bold tracking-widest uppercase text-xs">Laddar lån...</div>;
+    if (!data || data.loans.length === 0) return (
+        <div className="p-20 text-center">
+            <p className="mb-4">Du har inga aktiva lån.</p>
+            <Link href="/mypages" className="text-red-600 font-bold uppercase text-xs tracking-widest">Tillbaka</Link>
+        </div>
+    );
 
     return (
-        <main className="p-4 md:p-8 bg-gray-50 min-h-screen text-gray-800">
-            <div className="w-full max-w-6xl mx-auto">
-                <header className="mb-6">
-                    <h1 className="text-2xl font-bold">Mina Lån - Detaljer</h1>
-                    <div className="flex gap-4 mt-3">
-                        <Link href="/mypages" className="text-blue-600 hover:underline">Tillbaka till Mina Sidor</Link>
-                        <Link href="/mypages/loans/apply" className="text-green-600 hover:underline font-bold">+ Ansök om Lån</Link>
-                    </div>
-                </header>
+        <main className="min-h-screen bg-gray-50/30 pb-20 flex flex-col items-center">
+            {/* Header */}
+            <header className="w-full bg-white border-b border-gray-100 px-8 py-12 mb-12 flex justify-center">
+                <div className="w-full max-w-4xl">
+                    <Link href="/mypages" className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 flex items-center gap-2 mb-4 hover:opacity-70 transition-opacity">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M15 19l-7-7 7-7" /></svg>
+                        Tillbaka till Mina Sidor
+                    </Link>
+                    <h1 className="text-4xl font-black tracking-tight text-gray-900">Mina Lån</h1>
+                </div>
+            </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {data.loans.map((loan) => (
-                        <div key={loan.loanId} className="bg-white p-5 rounded-xl border-2 border-black shadow-sm">
-                            <h3 className="text-lg font-bold mb-3">{loan.loanType}</h3>
-                            <div className="space-y-2 text-sm">
-                                <p><strong>Lån-ID:</strong> {loan.loanId}</p>
-                                <p><strong>Status:</strong> {loan.loanStatus}</p>
-                                <p><strong>Lånesumma:</strong> {loan.amount} kr</p>
-                                <p><strong>Ränta:</strong> {loan.interestRate}%</p>
-                                <p><strong>Löptid:</strong> {loan.durationMonths} månader</p>
-                                <p><strong>Månadlig betalning:</strong> {((loan.amount * (loan.interestRate / 100))/ 12).toLocaleString('sv-SE', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                })} kr</p>
+            {/* Lånelista */}
+            <div className="w-full max-w-4xl px-8 flex flex-col gap-8">
+                {data.loans.map((loan) => (
+                    <div key={loan.loanId} className="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 transition-all hover:shadow-md">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                            <div>
+                                <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">{loan.loanType}</h2>
+                                <p className="text-[10px] font-mono text-gray-400 mt-1">ID: {loan.loanId}</p>
+                            </div>
+                            <span className="text-[10px] font-black uppercase px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                                Aktiv skuld
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-12">
+                            {/* Huvudbelopp */}
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-black uppercase tracking-[0.15em] text-gray-400 mb-2">Nuvarande skuld</span>
+                                <span className="text-3xl font-black text-gray-900">{loan.amount.toLocaleString('sv-SE')} kr</span>
+                            </div>
+
+                            {/* Ränta */}
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-black uppercase tracking-[0.15em] text-gray-400 mb-2">Ränta</span>
+                                <span className="text-xl font-bold text-gray-800">{loan.interestRate}%</span>
+                            </div>
+
+                            {/* Status eller annat fält (använder befintliga attribut) */}
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-black uppercase tracking-[0.15em] text-gray-400 mb-2">Typ</span>
+                                <span className="text-sm font-bold text-gray-700 uppercase">{loan.loanType}</span>
                             </div>
                         </div>
-                    ))}
-                </div>
 
-                {data.loans.length === 0 && (
-                    <div className="bg-white p-8 rounded-lg border text-center shadow-sm">
-                        <p className="text-gray-500 italic">Inga lån att visa.</p>
+
                     </div>
-                )}
+                ))}
             </div>
         </main>
     );
