@@ -50,7 +50,7 @@ public class Profile {
     @DynamoDbSortKey
     @DynamoDbAttribute("sk")
     public String getSk() {
-        return "PROFILE#" + socialSecurityNumber;
+        return "PROFILE";
     }
 
     public void setSk(String sk) {

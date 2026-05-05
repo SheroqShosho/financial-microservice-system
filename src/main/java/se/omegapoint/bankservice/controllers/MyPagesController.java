@@ -48,10 +48,12 @@ public class MyPagesController {
 
     @Get
     public Mono<MutableHttpResponse<MyPagesResponseDTO>> getMyPages(Authentication authentication) {
-
         String userId = authentication.getName();
 
-        return Mono.zip(profileService.getUserInformation(userId)
+        String firstName = (String) authentication.getAttributes().getOrDefault("firstName", "");
+        String lastName = (String) authentication.getAttributes().getOrDefault("lastName", "");
+
+        return Mono.zip(profileService.getOrCreateProfile(userId, firstName, lastName)
                 .onErrorResume(e -> {
                     LOG.error("Profile fetch failed for userId={}", userId, e);
                     return Mono.empty();
@@ -124,8 +126,5 @@ public class MyPagesController {
                     LOG.error("Error retrieving MyPages for userId={}", userId, e);
                     return Mono.just(HttpResponse.serverError());
                 });
-
-
-
     }
 }
