@@ -9,145 +9,182 @@ async function getCardData(type: string): Promise<CreditCardTemplateDTO | null> 
     return cards.find((c) => c.creditCardType.toLowerCase() === decodedType) || null;
 }
 
-const cardAccents: Record<string, { bg: string; chip: string; gradientFrom: string; gradientTo: string }> = {
-    standard: { bg: "from-gray-800 to-gray-950", chip: "bg-yellow-400", gradientFrom: "from-gray-50", gradientTo: "to-gray-100" },
-    gold:     { bg: "from-yellow-600 to-yellow-900", chip: "bg-yellow-200", gradientFrom: "from-yellow-50", gradientTo: "to-amber-100" },
-    platinum: { bg: "from-slate-500 to-slate-800",   chip: "bg-slate-200",  gradientFrom: "from-slate-50",  gradientTo: "to-slate-100" },
+const cardAccents: Record<string, { bg: string; chip: string; glow: string }> = {
+    standard: {
+        bg: "from-[#1a1c20] to-[#0f1012]",
+        chip: "bg-slate-400",
+        glow: "from-slate-500/20"
+    },
+    gold: {
+        bg: "from-[#a16d03] to-[#7a5202]",
+        chip: "bg-[#f3e5ab]",
+        glow: "from-amber-500/20"
+    },
+    platinum: {
+        bg: "from-[#384c62] to-[#273544]",
+        chip: "bg-[#e5e7eb]",
+        glow: "from-blue-400/20"
+    },
 };
 
 export default async function CardDetailPage({ params }: { params: Promise<{ type: string }> }) {
     const resolvedParams = await params;
     const card = await getCardData(resolvedParams.type);
-    const accent = cardAccents[resolvedParams.type] ?? cardAccents["standard"];
+    const accent = cardAccents[resolvedParams.type.toLowerCase()] ?? cardAccents["standard"];
 
     if (!card) {
         return (
-            <main className="min-h-screen bg-white flex flex-col items-center justify-center text-gray-900 px-8">
-                <h1 className="text-2xl font-bold mb-2">Kortet &quot;{resolvedParams.type}&quot; hittades inte.</h1>
-                <p className="text-gray-500 mb-6">Kontrollera att namnet stämmer i URL:en.</p>
-                <Link href="/creditcardtemplates" className="bg-red-600 text-white font-bold px-5 py-2.5 rounded hover:bg-red-700 transition text-sm">
-                    ← Tillbaka till kreditkort
+            <main className="min-h-screen bg-[#002a3a] flex flex-col items-center justify-center text-white px-8 text-center">
+                <h1 className="text-xl font-light mb-4 uppercase tracking-[0.2em]">Kortet hittades inte</h1>
+                <Link href="/creditcardtemplates" className="text-red-500 font-bold uppercase text-[10px] tracking-[0.2em] border-b border-red-500 pb-1">
+                    ← Se alla kreditkort
                 </Link>
             </main>
         );
     }
 
     return (
-        <main className="min-h-screen bg-white text-gray-900">
+        <main className="min-h-screen bg-white text-slate-900">
 
-            {/* Hero */}
-            <section className={`grid md:grid-cols-2 border-b border-gray-100`}>
-                <div className="flex flex-col justify-center px-12 md:px-20 py-16">
-                    <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-                        <Link href="/" className="hover:text-gray-700 transition">Hem</Link>
-                        <span>/</span>
-                        <Link href="/creditcardtemplates" className="hover:text-gray-700 transition">Kreditkort</Link>
-                        <span>/</span>
-                        <span className="text-gray-700 font-medium">{card.creditCardType}</span>
+            {/* ── HERO SECTION ── */}
+            <section className="bg-[#003349] pt-24 pb-48 px-8 md:px-20 relative overflow-hidden">
+                <div className={`absolute inset-0 opacity-20 pointer-events-none bg-gradient-to-tr ${accent.glow} to-transparent`} />
+
+                <div className="max-w-6xl mx-auto relative z-10">
+                    <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-red-500 mb-12">
+                        <Link href="/" className="text-slate-400 hover:text-white transition-colors">Hem</Link>
+                        <span className="text-slate-600">/</span>
+                        <Link href="/creditcardtemplates" className="text-slate-400 hover:text-white transition-colors">Kreditkort</Link>
+                        <span className="text-slate-600">/</span>
+                        <span className="text-white uppercase">{card.creditCardType}</span>
                     </div>
 
-                    <h1 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4">
-                        {card.creditCardType}
-                    </h1>
-                    <p className="text-gray-600 text-lg max-w-md mb-8 leading-relaxed">{card.description}</p>
-
-                    <Link
-                        href="/mypages/creditcards/apply"
-                        className="inline-block w-fit bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded transition-colors text-sm"
-                    >
-                        Ansök nu
-                    </Link>
-                </div>
-
-                {/* Right – card visual */}
-                <div className={`relative bg-gradient-to-br ${accent.gradientFrom} ${accent.gradientTo} min-h-[300px] flex items-center justify-center hidden md:flex`}>
-                    <div className={`relative w-72 h-44 rounded-2xl bg-gradient-to-br ${accent.bg} p-6 shadow-2xl overflow-hidden`}>
-                        <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white opacity-5" />
-                        <div className="absolute -right-4 bottom-4 w-24 h-24 rounded-full bg-white opacity-5" />
-                        <div className="flex justify-between items-start">
-                            <span className="text-white/60 text-xs font-semibold tracking-widest uppercase">Omega Bank</span>
-                            <span className="text-white text-xs font-bold tracking-wider">{card.creditCardType}</span>
+                    <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-16">
+                        <div className="max-w-2xl text-center md:text-left">
+                            <h1 className="text-4xl md:text-6xl font-light tracking-tight text-white mb-6 uppercase">
+                                {card.creditCardType}
+                            </h1>
+                            <p className="text-slate-300 text-lg md:text-xl font-light leading-relaxed mb-10">
+                                {card.description} ett kort utformat för dig som värdesätter trygghet, exklusiva förmåner och global räckvidd.
+                            </p>
+                            <Link
+                                href="/mypages/creditcards/apply"
+                                className="inline-block bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold uppercase tracking-widest px-12 py-5 rounded-sm transition-all shadow-xl shadow-black/20"
+                            >
+                                Ansök nu
+                            </Link>
                         </div>
-                        <div className={`mt-4 w-10 h-7 rounded-md ${accent.chip} opacity-90`} />
-                        <div className="absolute bottom-5 left-6 right-6 flex justify-between items-end">
-                            <span className="text-white/80 text-xs font-mono tracking-widest">•••• •••• •••• ••••</span>
-                            <svg viewBox="0 0 38 24" className="w-10 opacity-70" fill="none">
-                                <circle cx="15" cy="12" r="10" fill="#eb001b" fillOpacity="0.8" />
-                                <circle cx="23" cy="12" r="10" fill="#f79e1b" fillOpacity="0.8" />
-                            </svg>
+
+                        <div className="relative group perspective hidden md:block">
+                            <div className={`relative w-[400px] h-[250px] rounded-[20px] bg-gradient-to-br ${accent.bg} p-8 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden`}>
+                                <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent)]" />
+                                <div className="flex justify-between items-start mb-12">
+                                    <span className="text-white/40 text-[10px] font-bold tracking-[0.3em] uppercase">Omega Bank</span>
+                                    <div className={`w-12 h-9 rounded-md ${accent.chip} opacity-80 shadow-inner`} />
+                                </div>
+                                <div className="space-y-6">
+                                    <div className="text-white/90 text-xl font-mono tracking-[0.2em]">•••• •••• •••• ••••</div>
+                                    <div className="flex justify-between items-end">
+                                        <div>
+                                            <p className="text-white/30 text-[8px] uppercase tracking-widest mb-1">Card Holder</p>
+                                            <p className="text-white/70 text-xs font-light tracking-widest uppercase">Valued Member</p>
+                                        </div>
+                                        <svg viewBox="0 0 38 24" className="w-12 opacity-80" fill="none">
+                                            <circle cx="15" cy="12" r="10" fill="#eb001b" />
+                                            <circle cx="23" cy="12" r="10" fill="#f79e1b" fillOpacity="0.8" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Stats */}
-            <section className="px-12 md:px-20 py-12 bg-white">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl">
-                    <div className="border border-gray-200 rounded-xl p-6">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Ränta</p>
-                        <p className="text-4xl font-extrabold text-gray-900">{card.interestRate}<span className="text-xl font-bold text-gray-500">%</span></p>
-                        <p className="text-xs text-gray-400 mt-1">nominell årsränta</p>
-                    </div>
-                    <div className="border border-gray-200 rounded-xl p-6">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Årsavgift</p>
-                        <p className="text-4xl font-extrabold text-gray-900">{card.fee}<span className="text-xl font-bold text-gray-500"> kr</span></p>
-                        <p className="text-xs text-gray-400 mt-1">per år</p>
-                    </div>
-                    <div className="border border-gray-200 rounded-xl p-6">
-                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kreditgräns</p>
-                        <p className="text-4xl font-extrabold text-gray-900">{card.creditLimit.toLocaleString("sv-SE")}<span className="text-xl font-bold text-gray-500"> kr</span></p>
-                        <p className="text-xs text-gray-400 mt-1">max kreditgräns</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* Info */}
-            <section className="px-12 md:px-20 py-10 bg-gray-50 border-t border-gray-100">
-                <div className="max-w-2xl">
-                    <h2 className="text-xl font-extrabold mb-4">Det här ingår</h2>
-                    <ul className="space-y-3">
+            {/* ── STATS SECTION ── */}
+            <section className="px-8 md:px-20 -mt-24 relative z-20">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-3 bg-white border border-slate-100 rounded-sm shadow-2xl shadow-slate-900/5">
                         {[
-                            `Ränta ${card.interestRate}% per år`,
-                            `Årsavgift ${card.fee} kr`,
-                            `Kreditgräns upp till ${card.creditLimit.toLocaleString("sv-SE")} kr`,
-                            "Kontaktlös betalning ingår",
-                            "Digital korthantering i appen",
-                        ].map((item) => (
-                            <li key={item} className="flex items-start gap-3 text-gray-700 text-sm">
-                <span className="mt-0.5 flex-shrink-0 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center">
-                  <svg viewBox="0 0 12 10" fill="none" className="w-3 h-3">
-                    <path d="M1 5L4.5 8.5L11 1.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                                {item}
-                            </li>
+                            { label: "Ränta", value: `${card.interestRate}%`, sub: "Årsränta på nyttjad kredit" },
+                            { label: "Årsavgift", value: `${card.fee} kr`, sub: "Debiteras årligen" },
+                            { label: "Kreditgräns", value: `${card.creditLimit.toLocaleString("sv-SE")} kr`, sub: "Maximal kreditvärdighet" }
+                        ].map((stat, i) => (
+                            <div key={i} className="p-12 flex flex-col items-center text-center border-r last:border-r-0 border-slate-50">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">{stat.label}</p>
+                                <p className="text-3xl font-light text-slate-900 mb-1">{stat.value}</p>
+                                <p className="text-[11px] text-slate-400 font-light italic">{stat.sub}</p>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             </section>
 
-            {/* Bottom CTA strip */}
-            <section className="px-10 md:px-20 py-12 bg-gray-950 text-white">
-                <div className="max-w-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            {/* ── INFO & HELP ── */}
+            <section className="px-8 md:px-20 py-32 mx-auto max-w-6xl">
+                <div className="grid md:grid-cols-2 gap-24">
                     <div>
-                        <h2 className="text-xl font-extrabold mb-1">Redo att ansöka?</h2>
-                        <p className="text-gray-400 text-sm">Logga in med ditt Google-konto för att skicka in din kreditkortansökan på under fem minuter.</p>
+                        <h2 className="text-xl font-medium text-slate-900 mb-8 uppercase tracking-wider">Förmåner & Detaljer</h2>
+                        <ul className="space-y-6">
+                            {[
+                                `Ränta ${card.interestRate}% per år på utnyttjad kredit`,
+                                `Årsavgift om endast ${card.fee} kr per år`,
+                                `Kreditutrymme upp till ${card.creditLimit.toLocaleString("sv-SE")} kr`,
+                                "Global acceptans via Mastercard-nätverket",
+                                "Full kontroll och korthantering i Omega Banks mobilapp"
+                            ].map((item, i) => (
+                                <li key={i} className="flex items-start gap-4 text-slate-600 text-sm font-light leading-relaxed">
+                                    <div className="w-1 h-1 bg-red-600 rounded-full mt-2 shrink-0" />
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
 
-                    {/* Knapp-grupp som matchar lån-sektionen */}
-                    <div className="flex gap-3 flex-shrink-0">
-                        <a
+                    <div className="bg-slate-50 p-12 rounded-sm border border-slate-100 flex flex-col justify-center">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-slate-900 mb-4">Behöver du vägledning?</h3>
+                        <p className="text-sm text-slate-500 font-light mb-8 leading-relaxed">
+                            Är du osäker på vilket kort som bäst passar din livsstil? Våra rådgivare finns tillgängliga för att hjälpa dig välja rätt nivå av förmåner och kreditutrymme.
+                        </p>
+                        <div className="space-y-4">
+                            <Link href="/kundservice" className="block text-center border border-slate-200 bg-white py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors">
+                                Kontakta rådgivare
+                            </Link>
+                            <Link href="/creditcardtemplates" className="block text-center py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">
+                                Jämför våra kort
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── FINAL CTA STRIP ── */}
+            <section className="bg-slate-50 border-t border-slate-100 py-20 px-8 md:px-20 text-center">
+                <div className="max-w-2xl mx-auto">
+                    <h2 className="text-2xl font-light mb-4 uppercase tracking-widest text-slate-900">Redo att ansöka?</h2>
+                    <p className="text-slate-500 font-light text-sm mb-10 leading-relaxed">
+                        Logga in för att påbörja din ansökan.
+                    </p>
+                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                        <Link
                             href="/mypages/creditcards/apply"
-                            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded transition-colors text-sm"
+                            className="bg-red-600 hover:bg-red-700 text-white font-bold px-12 py-4 rounded-sm transition-all text-[11px] uppercase tracking-widest shadow-lg shadow-red-600/10"
                         >
                             Ansök nu
-                        </a>
+                        </Link>
                         <Link
                             href="/creditcardtemplates"
-                            className="border border-white/20 text-white font-bold px-6 py-3 rounded hover:bg-white/10 transition-colors text-sm"
+                            className="border border-slate-200 text-slate-600 font-bold px-12 py-4 rounded-sm hover:bg-white transition-all text-[11px] uppercase tracking-widest"
                         >
-                            ← Tillbaka
+                            ← Gå tillbaka
                         </Link>
+                    </div>
+
+                    <div className="mt-16 pt-8 border-t border-slate-200">
+                        <p className="text-[10px] text-slate-400 uppercase tracking-tight leading-relaxed font-light">
+                            Effektiv ränta vid utnyttjad kredit om 20 000 kr är 14.5% (exempel). Kreditgivare är Omega Bank AB.
+                            Vi tillämpar ansvarsfull kreditgivning under Finansinspektionens tillsyn.
+                        </p>
                     </div>
                 </div>
             </section>

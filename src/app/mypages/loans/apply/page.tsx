@@ -14,7 +14,6 @@ export default function ApplyLoanPage() {
         durationMonths: 60,
         amount: "",
         currency: "SEK",
-        // Profile fields (pre-filled)
         firstName: "",
         lastName: "",
         socialSecurityNumber: "",
@@ -30,9 +29,7 @@ export default function ApplyLoanPage() {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
-
                 if (!token) {
-                    console.log("No access token found");
                     setIsLoading(false);
                     return;
                 }
@@ -46,7 +43,6 @@ export default function ApplyLoanPage() {
                 });
 
                 if (!res.ok) {
-                    console.error("Failed to fetch user data:", res.status);
                     setIsLoading(false);
                     return;
                 }
@@ -66,8 +62,6 @@ export default function ApplyLoanPage() {
                 };
 
                 setData(userData);
-
-                // Pre-fill form with user data
                 setFormData(prev => ({
                     ...prev,
                     firstName: userData.firstName,
@@ -84,16 +78,12 @@ export default function ApplyLoanPage() {
                 setIsLoading(false);
             }
         };
-
         fetchUserData();
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -102,17 +92,16 @@ export default function ApplyLoanPage() {
 
         try {
             const token = localStorage.getItem("accessToken");
-
             if (!token) {
                 alert("Du är inte inloggad");
                 return;
             }
 
             const requestBody = {
-                profile: null, // Backend använder existing profile om den finns
+                profile: null,
                 loan: {
                     loanType: formData.loanType,
-                    durationMonths: (formData.durationMonths),
+                    durationMonths: formData.durationMonths,
                     amount: parseFloat(formData.amount),
                     currency: formData.currency
                 }
@@ -128,95 +117,86 @@ export default function ApplyLoanPage() {
             });
 
             if (res.ok) {
-                const responseData = await res.json();
-                console.log("Loan application successful:", responseData);
-                alert("Lånansökan skickad! Lån-ID: " + responseData.loanId);
-                // Navigate back to loans page
+                alert("Lånansökan skickad!");
                 window.location.href = "/mypages/loans";
             } else {
                 const errorText = await res.text();
-                console.error("Loan application error:", res.status, errorText);
-                alert("Fel vid lånansökan: " + (errorText || res.statusText));
+                alert("Fel vid ansökan: " + errorText);
             }
         } catch (error) {
-            console.error("Network error:", error);
-            alert("Nätverksfel: " + (error instanceof Error ? error.message : "Okänt fel"));
+            alert("Nätverksfel");
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    if (isLoading) {
-        return <div className="p-10 text-center">Laddar...</div>;
-    }
-
-    if (!data) {
-        return <div className="p-10">Kunde inte hämta data. Logga in igen.</div>;
-    }
+    if (isLoading) return <div className="p-20 text-center font-bold tracking-widest uppercase text-xs text-slate-400">Laddar formulär...</div>;
 
     return (
-        <main className="p-4 md:p-8 bg-gray-50 min-h-screen text-gray-800">
-            <div className="w-full max-w-4xl mx-auto">
-                <header className="mb-6">
-                    <h1 className="text-2xl font-bold mb-2">Ansök om Lån</h1>
-                    <Link href="/loantemplates" className="text-blue-600 hover:underline">Tillbaka till lån</Link>
-                </header>
+        <main className="min-h-screen bg-gray-50/30 pb-20 flex flex-col items-center">
+            {/* Header - Matchar bank-temat */}
+            <header className="w-full bg-[#003349] px-8 pt-32 pb-16 mb-12 flex justify-center border-b border-white/5 shadow-lg">
+                <div className="w-full max-w-4xl">
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-4 uppercase">Ansök om Lån</h1>
+                    <Link href="/loantemplates" className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 flex items-center gap-2 hover:opacity-70 transition-opacity">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M15 19l-7-7 7-7" /></svg>
+                        Avbryt och gå tillbaka
+                    </Link>
+                </div>
+            </header>
 
-                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border-2 border-black shadow-sm space-y-6">
+            <div className="w-full max-w-4xl px-8">
+                <form onSubmit={handleSubmit} className="bg-white rounded-[40px] p-10 shadow-sm border border-gray-100 space-y-12">
 
-                    {/* Loan Information Section */}
-                    <div className="border-b pb-6">
-                        <h2 className="text-lg font-bold mb-4">Låndetaljer</h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Låntyp</label>
+                    {/* Lånedetaljer Sektion */}
+                    <section>
+                        <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-6 border-l-4 border-[#003349] pl-4">Lånedetaljer</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                            <div className="flex flex-col">
+                                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Låntyp</label>
                                 <select
                                     name="loanType"
                                     value={formData.loanType}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#003349] font-bold text-gray-700"
                                 >
                                     <option value="PRIVATE">Privatlån</option>
                                     <option value="MORTGAGE">Bolån</option>
                                 </select>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Lånebelopp (kr)</label>
+                            <div className="flex flex-col">
+                                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Lånebelopp (kr)</label>
                                 <input
                                     type="number"
                                     name="amount"
                                     value={formData.amount}
                                     onChange={handleChange}
-                                    placeholder="50000"
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    placeholder="Ex: 50000"
+                                    className="px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-200 font-medium text-gray-700 transition-all"
                                     required
-                                    step="1000"
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Löptid (månader)</label>
+                            <div className="flex flex-col">
+                                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Löptid (månader)</label>
                                 <input
                                     type="number"
                                     name="durationMonths"
                                     value={formData.durationMonths}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    className="px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-200 font-medium text-gray-700 transition-all"
                                     required
-                                    min="1"
-                                    max="360"
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Valuta</label>
+                            <div className="flex flex-col">
+                                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Valuta</label>
                                 <select
                                     name="currency"
                                     value={formData.currency}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-200 font-bold text-gray-700"
                                 >
                                     <option value="SEK">SEK</option>
                                     <option value="EUR">EUR</option>
@@ -224,135 +204,64 @@ export default function ApplyLoanPage() {
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Profile Information Section */}
-                    <div className="border-b pb-6">
-                        <h2 className="text-lg font-bold mb-4">Din Profilinformation</h2>
-                        <p className="text-sm text-gray-600 mb-4">Dessa fält är pre-ifyllda från din profil. Uppdatera dem om det behövs.</p>
+                    {/* Profilinformation Sektion */}
+                    <section>
+                        <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-2 border-l-4 border-[#003349] pl-4">Din Profilinformation</h2>
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-8 pl-4">Dessa uppgifter hämtas från din profil</p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Förnamn</label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                            {[
+                                { label: "Förnamn", name: "firstName", type: "text" },
+                                { label: "Efternamn", name: "lastName", type: "text" },
+                                { label: "Personnummer", name: "socialSecurityNumber", type: "text" },
+                                { label: "Adress", name: "address", type: "text" },
+                                { label: "Stad", name: "city", type: "text" },
+                                { label: "Postnummer", name: "zipCode", type: "text" },
+                                { label: "Land", name: "country", type: "text" },
+                                { label: "Telefonnummer", name: "phoneNumber", type: "tel" },
+                            ].map((field) => (
+                                <div key={field.name} className="flex flex-col">
+                                    <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">{field.label}</label>
+                                    <input
+                                        type={field.type}
+                                        name={field.name}
+                                        value={(formData as any)[field.name]}
+                                        onChange={handleChange}
+                                        className="px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-200 font-medium text-gray-700 transition-all"
+                                        required={field.name !== "phoneNumber"}
+                                    />
+                                </div>
+                            ))}
 
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Efternamn</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Personnummer</label>
-                                <input
-                                    type="text"
-                                    name="socialSecurityNumber"
-                                    value={formData.socialSecurityNumber}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Adress</label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Stad</label>
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Postnummer</label>
-                                <input
-                                    type="text"
-                                    name="zipCode"
-                                    value={formData.zipCode}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Land</label>
-                                <input
-                                    type="text"
-                                    name="country"
-                                    value={formData.country}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Telefonnummer</label>
-                                <input
-                                    type="tel"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Årlig Inkomst (kr)</label>
+                            <div className="flex flex-col">
+                                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Årlig Inkomst (kr)</label>
                                 <input
                                     type="number"
                                     name="yearlyIncome"
+                                    placeholder="Ex: 450000"
                                     value={formData.yearlyIncome}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    className="px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-200 font-medium text-gray-700 transition-all"
                                 />
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Submit Button */}
-                    <div className="flex gap-4">
+                    {/* Submit Sektion */}
+                    <div className="pt-10 border-t border-gray-50 flex flex-col sm:flex-row gap-4">
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 py-3 px-6 bg-green-600 text-white rounded-full font-bold transition-all hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 bg-[#003349] hover:opacity-90 text-white text-[11px] font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl transition-all disabled:opacity-50"
                         >
-                            {isSubmitting ? "Skickar..." : "Ansök om Lån"}
+                            {isSubmitting ? "Behandlar ansökan..." : "Skicka Lånansökan"}
                         </button>
                         <Link href="/mypages/loans" className="flex-1">
                             <button
                                 type="button"
-                                className="w-full py-3 px-6 bg-gray-400 text-white rounded-full font-bold transition-all hover:bg-gray-500"
+                                className="w-full border border-gray-200 text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl hover:bg-gray-50 transition-all"
                             >
                                 Avbryt
                             </button>
@@ -363,6 +272,3 @@ export default function ApplyLoanPage() {
         </main>
     );
 }
-
-
-
