@@ -11,7 +11,6 @@ export default function ApplyCreditCardPage() {
 
     const [formData, setFormData] = useState({
         creditCardType: "STANDARD",
-        // Profile fields (pre-filled)
         firstName: "",
         lastName: "",
         socialSecurityNumber: "",
@@ -27,9 +26,7 @@ export default function ApplyCreditCardPage() {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("accessToken");
-
                 if (!token) {
-                    console.log("No access token found");
                     setIsLoading(false);
                     return;
                 }
@@ -43,7 +40,6 @@ export default function ApplyCreditCardPage() {
                 });
 
                 if (!res.ok) {
-                    console.error("Failed to fetch user data:", res.status);
                     setIsLoading(false);
                     return;
                 }
@@ -63,8 +59,6 @@ export default function ApplyCreditCardPage() {
                 };
 
                 setData(userData);
-
-                // Pre-fill form with user data
                 setFormData(prev => ({
                     ...prev,
                     firstName: userData.firstName,
@@ -81,16 +75,12 @@ export default function ApplyCreditCardPage() {
                 setIsLoading(false);
             }
         };
-
         fetchUserData();
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -99,17 +89,14 @@ export default function ApplyCreditCardPage() {
 
         try {
             const token = localStorage.getItem("accessToken");
-
             if (!token) {
                 alert("Du är inte inloggad");
                 return;
             }
 
             const requestBody = {
-                profile: null, // Backend använder existing profile om den finns
-                creditcard: {
-                    creditCardType: formData.creditCardType
-                }
+                profile: null,
+                creditcard: { creditCardType: formData.creditCardType }
             };
 
             const res = await fetch("http://localhost:8080/creditcard", {
@@ -123,52 +110,48 @@ export default function ApplyCreditCardPage() {
 
             if (res.ok) {
                 const responseData = await res.json();
-                console.log("Credit card application successful:", responseData);
-                alert("Kreditkortsansökan skickad! Kort-ID: " + responseData.creditCardId);
+                alert("Kreditkortsansökan skickad!");
                 window.location.href = "/mypages/creditcards";
             } else {
                 const errorText = await res.text();
-                console.error("Credit card application error:", res.status, errorText);
-                alert("Fel vid kreditkortsansökan: " + (errorText || res.statusText));
+                alert("Fel vid ansökan: " + errorText);
             }
         } catch (error) {
-            console.error("Network error:", error);
-            alert("Nätverksfel: " + (error instanceof Error ? error.message : "Okänt fel"));
+            alert("Nätverksfel");
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    if (isLoading) {
-        return <div className="p-10 text-center">Laddar...</div>;
-    }
-
-    if (!data) {
-        return <div className="p-10">Kunde inte hämta data. Logga in igen.</div>;
-    }
+    if (isLoading) return <div className="p-20 text-center font-bold tracking-widest uppercase text-xs text-slate-400">Laddar formulär...</div>;
 
     return (
-        <main className="p-4 md:p-8 bg-gray-50 min-h-screen text-gray-800">
-            <div className="w-full max-w-4xl mx-auto">
-                <header className="mb-6">
-                    <h1 className="text-2xl font-bold mb-2">Ansök om Kreditkort</h1>
-                    <Link href="/creditcardtemplates" className="text-blue-600 hover:underline">Tillbaka till kreditkort</Link>
-                </header>
+        <main className="min-h-screen bg-gray-50/30 pb-20 flex flex-col items-center">
+            {/* Header - Samma stil som de andra sidorna */}
+            <header className="w-full bg-[#003349] px-8 pt-32 pb-16 mb-12 flex justify-center border-b border-white/5 shadow-lg">
+                <div className="w-full max-w-4xl">
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-4 uppercase">Ansök om Kreditkort</h1>
+                    <Link href="/mypages/creditcards" className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 flex items-center gap-2 hover:opacity-70 transition-opacity">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M15 19l-7-7 7-7" /></svg>
+                        Avbryt och gå tillbaka
+                    </Link>
+                </div>
+            </header>
 
-                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl border-2 border-black shadow-sm space-y-6">
+            <div className="w-full max-w-4xl px-8">
+                <form onSubmit={handleSubmit} className="bg-white rounded-[40px] p-10 shadow-sm border border-gray-100 space-y-12">
 
-                    {/* Credit Card Information Section */}
-                    <div className="border-b pb-6">
-                        <h2 className="text-lg font-bold mb-4">Kortdetaljer</h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Korttyp</label>
+                    {/* Kortval Sektion */}
+                    <section>
+                        <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-6 border-l-4 border-[#003349] pl-4">Välj Korttyp</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="flex flex-col">
+                                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Kortnivå</label>
                                 <select
                                     name="creditCardType"
                                     value={formData.creditCardType}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#003349] font-bold text-gray-700"
                                 >
                                     <option value="STANDARD">Standard</option>
                                     <option value="GOLD">Gold</option>
@@ -176,135 +159,64 @@ export default function ApplyCreditCardPage() {
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Profile Information Section */}
-                    <div className="border-b pb-6">
-                        <h2 className="text-lg font-bold mb-4">Din Profilinformation</h2>
-                        <p className="text-sm text-gray-600 mb-4">Dessa fält är pre-ifyllda från din profil. Uppdatera dem om det behövs.</p>
+                    {/* Profilinformation Sektion */}
+                    <section>
+                        <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-2 border-l-4 border-[#003349] pl-4">Din Profilinformation</h2>
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-8 pl-4">Kontrollera att dina uppgifter stämmer</p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Förnamn</label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                            {[
+                                { label: "Förnamn", name: "firstName", type: "text" },
+                                { label: "Efternamn", name: "lastName", type: "text" },
+                                { label: "Personnummer", name: "socialSecurityNumber", type: "text" },
+                                { label: "Adress", name: "address", type: "text" },
+                                { label: "Stad", name: "city", type: "text" },
+                                { label: "Postnummer", name: "zipCode", type: "text" },
+                                { label: "Land", name: "country", type: "text" },
+                                { label: "Telefonnummer", name: "phoneNumber", type: "tel" },
+                            ].map((field) => (
+                                <div key={field.name} className="flex flex-col">
+                                    <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">{field.label}</label>
+                                    <input
+                                        type={field.type}
+                                        name={field.name}
+                                        value={(formData as any)[field.name]}
+                                        onChange={handleChange}
+                                        className="px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-200 font-medium text-gray-700 transition-all"
+                                        required={field.name !== "phoneNumber"}
+                                    />
+                                </div>
+                            ))}
 
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Efternamn</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Personnummer</label>
-                                <input
-                                    type="text"
-                                    name="socialSecurityNumber"
-                                    value={formData.socialSecurityNumber}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Adress</label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Stad</label>
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Postnummer</label>
-                                <input
-                                    type="text"
-                                    name="zipCode"
-                                    value={formData.zipCode}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Land</label>
-                                <input
-                                    type="text"
-                                    name="country"
-                                    value={formData.country}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Telefonnummer</label>
-                                <input
-                                    type="tel"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Årlig Inkomst (kr)</label>
+                            <div className="flex flex-col">
+                                <label className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-2">Årlig Inkomst (kr)</label>
                                 <input
                                     type="number"
                                     name="yearlyIncome"
+                                    placeholder="Ex: 450000"
                                     value={formData.yearlyIncome}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    className="px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-200 font-medium text-gray-700 transition-all"
                                 />
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Submit Button */}
-                    <div className="flex gap-4">
+                    {/* Submit Sektion */}
+                    <div className="pt-10 border-t border-gray-50 flex flex-col sm:flex-row gap-4">
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 py-3 px-6 bg-green-600 text-white rounded-full font-bold transition-all hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 bg-[#003349] hover:opacity-90 text-white text-[11px] font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl transition-all disabled:opacity-50"
                         >
-                            {isSubmitting ? "Skickar..." : "Ansök om Kreditkort"}
+                            {isSubmitting ? "Behandlar ansökan..." : "Skicka Ansökan"}
                         </button>
                         <Link href="/mypages/creditcards" className="flex-1">
                             <button
                                 type="button"
-                                className="w-full py-3 px-6 bg-gray-400 text-white rounded-full font-bold transition-all hover:bg-gray-500"
+                                className="w-full border border-gray-200 text-gray-400 text-[11px] font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl hover:bg-gray-50 transition-all"
                             >
                                 Avbryt
                             </button>
