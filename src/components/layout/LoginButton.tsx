@@ -10,10 +10,9 @@ interface GoogleResponse {
 }
 
 export default function LoginButton() {
-    const [isMounted, setIsMounted] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [googleReady, setGoogleReady] = useState(false);
 
-    // 1. Definiera din funktion först
     const handleGoogleResponse = useCallback(async (response: GoogleResponse) => {
         const realToken = response.credential;
 
@@ -38,57 +37,91 @@ export default function LoginButton() {
         }
     }, []);
 
-    // 2. useEffect kommer efter definitionen
+    // Sätt inloggningsstatus direkt utan att vänta på mount
     useEffect(() => {
-        setIsMounted(true);
         setIsLoggedIn(!!localStorage.getItem("accessToken"));
+    }, []);
+
+    // Ladda Google-scriptet separat, bara när vi inte är inloggade
+    useEffect(() => {
+        if (isLoggedIn) return;
+
+        const initGoogle = () => {
+            if (!globalThis.google) return;
+            globalThis.google.accounts.id.initialize({
+                client_id: "210602676176-p68dp0mq87n7ts9gdup32k63nq3a5vuq.apps.googleusercontent.com",
+                callback: handleGoogleResponse,
+            });
+            const btnElement = document.getElementById("googleBtn");
+            if (btnElement) {
+                globalThis.google.accounts.id.renderButton(btnElement, {
+                    theme: "outline",
+                    size: "large",
+                });
+            }
+            setGoogleReady(true);
+        };
+
+        if (globalThis.google) {
+            initGoogle();
+            return;
+        }
+
+        const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+        if (existing) {
+            // Scriptet finns redan, vänta lite
+            const interval = setInterval(() => {
+                if (globalThis.google) {
+                    initGoogle();
+                    clearInterval(interval);
+                }
+            }, 100);
+            return () => clearInterval(interval);
+        }
 
         const script = document.createElement("script");
         script.src = "https://accounts.google.com/gsi/client";
         script.async = true;
         script.defer = true;
+        script.onload = initGoogle;
         document.body.appendChild(script);
-
-        script.onload = () => {
-            if (globalThis.google) {
-                globalThis.google.accounts.id.initialize({
-                    client_id: "210602676176-p68dp0mq87n7ts9gdup32k63nq3a5vuq.apps.googleusercontent.com",
-                    callback: handleGoogleResponse
-                });
-
-                const btnElement = document.getElementById("googleBtn");
-                if (btnElement) {
-                    globalThis.google.accounts.id.renderButton(btnElement, {
-                        theme: "outline",
-                        size: "large"
-                    });
-                }
-            }
-        };
 
         return () => {
             if (document.body.contains(script)) {
                 document.body.removeChild(script);
             }
         };
-    }, [handleGoogleResponse]);
+    }, [isLoggedIn, handleGoogleResponse]);
 
     const handleLogout = async () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setIsLoggedIn(false);
-        window.location.reload();
+        const refreshToken = localStorage.getItem("refreshToken");
+        try {
+            await fetch("http://localhost:8082/api/auth/logout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refreshToken }),
+            });
+        } catch (e) {
+            console.error("Logout error:", e);
+        } finally {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            setIsLoggedIn(false);
+            window.location.reload();
+        }
     };
-
-    if (!isMounted) return null;
 
     if (isLoggedIn) {
         return (
-            <button onClick={handleLogout} className="py-2 px-4 bg-white text-[#003349] rounded-full">
+            <button
+                onClick={handleLogout}
+                className="py-2 px-4 bg-white text-[#003349] rounded-full font-semibold hover:bg-gray-100 transition-all"
+            >
                 Logga ut
             </button>
         );
     }
 
-    return <div id="googleBtn"></div>;
+    // Visa alltid en placeholder-div så knappen har plats att renderas in
+    return <div id="googleBtn" style={{ minWidth: "120px", minHeight: "40px" }} />;
 }

@@ -3,14 +3,23 @@
 import Link from 'next/link';
 import LoginButton from "@/components/layout/LoginButton";
 import { useEffect, useState } from "react";
+import { isUserAdmin } from "@/utils/jwt";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setIsAdmin(isUserAdmin(token));
+    }
   }, []);
 
   return (
@@ -44,6 +53,11 @@ const Header = () => {
               <Link href="/mypages"
                     style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,255,255,0.65)", textDecoration: "none" }}
                     className="hover:text-white">Mina sidor</Link>
+              {isAdmin && (
+                <Link href="/admin"
+                      style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,215,0,0.8)", textDecoration: "none" }}
+                      className="hover:text-yellow-300">Admin Panel</Link>
+              )}
             </nav>
           </div>
 
