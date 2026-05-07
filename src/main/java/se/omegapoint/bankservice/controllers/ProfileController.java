@@ -60,7 +60,7 @@ public class ProfileController {
     }
 
     @Get("/{userId}")
-//    @Secured("ADMIN")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<ProfileResponseDTO>> getProfileForSpecificUser(
             @PathVariable String userId) {
 

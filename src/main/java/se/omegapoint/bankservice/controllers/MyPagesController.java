@@ -91,7 +91,7 @@ public class MyPagesController {
     }
 
     @Get("/{userId}")
-//    @Secured("ADMIN")
+    @Secured("ADMIN")
     public Mono<MutableHttpResponse<MyPagesResponseDTO>> getUserPages(@PathVariable String userId) {
 
         return Mono.zip(profileService.getUserInformation(userId)
