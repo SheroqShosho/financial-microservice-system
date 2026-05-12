@@ -56,8 +56,8 @@ export default async function LoansPage() {
             </section>
 
             {/* Bottom CTA strip */}
-            <section className="w-full bg-[#f8fafc] py-24 flex justify-center border-t border-gray-100">
-                <div className="w-full max-w-5xl px-10">
+            <section className="w-full bg-slate-50 py-24 flex justify-center border-t border-slate-100">
+            <div className="w-full max-w-5xl px-10">
                     <div className="bg-[#003349] rounded-[40px] p-12 md:p-16 shadow-2xl flex flex-col md:flex-row items-center text-center md:text-left justify-between gap-10">
                         <div className="max-w-md">
                             <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-3 uppercase text-white">

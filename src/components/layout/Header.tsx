@@ -61,13 +61,13 @@ const Header = () => {
             </nav>
           </div>
 
-          {/* Höger */}
-          <div className="flex items-center gap-6">
-            <Link href="/kundservice"
-                  style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,255,255,0.55)", textDecoration: "none" }}
-                  className="hidden md:block hover:text-white">Kundservice</Link>
-            <LoginButton />
-          </div>
+           {/* Höger */}
+           <div className="flex items-center gap-6">
+             <Link href="/kundtjanst"
+                   style={{ fontFamily: "sans-serif", fontSize: "0.85rem", fontWeight: 500, color: "rgba(255,255,255,0.55)", textDecoration: "none" }}
+                   className="hidden md:block hover:text-white">Kundtjänst</Link>
+             <LoginButton />
+           </div>
 
         </div>
       </header>
