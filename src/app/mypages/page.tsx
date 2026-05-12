@@ -68,7 +68,7 @@ export default function MyPages() {
                 <div className="w-full max-w-6xl relative z-10 mt-10">
                     <p className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4">Mina Sidor</p>
                     <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white">
-                        Välkommen, <span className="text-white/80 italic font-medium">{data.firstName}</span>.
+                        Välkommen <span className="text-white/80 italic font-medium">{data.firstName}</span>
                     </h1>
                     <p className="text-blue-100/60 mt-4 text-lg font-medium max-w-xl mx-auto">
                         Här är en överblick av din ekonomi hos Omega Bank.

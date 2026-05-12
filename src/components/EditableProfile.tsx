@@ -60,7 +60,6 @@ export default function EditableProfile({ initialData }: { initialData: MyPagesD
             <div className="flex justify-between items-center mb-10 border-b border-gray-50 pb-4">
                 <div>
                     <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Din Profil</h2>
-                    <p className="text-[9px] font-mono text-gray-300 mt-1 uppercase tracking-tight">{profile.username}</p>
                 </div>
                 {!isSaving && (
                     <button

@@ -13,9 +13,6 @@ const Footer = () => {
                style={{ fontFamily: "'Georgia', serif", letterSpacing: "0.18em", fontSize: "1.05rem", color: "#ffffff" }}>
               Omega<span style={{ color: "#a8cdd9" }}>Bank</span>
             </p>
-            <p style={{ fontFamily: "sans-serif", fontSize: "0.85rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
-              Get rich or die trying.
-            </p>
           </div>
 
           {/* Snabblänkar */}
