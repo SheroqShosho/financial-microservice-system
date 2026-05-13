@@ -1,5 +1,6 @@
 import { LoanTemplateDTO } from "@/types/loan";
 import Link from "next/link";
+import ApplyButton from "@/components/ApplyButton";
 
 async function getLoanData(type: string): Promise<LoanTemplateDTO | null> {
     const res = await fetch("http://localhost:8080/template/loans", { cache: "no-store" });
@@ -80,12 +81,12 @@ export default async function LoanDetailPage({
                                 {loan.description}
                             </p>
                         </div>
-                        <Link
+                        <ApplyButton
                             href="/mypages/loans/apply"
                             className="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold uppercase tracking-widest px-12 py-5 rounded-sm transition-all shadow-xl shadow-black/20"
                         >
                             Starta ansökan
-                        </Link>
+                        </ApplyButton>
                     </div>
                 </div>
             </section>
@@ -139,7 +140,7 @@ export default async function LoanDetailPage({
                         <p className="text-sm text-slate-500 font-light mb-8 leading-relaxed">
                             Är du osäker på vilket lån som passar dina behov bäst? Våra rådgivare hjälper dig att hitta rätt lösning för din unika situation.
                         </p>
-                        <Link href="/kundservice" className="block text-center border border-slate-200 bg-white py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors">
+                        <Link href="/kundtjanst" className="block text-center border border-slate-200 bg-white py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors">
                             Kontakta rådgivare
                         </Link>
                     </div>
@@ -154,12 +155,12 @@ export default async function LoanDetailPage({
                         Processen är helt digital, fyll i formuläret och ansök.
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4">
-                        <Link
+                        <ApplyButton
                             href="/mypages/loans/apply"
                             className="bg-red-600 hover:bg-red-700 text-white font-bold px-10 py-4 rounded-sm transition-all text-[11px] uppercase tracking-widest"
                         >
                             Ansök nu
-                        </Link>
+                        </ApplyButton>
                         <Link
                             href="/loantemplates"
                             className="border border-slate-200 text-slate-600 font-bold px-10 py-4 rounded-sm hover:bg-white transition-all text-[11px] uppercase tracking-widest"

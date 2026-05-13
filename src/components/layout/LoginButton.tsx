@@ -2,7 +2,16 @@
 import { useEffect, useCallback, useState } from "react";
 
 declare global {
-    var google: any;
+    interface Window {
+        google?: {
+            accounts: {
+                id: {
+                    initialize: (config: Record<string, unknown>) => void;
+                    renderButton: (element: HTMLElement, options: Record<string, unknown>) => void;
+                };
+            };
+        };
+    }
 }
 
 interface GoogleResponse {
@@ -15,14 +24,12 @@ export default function LoginButton() {
 
     const handleGoogleResponse = useCallback(async (response: GoogleResponse) => {
         const realToken = response.credential;
-
         try {
             const backendRes = await fetch("http://localhost:8082/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ idToken: realToken }),
             });
-
             if (backendRes.ok) {
                 const data = await backendRes.json();
                 localStorage.setItem("accessToken", data.accessToken);
@@ -47,14 +54,14 @@ export default function LoginButton() {
         if (isLoggedIn) return;
 
         const initGoogle = () => {
-            if (!globalThis.google) return;
-            globalThis.google.accounts.id.initialize({
+            if (!window.google) return;
+            window.google.accounts.id.initialize({
                 client_id: "210602676176-p68dp0mq87n7ts9gdup32k63nq3a5vuq.apps.googleusercontent.com",
                 callback: handleGoogleResponse,
             });
             const btnElement = document.getElementById("googleBtn");
             if (btnElement) {
-                globalThis.google.accounts.id.renderButton(btnElement, {
+                window.google.accounts.id.renderButton(btnElement, {
                     theme: "outline",
                     size: "large",
                 });
@@ -62,16 +69,15 @@ export default function LoginButton() {
             setGoogleReady(true);
         };
 
-        if (globalThis.google) {
+        if (window.google) {
             initGoogle();
             return;
         }
 
         const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
         if (existing) {
-            // Scriptet finns redan, vänta lite
             const interval = setInterval(() => {
-                if (globalThis.google) {
+                if (window.google) {
                     initGoogle();
                     clearInterval(interval);
                 }

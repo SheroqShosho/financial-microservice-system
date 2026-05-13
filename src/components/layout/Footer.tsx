@@ -22,13 +22,17 @@ const Footer = () => {
               Snabblänkar
             </h3>
             <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="space-y-3">
-              {["Om oss", "Säkerhet", "Cookies"].map((item) => (
-                  <li key={item}>
-                    <a href="#"
+              {[
+                { name: "Om oss", href: "/" },
+                { name: "Säkerhet", href: "/kundtjanst" },
+                { name: "Cookies", href: "#" }
+              ].map((item) => (
+                  <li key={item.name}>
+                    <a href={item.href}
                        style={{ fontFamily: "sans-serif", fontSize: "0.875rem", color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color 0.15s" }}
                        onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.9)")}
                        onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}>
-                      {item}
+                      {item.name}
                     </a>
                   </li>
               ))}
