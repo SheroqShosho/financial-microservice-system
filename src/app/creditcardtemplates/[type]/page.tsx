@@ -1,5 +1,6 @@
 import { CreditCardTemplateDTO } from "@/types/creditcard";
 import Link from "next/link";
+import ApplyButton from "@/components/ApplyButton";
 
 async function getCardData(type: string): Promise<CreditCardTemplateDTO | null> {
     const res = await fetch("http://localhost:8080/template/creditcards", { cache: "no-store" });
@@ -67,12 +68,12 @@ export default async function CardDetailPage({ params }: { params: Promise<{ typ
                             <p className="text-slate-300 text-lg md:text-xl font-light leading-relaxed mb-10">
                                 {card.description} ett kort utformat för dig som värdesätter trygghet, exklusiva förmåner och global räckvidd.
                             </p>
-                            <Link
+                            <ApplyButton
                                 href="/mypages/creditcards/apply"
                                 className="inline-block bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold uppercase tracking-widest px-12 py-5 rounded-sm transition-all shadow-xl shadow-black/20"
                             >
                                 Ansök nu
-                            </Link>
+                            </ApplyButton>
                         </div>
 
                         <div className="relative group perspective hidden md:block">
@@ -147,7 +148,7 @@ export default async function CardDetailPage({ params }: { params: Promise<{ typ
                             Är du osäker på vilket kort som bäst passar din livsstil? Våra rådgivare finns tillgängliga för att hjälpa dig välja rätt nivå av förmåner och kreditutrymme.
                         </p>
                         <div className="space-y-4">
-                            <Link href="/kundservice" className="block text-center border border-slate-200 bg-white py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors">
+                            <Link href="/kundtjanst" className="block text-center border border-slate-200 bg-white py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-colors">
                                 Kontakta rådgivare
                             </Link>
                             <Link href="/creditcardtemplates" className="block text-center py-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">
@@ -166,12 +167,12 @@ export default async function CardDetailPage({ params }: { params: Promise<{ typ
                         Logga in för att påbörja din ansökan.
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4">
-                        <Link
+                        <ApplyButton
                             href="/mypages/creditcards/apply"
                             className="bg-red-600 hover:bg-red-700 text-white font-bold px-12 py-4 rounded-sm transition-all text-[11px] uppercase tracking-widest shadow-lg shadow-red-600/10"
                         >
                             Ansök nu
-                        </Link>
+                        </ApplyButton>
                         <Link
                             href="/creditcardtemplates"
                             className="border border-slate-200 text-slate-600 font-bold px-12 py-4 rounded-sm hover:bg-white transition-all text-[11px] uppercase tracking-widest"

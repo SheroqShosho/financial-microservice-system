@@ -68,7 +68,7 @@ export default async function LoansPage() {
                             </p>
                         </div>
                         <a
-                            href="/kundservice"
+                            href="/kundtjanst"
                             className="w-full md:w-auto flex-shrink-0 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest px-12 py-5 rounded-2xl transition-all shadow-xl shadow-red-600/30 active:scale-95 text-xs text-center"
                         >
                             Kontakta oss
