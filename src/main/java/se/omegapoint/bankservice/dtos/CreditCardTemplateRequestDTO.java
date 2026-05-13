@@ -10,6 +10,7 @@ public record  CreditCardTemplateRequestDTO (
         String creditCardType,
         BigDecimal creditLimit,
         BigDecimal fee,
-        BigDecimal interestRate
+        BigDecimal interestRate,
+        String description
 ) {
 }
