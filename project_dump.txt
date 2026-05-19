@@ -1,0 +1,2608 @@
+
+FILE: ./pom.xml 
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>se.omegapoint</groupId>
+    <artifactId>ProductDirectory</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>ProductDirectory</name>
+    <description>ProductDirectory</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-h2console</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webservices</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>6.0.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <version>4.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webservices-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/controllers/CreditCardController.java 
+---
+package se.omegapoint.productdirectory.controllers;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
+import se.omegapoint.productdirectory.services.CreditCardService;
+
+import java.util.List;
+
+// RestController för kreditkort
+@RestController
+@RequestMapping("/api/creditcard")
+public class CreditCardController {
+
+    private final CreditCardService creditCardService;
+
+    // Konstruktor för injection
+    public CreditCardController(CreditCardService creditCardService) {
+        this.creditCardService = creditCardService;
+    }
+
+    // Hanterar GET-request och hämtar alla kreditkort. Returnerar dto-lista samt statuskod
+    @GetMapping
+    public ResponseEntity<List<CreditCardResponseDTO>> getAll() {
+
+        List<CreditCardResponseDTO> allCards = creditCardService.getAllCreditCards(); // Skapar lista via service
+
+        return ResponseEntity.status(HttpStatus.OK).body(allCards); // Returnerar response med listan och statuskod
+    }
+
+    // Hanterar GET-request för specifikt id. Returnerar dto samt statuskod
+    @GetMapping("/{id}")
+    public ResponseEntity<CreditCardResponseDTO> getCreditCardById(@PathVariable Integer id) {
+
+        CreditCardResponseDTO response = creditCardService.getCreditCardById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/type/{creditCardType}")
+    public ResponseEntity<CreditCardResponseDTO> getCreditCardByCreditCardType(@PathVariable String creditCardType) {
+
+        CreditCardResponseDTO response = creditCardService.getCreditCardByType(creditCardType);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // Hanterar POST-request och skapar nytt kreditkort i databas. Returnerar sedan dto-response med body och statuskod
+    @PostMapping
+    public ResponseEntity<CreditCardResponseDTO> create(@RequestBody @Valid CreditCardRequestDTO request) {
+
+        CreditCardResponseDTO response = creditCardService.addCreditCard(request); // Skickar request till service och får tillbaka response
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response); // Returnerar response till client med body och statuskod
+    }
+
+    // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
+    @PutMapping("/{id}")
+    public ResponseEntity<CreditCardResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid CreditCardUpdateDTO request) {
+
+        CreditCardResponseDTO response = creditCardService.updateCreditCard(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // Hanterar DELETE-request. Tar bort entity i databas för id't och returnerar statuskod.
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+
+        creditCardService.deleteCreditCard(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/controllers/LoanController.java 
+---
+package se.omegapoint.productdirectory.controllers;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
+import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
+import se.omegapoint.productdirectory.services.LoanService;
+
+import java.util.List;
+
+// RestController för lån
+@RestController
+@RequestMapping("/api/loan")
+public class LoanController {
+
+    private final LoanService loanService;
+
+    // Konstruktor för injection
+    public LoanController(final LoanService loanService) {
+        this.loanService = loanService;
+    }
+
+    // Hanterar GET-request och hämtar alla lån. Returnerar dto-lista samt statuskod
+    @GetMapping
+    public ResponseEntity<List<LoanResponseDTO>> getAll() {
+
+        List<LoanResponseDTO> allLoans = loanService.getAllLoans(); // Skapar lista via service
+
+        return ResponseEntity.status(HttpStatus.OK).body(allLoans); // Returnerar response med listan och statuskod
+    }
+
+    // Hanterar GET-request för specifikt id. Returnerar dto samt statuskod
+    @GetMapping("/{id}")
+    public ResponseEntity<LoanResponseDTO> getLoanById(@PathVariable Integer id) {
+
+        LoanResponseDTO response = loanService.getLoanById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/type/{loanType}")
+    public ResponseEntity<LoanResponseDTO> getLoanByType(@PathVariable String loanType) {
+
+        LoanResponseDTO response = loanService.getLoanByLoanType(loanType);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // Hanterar POST-request och skapar nytt lån i databas. Returnerar sedan dto-response med body och statuskod
+    @PostMapping
+    public ResponseEntity<LoanResponseDTO> create(@RequestBody @Valid LoanRequestDTO request) {
+
+        LoanResponseDTO response = loanService.addLoan(request); // Skickar request till service och får tillbaka response
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response); // Returnerar response till client med body och statuskod
+    }
+
+    // Hanterar PUT-request och uppdaterar entityn för id't i databasen. Returnerar body och statuskod
+    @PutMapping("/{id}")
+    public ResponseEntity<LoanResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid LoanUpdateDTO request) {
+
+        LoanResponseDTO response = loanService.updateLoan(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // Hanterar DELETE-request. Tar bort entity i databas för id't och returnerar statuskod.
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+
+        loanService.deleteLoan(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/dtos/CreditCardRequestDTO.java 
+---
+package se.omegapoint.productdirectory.dtos;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+
+import java.math.BigDecimal;
+
+public record CreditCardRequestDTO(
+
+        @NotNull(message = "Is required or has an invalid format")
+        ProductStatus productStatus,
+
+        @NotNull(message = "Is required or has an invalid format")
+        String creditCardType,
+
+        @NotNull(message = "Can not be null")
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal creditLimit,
+
+        @NotNull(message = "Can not be null")
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal fee,
+
+        @NotNull(message = "Can not be null")
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal interestRate,
+
+        @NotNull(message = "Is required or has an invalid format")
+        String description
+) {
+
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/dtos/CreditCardResponseDTO.java 
+---
+package se.omegapoint.productdirectory.dtos;
+
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+
+import java.math.BigDecimal;
+
+public record CreditCardResponseDTO(
+        Integer productId,
+        ProductType productType,
+        ProductStatus productStatus,
+        String creditCardType,
+        BigDecimal creditLimit,
+        BigDecimal fee,
+        BigDecimal interestRate,
+        String description
+) {
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/dtos/CreditCardUpdateDTO.java 
+---
+package se.omegapoint.productdirectory.dtos;
+
+import jakarta.validation.constraints.PositiveOrZero;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+
+import java.math.BigDecimal;
+
+public record CreditCardUpdateDTO(
+        ProductStatus productStatus,
+
+        String creditCardType,
+
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal creditLimit,
+
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal fee,
+
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal interestRate,
+
+        String description
+) {
+}
+FILE: ./src/main/java/se/omegapoint/productdirectory/dtos/LoanRequestDTO.java 
+---
+package se.omegapoint.productdirectory.dtos;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+
+import java.math.BigDecimal;
+
+public record LoanRequestDTO(
+
+        @NotNull(message = "Is required or has an invalid format")
+        ProductStatus productStatus,
+
+        @NotNull(message = "Is required or has an invalid format")
+        String loanType,
+
+        @NotNull(message = "Can not be null")
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal minAmount,
+
+        @NotNull(message = "Can not be null")
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal maxAmount,
+
+        @NotNull(message = "Can not be null")
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal interestRate,
+
+        @NotNull(message = "Is required or has an invalid format")
+        String description
+) {
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/dtos/LoanResponseDTO.java 
+---
+package se.omegapoint.productdirectory.dtos;
+
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+
+import java.math.BigDecimal;
+
+public record LoanResponseDTO(
+        Integer productId,
+        ProductType productType,
+        ProductStatus productStatus,
+        String loanType,
+        BigDecimal minAmount,
+        BigDecimal maxAmount,
+        BigDecimal interestRate,
+        String description) {
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/dtos/LoanUpdateDTO.java 
+---
+package se.omegapoint.productdirectory.dtos;
+
+import jakarta.validation.constraints.PositiveOrZero;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+
+import java.math.BigDecimal;
+
+public record LoanUpdateDTO(
+        ProductStatus productStatus,
+
+        String loanType,
+
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal minAmount,
+
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal maxAmount,
+
+        @PositiveOrZero(message = "Can not be negative")
+        BigDecimal interestRate,
+
+        String description
+) {
+}
+FILE: ./src/main/java/se/omegapoint/productdirectory/exceptions/ErrorResponseDTO.java 
+---
+package se.omegapoint.productdirectory.exceptions;
+
+import java.time.LocalDateTime;
+
+// DTO för att visa begränsad information i error-message
+public record ErrorResponseDTO(
+        LocalDateTime timestamp,
+        int status,
+        String error,
+        Object message,
+        String path
+) {
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/exceptions/GlobalExceptionHandler.java 
+---
+package se.omegapoint.productdirectory.exceptions;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    // Exception handler för resource not found
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException exception, HttpServletRequest request) {
+        log.warn("Resource not found: {} at path {}", exception.getMessage(), request.getRequestURI());
+
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Not Found",
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    // Exception handler för generella exceptions för att begränsa visad felinformation till klient
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDTO> handleGlobalException(Exception exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
+
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Internal Server Error",
+                "An unexpected error occurred.",
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseDTO> handleValidationException(MethodArgumentNotValidException exception, HttpServletRequest request) {
+        log.warn("Validation failed for request: {}", request.getRequestURI());
+
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
+
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed.",
+                errors,
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/exceptions/ResourceNotFoundException.java 
+---
+package se.omegapoint.productdirectory.exceptions;
+
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/mappers/CreditCardMapper.java 
+---
+package se.omegapoint.productdirectory.mappers;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
+import se.omegapoint.productdirectory.models.creditcards.CreditCard;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+
+@Component
+public class CreditCardMapper {
+
+    private static final Logger log = LoggerFactory.getLogger(CreditCardMapper.class);
+
+    // Mapper för response med ID (Entity > DTO)
+    public CreditCardResponseDTO mapToCreditCardResponse(CreditCard entity) {
+        return new CreditCardResponseDTO(
+                entity.getProductId(),
+                entity.getProductType(),
+                entity.getProductStatus(),
+                entity.getCreditCardType(),
+                entity.getCreditLimit(),
+                entity.getFee(),
+                entity.getInterestRate(),
+                entity.getDescription()
+        );
+    }
+
+    // Mapper för request utan ID (DTO > Entity)
+    public CreditCard mapToCreditCardEntity(CreditCardRequestDTO request) {
+        CreditCard entity = new CreditCard();
+        entity.setProductType(ProductType.CREDIT_CARD);
+        entity.setProductStatus(request.productStatus());
+        entity.setCreditCardType(request.creditCardType());
+        entity.setCreditLimit(request.creditLimit());
+        entity.setFee(request.fee());
+        entity.setInterestRate(request.interestRate());
+        entity.setDescription(request.description());
+        return entity;
+    }
+
+    // Mapper för att uppdatera befintlig entity i databasen - behåller befintligt värde om null skickas in
+    public void updateEntityFromDTO(CreditCardUpdateDTO request, CreditCard entity) {
+
+        if (request.productStatus() != null) {
+            log.info("   Field productStatus updated to : {}", request.productStatus());
+            entity.setProductStatus(request.productStatus());
+        }
+        if (request.creditCardType() != null) {
+            log.info("   Field creditCardType updated to : {}", request.creditCardType());
+            entity.setCreditCardType(request.creditCardType());
+        }
+        if (request.creditLimit() != null) {
+            log.info("   Field creditLimit updated to : {}", request.creditLimit());
+            entity.setCreditLimit(request.creditLimit());
+        }
+        if (request.fee() != null) {
+            log.info("   Field fee updated to : {}", request.fee());
+            entity.setFee(request.fee());
+        }
+        if (request.interestRate() != null) {
+            log.info("   Field interestRate updated to : {}", request.interestRate());
+            entity.setInterestRate(request.interestRate());
+        }
+        if (request.description() != null) {
+            log.info("   Field description updated to : {}", request.description());
+            entity.setDescription(request.description());
+        }
+    }
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/mappers/LoanMapper.java 
+---
+package se.omegapoint.productdirectory.mappers;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
+import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+import se.omegapoint.productdirectory.models.loans.Loan;
+
+@Component
+public class LoanMapper {
+
+    private static final Logger log = LoggerFactory.getLogger(LoanMapper.class);
+
+    // Mapper för response med ID (Entity > DTO)
+    public LoanResponseDTO mapToLoanResponse(Loan entity) {
+        return new LoanResponseDTO(
+                entity.getProductId(),
+                entity.getProductType(),
+                entity.getProductStatus(),
+                entity.getLoanType(),
+                entity.getMinAmount(),
+                entity.getMaxAmount(),
+                entity.getInterestRate(),
+                entity.getDescription()
+        );
+    }
+
+    // Mapper för request utan ID (DTO > Entity)
+    public Loan mapToLoan(LoanRequestDTO request) {
+        Loan entity = new Loan();
+        entity.setProductType(ProductType.LOAN);
+        entity.setProductStatus(request.productStatus());
+        entity.setLoanType(request.loanType());
+        entity.setMinAmount(request.minAmount());
+        entity.setMaxAmount(request.maxAmount());
+        entity.setInterestRate(request.interestRate());
+        entity.setDescription(request.description());
+        return entity;
+    }
+
+    // Mapper för att uppdatera befintlig entity i databasen - behåller befintligt värde om null skickas in
+    public void updateEntityFromDTO(LoanUpdateDTO request, Loan entity) {
+
+        if (request.productStatus() != null) {
+            log.info("   Field productStatus updated to : {}", request.productStatus());
+            entity.setProductStatus(request.productStatus());
+        }
+        if (request.loanType() != null) {
+            log.info("   Field loanType updated to : {}", request.loanType());
+            entity.setLoanType(request.loanType());
+        }
+        if (request.minAmount() != null) {
+            log.info("   Field minAmount updated to : {}", request.minAmount());
+            entity.setMinAmount(request.minAmount());
+        }
+        if (request.maxAmount() != null) {
+            log.info("   Field maxAmount updated to : {}", request.maxAmount());
+            entity.setMaxAmount(request.maxAmount());
+        }
+        if (request.interestRate() != null) {
+            log.info("   Field interestRate updated to : {}", request.interestRate());
+            entity.setInterestRate(request.interestRate());
+        }
+        if (request.description() != null) {
+            log.info("   Field description updated to : {}", request.description());
+            entity.setDescription(request.description());
+        }
+    }
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/models/creditcards/CreditCard.java 
+---
+package se.omegapoint.productdirectory.models.creditcards;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
+import se.omegapoint.productdirectory.models.Product;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+
+import java.math.BigDecimal;
+
+@Entity
+public class CreditCard extends Product {
+
+    @Column
+    @NotNull
+    private String creditCardType;
+
+    @Column
+    @NotNull
+    private BigDecimal creditLimit;
+
+    @Column
+    @NotNull
+    private BigDecimal fee;
+
+    @Column
+    @NotNull
+    private BigDecimal interestRate;
+
+    public CreditCard() {
+    }
+
+    protected CreditCard(String creditCardType, BigDecimal creditLimit, BigDecimal fee, BigDecimal interestRate, ProductType productType, ProductStatus productStatus, String description) {
+        super(productType, productStatus);
+        this.creditCardType = creditCardType;
+        this.creditLimit = creditLimit;
+        this.fee = fee;
+        this.interestRate = interestRate;
+        this.setDescription(description);
+    }
+
+    public String getCreditCardType() {
+        return creditCardType;
+    }
+
+    public void setCreditCardType(String creditCardType) {
+        this.creditCardType = creditCardType;
+    }
+
+    public BigDecimal getCreditLimit() {
+        return creditLimit;
+    }
+
+    public void setCreditLimit(BigDecimal creditLimit) {
+        this.creditLimit = creditLimit;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
+
+    public BigDecimal getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(BigDecimal interestRate) {
+        this.interestRate = interestRate;
+    }
+}
+FILE: ./src/main/java/se/omegapoint/productdirectory/models/enums/ProductStatus.java 
+---
+package se.omegapoint.productdirectory.models.enums;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+public enum ProductStatus {
+    ACTIVE, // Produktmall är aktiverad
+    INACTIVE; // Produktmall är inaktiverad
+
+    // Gör om all input till upper case
+    @JsonCreator
+    public static ProductStatus fromString(String value) {
+        if (value == null) return null;
+
+        try {
+            return ProductStatus.valueOf(value.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/models/enums/ProductType.java 
+---
+package se.omegapoint.productdirectory.models.enums;
+
+public enum ProductType {
+    CREDIT_CARD,
+    LOAN;
+
+
+//    // Gör om all input till rätt format
+//    @JsonCreator
+//    public static ProductType fromString(String value) {
+//       if (value == null) return null;
+//
+//       try {
+//           String val = value.replaceAll("[ -]", "").toUpperCase();
+//           if (val.equals("CREDITCARD"))
+//               return CREDIT_CARD;
+//
+//           return ProductType.valueOf(val);
+//       } catch (IllegalArgumentException e) {
+//           return null;
+//       }
+//    }
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/models/loans/Loan.java 
+---
+package se.omegapoint.productdirectory.models.loans;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
+import se.omegapoint.productdirectory.models.Product;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+
+import java.math.BigDecimal;
+
+@Entity
+public class Loan extends Product {
+
+    @Column
+    @NotNull
+    private String loanType;
+
+    @Column
+    @NotNull
+    private BigDecimal minAmount;
+
+    @Column
+    @NotNull
+    private BigDecimal maxAmount;
+
+    @Column
+    @NotNull
+    private BigDecimal interestRate;
+
+    public Loan() {
+    }
+
+    protected Loan(
+            String loanType,
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
+            BigDecimal interestRate,
+            ProductType productType,
+            ProductStatus productStatus,
+            String description
+    ) {
+
+        super(productType, productStatus);
+        this.loanType = loanType;
+        this.minAmount = minAmount;
+        this.maxAmount = maxAmount;
+        this.interestRate = interestRate;
+        this.setDescription(description);
+    }
+
+    public String getLoanType() {
+        return loanType;
+    }
+
+    public void setLoanType(String loanType) {
+        this.loanType = loanType;
+    }
+
+    public BigDecimal getMinAmount() {
+        return minAmount;
+    }
+
+    public void setMinAmount(BigDecimal minAmount) {
+        this.minAmount = minAmount;
+    }
+
+    public BigDecimal getMaxAmount() {
+        return maxAmount;
+    }
+
+    public void setMaxAmount(BigDecimal maxAmount) {
+        this.maxAmount = maxAmount;
+    }
+
+    public BigDecimal getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(BigDecimal interestRate) {
+        this.interestRate = interestRate;
+    }
+
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/models/Product.java 
+---
+package se.omegapoint.productdirectory.models;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer productId;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ProductType productType;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ProductStatus productStatus;
+
+    @Column
+    @NotNull
+    private String description;
+
+    protected Product() {
+    }
+
+    protected Product(ProductType productType, ProductStatus productStatus) {
+        this.productType = productType;
+        this.productStatus = productStatus;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
+    }
+
+    public ProductStatus getProductStatus() {
+        return productStatus;
+    }
+
+    public void setProductStatus(ProductStatus productStatus) {
+        this.productStatus = productStatus;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/ProductDirectoryApplication.java 
+---
+package se.omegapoint.productdirectory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.ansi.AnsiColor;
+import org.springframework.boot.ansi.AnsiOutput;
+import org.springframework.boot.ansi.AnsiStyle;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ProductDirectoryApplication {
+    private static final Logger log = LoggerFactory.getLogger(ProductDirectoryApplication.class);
+
+
+    public static void main(String[] args) {
+
+        SpringApplication.run(ProductDirectoryApplication.class, args);
+        log.info(AnsiOutput.toString(AnsiColor.BRIGHT_GREEN, "Application running", AnsiStyle.NORMAL));
+
+    }
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/repositories/CreditCardRepository.java 
+---
+package se.omegapoint.productdirectory.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import se.omegapoint.productdirectory.models.creditcards.CreditCard;
+
+import java.util.Optional;
+
+@Repository
+public interface CreditCardRepository extends JpaRepository<CreditCard, Integer> {
+    Optional<CreditCard> findByCreditCardType(String creditCardType);
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/repositories/LoanRepository.java 
+---
+package se.omegapoint.productdirectory.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import se.omegapoint.productdirectory.models.loans.Loan;
+
+import java.util.Optional;
+
+@Repository
+public interface LoanRepository extends JpaRepository<Loan, Integer> {
+    Optional<Loan> findByLoanType(String loanType);
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/services/CreditCardService.java 
+---
+package se.omegapoint.productdirectory.services;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
+import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
+import se.omegapoint.productdirectory.mappers.CreditCardMapper;
+import se.omegapoint.productdirectory.models.creditcards.CreditCard;
+import se.omegapoint.productdirectory.repositories.CreditCardRepository;
+
+import java.util.List;
+
+@Service
+@Transactional
+public class CreditCardService {
+
+    private static final Logger log = LoggerFactory.getLogger(CreditCardService.class);
+
+    private final CreditCardRepository creditCardRepository;
+    private final CreditCardMapper creditCardMapper;
+
+    // Konstruktor för injection
+    public CreditCardService(CreditCardRepository creditCardRepository, CreditCardMapper creditCardMapper) {
+        this.creditCardRepository = creditCardRepository;
+        this.creditCardMapper = creditCardMapper;
+    }
+
+    // Hämtar och returnerar lista med alla kreditkort
+    public List<CreditCardResponseDTO> getAllCreditCards() {
+        log.info("Retrieving all credit cards");
+
+        return creditCardRepository.findAll()// Repo/hibernate skapar SQL för att hämta alla kort
+                .stream() // Streamar alla delar en efter en
+                .map(creditCardMapper::mapToCreditCardResponse) // Mappar om från entity till DTO
+                .toList(); // Lägger till i lista
+    }
+
+    // Hämtar och returnerar specifikt kreditkort baserat på id
+    public CreditCardResponseDTO getCreditCardById(Integer id) {
+        log.info("Retrieving credit card by id: {}", id);
+
+        CreditCard existingCard = creditCardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find credit card with id: " + id));
+        return creditCardMapper.mapToCreditCardResponse(existingCard);
+    }
+
+    public CreditCardResponseDTO getCreditCardByType(String creditCardType) {
+        log.info("Retrieving credit card by type: {}", creditCardType);
+
+        CreditCard existingCard = creditCardRepository.findByCreditCardType(creditCardType)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find credit card with type: " + creditCardType));
+        return creditCardMapper.mapToCreditCardResponse(existingCard);
+    }
+
+    // Skapar nytt kreditkort i databasen och returnerar response
+    public CreditCardResponseDTO addCreditCard(CreditCardRequestDTO request) {
+        log.info("Adding credit card {}", request);
+
+        CreditCard entity = creditCardMapper.mapToCreditCardEntity(request); // Använder request och mappar till entity
+        CreditCard savedEntity = creditCardRepository.save(entity); // Entity sparas i databasen via repo
+
+        return creditCardMapper.mapToCreditCardResponse(savedEntity); // Entity mappas om till response-dto och returneras
+    }
+
+    // Uppdaterar specifikt kreditkort baserat på id
+    public CreditCardResponseDTO updateCreditCard(Integer id, CreditCardUpdateDTO request) {
+        log.info("Updating credit card with id: {}", id);
+
+        CreditCard existingCreditCard = creditCardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Credit card with id " + id + " not found"));
+
+        creditCardMapper.updateEntityFromDTO(request, existingCreditCard); // Mappar om befintlig entity med ny data från requestDTO
+        CreditCard savedEntity = creditCardRepository.save(existingCreditCard);
+
+        log.info("Successfully updated credit card with id: {}", id);
+        return creditCardMapper.mapToCreditCardResponse(savedEntity);
+    }
+
+    // Tar bort specifikt kreditkort baserat på id
+    public void deleteCreditCard(Integer id) {
+        log.info("Deleting credit card by id: {}", id);
+
+        CreditCard existingCard = creditCardRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Credit card with id: " + id + " not found")
+        );
+
+        creditCardRepository.delete(existingCard);
+        log.info("Successfully deleted credit card with id: {}", id);
+    }
+
+}
+
+FILE: ./src/main/java/se/omegapoint/productdirectory/services/LoanService.java 
+---
+package se.omegapoint.productdirectory.services;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
+import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
+import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
+import se.omegapoint.productdirectory.mappers.LoanMapper;
+import se.omegapoint.productdirectory.models.loans.Loan;
+import se.omegapoint.productdirectory.repositories.LoanRepository;
+
+import java.util.List;
+
+@Service
+@Transactional
+public class LoanService {
+
+    private static final Logger log = LoggerFactory.getLogger(LoanService.class);
+
+    private final LoanRepository loanRepository;
+    private final LoanMapper loanMapper;
+
+    // Konstruktor för injection
+    public LoanService(LoanRepository loanRepository, LoanMapper loanMapper) {
+        this.loanRepository = loanRepository;
+        this.loanMapper = loanMapper;
+    }
+
+    // Hämtar och returnerar alla lån
+    public List<LoanResponseDTO> getAllLoans() {
+        log.info("Retrieving all loans");
+
+        return loanRepository.findAll() // Repo/hibernate skapar SQL för att hämta alla lån
+                .stream() // Streamar alla delar en efter en
+                .map(loanMapper::mapToLoanResponse) // Mappar om från entity till DTO
+                .toList(); // Lägger till i lista
+    }
+
+    // Hämtar och returnerar specifikt lån baserat på id
+    public LoanResponseDTO getLoanById(Integer id) {
+        log.info("Retrieving loan by id: {}", id);
+
+        Loan existingLoan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find loan with id: " + id));
+        return loanMapper.mapToLoanResponse(existingLoan);
+    }
+
+    public LoanResponseDTO getLoanByLoanType(String loanType) {
+        log.info("Retrieving loan by loanType: {}", loanType);
+
+        Loan existingLoan = loanRepository.findByLoanType(loanType)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find loan with loanType: " + loanType));
+
+        return loanMapper.mapToLoanResponse(existingLoan);
+    }
+
+    // Skapar nytt lån i databasen och returnerar response
+    public LoanResponseDTO addLoan(LoanRequestDTO request) {
+        log.info("Adding a loan: {}", request);
+
+        Loan entity = loanMapper.mapToLoan(request); // Använder request och mappar till entity
+        Loan savedEntity = loanRepository.save(entity); // Entity sparas i databasen via repo
+
+        return loanMapper.mapToLoanResponse(savedEntity); // Entity mappas om till response-dto och returneras
+    }
+
+    // Uppdaterar specifikt lån baserat på id
+    public LoanResponseDTO updateLoan(Integer id, LoanUpdateDTO request) {
+        log.info("Updating loan with id: {}", id);
+
+        Loan existingLoan = loanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Loan with id " + id + " not found"));
+
+        loanMapper.updateEntityFromDTO(request, existingLoan); // Mappar om befintlig entity med ny data från requestDTO
+        Loan savedEntity = loanRepository.save(existingLoan);
+
+        log.info("Successfully updated loan with id: {}", id);
+        return loanMapper.mapToLoanResponse(savedEntity);
+    }
+
+    // Tar bort specifikt lån baserat på id
+    public void deleteLoan(Integer id) {
+        log.info("Deleting a loan with id: {}", id);
+
+        Loan existingLoan = loanRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Loan with id: " + id + "not found")
+        );
+        loanRepository.delete(existingLoan);
+        log.info("Successfully deleted loan with id: {}", id);
+    }
+
+
+}
+
+FILE: ./src/main/resources/application.properties 
+---
+spring.application.name=productdirectory
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.jpa.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+server.port=8081
+FILE: ./src/main/resources/logback-spring.xml 
+---
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <property name="LOG" value="logs"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} - %highlight(%-5level) [%thread] - %cyan(%c{20}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG}/app.log</file>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %-5level [%thread] - %c{36} - %msg%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>${LOG}/archived/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+
+        </rollingPolicy>
+
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
+
+FILE: ./src/test/java/se/omegapoint/productdirectory/controllers/CreditCardControllerTest.java 
+---
+package se.omegapoint.productdirectory.controllers;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.exceptions.GlobalExceptionHandler;
+import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
+import se.omegapoint.productdirectory.services.CreditCardService;
+import se.omegapoint.productdirectory.testutil.JsonTestUtils;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(CreditCardController.class)
+@Import(GlobalExceptionHandler.class)
+class CreditCardControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private CreditCardService creditCardService;
+
+
+    @Test
+    @DisplayName("Ska returnera en tom lista och status kod 200")
+    void getAllShouldReturn200() throws Exception {
+
+        // Servicen kör getAllCreditCards metoden och returnerar en tom lista
+        when(creditCardService.getAllCreditCards()).thenReturn(List.of());
+
+        //MockMvc testar endpointen med angivna pathen, och returnerar statuskod OK
+        mockMvc.perform(get("/api/creditcard"))
+                .andExpect(status().isOk());
+
+        //Verifierar att service metoden körs en gång
+        verify(creditCardService).getAllCreditCards();
+    }
+
+    @Test
+    @DisplayName("Ska returnera en CreditCard by id och statuskoden 200")
+    void getByIdShouldReturn200() throws Exception {
+        Integer id = 1;
+
+        //Service metoden hämtar id och senare mockas som response DTO
+        when(creditCardService.getCreditCardById(id)).thenReturn(mock(CreditCardResponseDTO.class));
+
+        //MockMvc testar endpointen med angivna pathen genom id, och returnerar statuskod OK
+        mockMvc.perform(get("/api/creditcard/{id}", id))
+                .andExpect(status().isOk());
+
+        //Verifierar att service metoden körs en gång
+        verify(creditCardService).getCreditCardById(id);
+    }
+
+    @Test
+    @DisplayName("Skapar kreditkort och returnerar statuskod 201 om json stämmer")
+    void createShouldReturn201WhenValidBody() throws Exception {
+
+        // Service metoden körs och returnerar en mock av response DTO
+        when(creditCardService.addCreditCard(any()))
+                .thenReturn(mock(CreditCardResponseDTO.class));
+
+        //MockMvc testar endpointen och läser av json valid filen och returnerar statuskod 201 created
+        mockMvc.perform(post("/api/creditcard")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/creditcard-valid.json")))
+                .andExpect(status().isCreated());
+
+        //Verifierar att service metoden körs en gång
+        verify(creditCardService).addCreditCard(any());
+    }
+
+    @Test
+    @DisplayName("Uppdatera ska returnera status kod 200 när json är rätt format")
+    void updateShouldReturn200WhenValidBody() throws Exception {
+        Integer id = 2;
+        when(creditCardService.updateCreditCard(eq(id), any()))
+                .thenReturn(mock(CreditCardResponseDTO.class));
+
+        mockMvc.perform(put("/api/creditcard/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/creditcard-valid.json")))
+                .andExpect(status().isOk());
+
+        verify(creditCardService).updateCreditCard(eq(id), any());
+    }
+
+    @Test
+    @DisplayName("När kortet raderas returnera status kod 204")
+    void deleteShouldReturn204WhenDeleted() throws Exception {
+        Integer id = 3;
+
+        mockMvc.perform(delete("/api/creditcard/{id}", id))
+                .andExpect(status().isNoContent());
+
+        verify(creditCardService).deleteCreditCard(id);
+    }
+
+
+    @Test
+    @DisplayName("När create körs med invalid json body så returneras statuskod 400")
+    void createShouldReturn400WhenInvalidJsonBody() throws Exception {
+        mockMvc.perform(post("/api/creditcard")
+
+                        //Säger att det är JSON-format som ska läsas
+                        .contentType(MediaType.APPLICATION_JSON)
+
+                        //Användning av readJson metoden för att läsa av invalid json filen och göra den till en sträng
+                        .content(JsonTestUtils.readJson("json/creditcard-invalid.json")))
+
+                //Förväntar sig rätt statuskod i detta fall BAD REQUEST
+                .andExpect(status().isBadRequest())
+
+                //Förväntar sig att statuskoden är 400
+                .andExpect(jsonPath("$.status").value(400))
+
+                //Förväntar sig att error msg är validation failed som hämtas från GlobalExceptionHandler
+                .andExpect(jsonPath("$.error").value("Validation failed."))
+
+                //Förväntar sig att pathen är rätt i detta fall /api/creditcard"
+                .andExpect(jsonPath("$.path").value("/api/creditcard"));
+
+        //Verifierar att servicen aldrig körs
+        verifyNoInteractions(creditCardService);
+    }
+
+    @Test
+    @DisplayName("När PUT körs med invalid body så returneras status kod 400")
+    void updateShouldReturn400WhenInvalidBody() throws Exception {
+        Integer id = 4;
+
+        mockMvc.perform(put("/api/creditcard/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/creditcard-invalid.json")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Validation failed."))
+                .andExpect(jsonPath("$.path").value("/api/creditcard/" + id));
+
+        //Verifierar att servicen aldrig körs
+        verifyNoInteractions(creditCardService);
+    }
+
+
+    @Test
+    @DisplayName("När GetById körs så kastas ResourceNotFound Exception om kortet med angivna id inte hittas")
+    void getByIdShouldReturn404WhenServiceThrowsResourceNotFound() throws Exception {
+        Integer id = 5;
+        doThrow(new ResourceNotFoundException("Could not find credit card with id: " + id))
+                .when(creditCardService).getCreditCardById(id);
+
+        mockMvc.perform(get("/api/creditcard/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.path").value("/api/creditcard/" + id));
+
+        verify(creditCardService).getCreditCardById(id);
+    }
+
+    @Test
+    @DisplayName("PUT ska returnera 404 när metoden kastar ResourceNotFound exception")
+    void updateShouldReturn404WhenServiceThrowsResourceNotFound() throws Exception {
+        Integer id = 6;
+        doThrow(new ResourceNotFoundException("Credit card with id " + id + " not found"))
+                .when(creditCardService).updateCreditCard(eq(id), any());
+
+        mockMvc.perform(put("/api/creditcard/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/creditcard-valid.json")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.path").value("/api/creditcard/" + id));
+
+        verify(creditCardService).updateCreditCard(eq(id), any());
+    }
+
+    @Test
+    @DisplayName("Delete ska returnera 404 när servicen kastar ResourceNotFound exception")
+    void deleteShouldReturn404WhenServiceThrowsResourceNotFound() throws Exception {
+        Integer id = 7;
+        doThrow(new ResourceNotFoundException("Credit card with id: " + id + " not found"))
+                .when(creditCardService).deleteCreditCard(id);
+
+        mockMvc.perform(delete("/api/creditcard/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.path").value("/api/creditcard/" + id));
+
+        verify(creditCardService).deleteCreditCard(id);
+    }
+
+
+    @Test
+    @DisplayName("GetById ska returnera statuskod 500 när servicen kastar RuntimeException")
+    void getByIdShouldReturn500WhenServiceThrowsUnexpectedException() throws Exception {
+        Integer id = 8;
+        doThrow(new RuntimeException("Krasch"))
+                .when(creditCardService).getCreditCardById(id);
+
+        mockMvc.perform(get("/api/creditcard/{id}", id))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.error").value("Internal Server Error"))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred."))
+                .andExpect(jsonPath("$.path").value("/api/creditcard/" + id));
+
+        verify(creditCardService).getCreditCardById(id);
+    }
+}
+
+FILE: ./src/test/java/se/omegapoint/productdirectory/controllers/LoanControllerTest.java 
+---
+package se.omegapoint.productdirectory.controllers;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.exceptions.GlobalExceptionHandler;
+import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
+import se.omegapoint.productdirectory.services.LoanService;
+import se.omegapoint.productdirectory.testutil.JsonTestUtils;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(LoanController.class)
+@Import(GlobalExceptionHandler.class)
+class LoanControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private LoanService loanService;
+
+
+    @Test
+    @DisplayName("Ska returnera en tom lista och status kod 200")
+    void getAllShouldReturn200() throws Exception {
+        when(loanService.getAllLoans()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/loan"))
+                .andExpect(status().isOk());
+
+        verify(loanService).getAllLoans();
+    }
+
+    @Test
+    @DisplayName("Ska returnera Loan by id och statuskoden 200")
+    void getByIdShouldReturn200() throws Exception {
+        Integer id = 1;
+        when(loanService.getLoanById(id)).thenReturn(mock(LoanResponseDTO.class));
+
+        mockMvc.perform(get("/api/loan/{id}", id))
+                .andExpect(status().isOk());
+
+        verify(loanService).getLoanById(id);
+    }
+
+    @Test
+    @DisplayName("Skapar loan och returnerar statuskod 201 om json stämmer")
+    void createShouldReturn201WhenValidBody() throws Exception {
+        when(loanService.addLoan(any()))
+                .thenReturn(mock(LoanResponseDTO.class));
+
+        mockMvc.perform(post("/api/loan")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/loan-valid.json")))
+                .andExpect(status().isCreated());
+
+        verify(loanService).addLoan(any());
+    }
+
+    @Test
+    @DisplayName("Uppdatera ska returnera status kod 200 när json är rätt format")
+    void updateShouldReturn200WhenValidBody() throws Exception {
+        Integer id = 2;
+        when(loanService.updateLoan(eq(id), any()))
+                .thenReturn(mock(LoanResponseDTO.class));
+
+        mockMvc.perform(put("/api/loan/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/loan-valid.json")))
+                .andExpect(status().isOk());
+
+        verify(loanService).updateLoan(eq(id), any());
+    }
+
+    @Test
+    @DisplayName("När lånet raderas returnera status kod 204")
+    void deleteShouldReturn204WhenDeleted() throws Exception {
+        Integer id = 3;
+
+        mockMvc.perform(delete("/api/loan/{id}", id))
+                .andExpect(status().isNoContent());
+
+        verify(loanService).deleteLoan(id);
+    }
+
+
+    @Test
+    @DisplayName("När create körs med invalid json body så returneras statuskod 400")
+    void createShouldReturn400WhenInvalidBody() throws Exception {
+        mockMvc.perform(post("/api/loan")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/loan-invalid.json")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Validation failed."))
+                .andExpect(jsonPath("$.path").value("/api/loan"));
+
+        verifyNoInteractions(loanService);
+    }
+
+    @Test
+    @DisplayName("När PUT körs med invalid body så returneras status kod 400")
+    void updateShouldReturn400WhenInvalidBody() throws Exception {
+        Integer id = 4;
+
+        mockMvc.perform(put("/api/loan/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/loan-invalid.json")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Validation failed."))
+                .andExpect(jsonPath("$.path").value("/api/loan/" + id));
+
+        verifyNoInteractions(loanService);
+    }
+
+
+    @Test
+    @DisplayName("När GetById körs så kastas ResourceNotFound Exception om lånet med angivna id inte hittas")
+    void getByIdShouldReturn404WhenServiceThrowsResourceNotFound() throws Exception {
+        Integer id = 5;
+        doThrow(new ResourceNotFoundException("Could not find loan with id: " + id))
+                .when(loanService).getLoanById(id);
+
+        mockMvc.perform(get("/api/loan/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.path").value("/api/loan/" + id));
+
+        verify(loanService).getLoanById(id);
+    }
+
+    @Test
+    @DisplayName("PUT ska returnera 404 när metoden kastar ResourceNotFound exception")
+    void updateShouldReturn404WhenServiceThrowsResourceNotFound() throws Exception {
+        Integer id = 6;
+        doThrow(new ResourceNotFoundException("Loan with id " + id + " not found"))
+                .when(loanService).updateLoan(eq(id), any());
+
+        mockMvc.perform(put("/api/loan/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonTestUtils.readJson("json/loan-valid.json")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.path").value("/api/loan/" + id));
+
+        verify(loanService).updateLoan(eq(id), any());
+    }
+
+    @Test
+    @DisplayName("Delete ska returnera 404 när servicen kastar ResourceNotFound exception")
+    void deleteShouldReturn404WhenServiceThrowsResourceNotFound() throws Exception {
+        Integer id = 7;
+        doThrow(new ResourceNotFoundException("Loan with id: " + id + " not found"))
+                .when(loanService).deleteLoan(id);
+
+        mockMvc.perform(delete("/api/loan/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.path").value("/api/loan/" + id));
+
+        verify(loanService).deleteLoan(id);
+    }
+
+
+    @Test
+    @DisplayName("GetById ska returnera statuskod 500 när servicen kastar RuntimeException")
+    void getByIdShouldReturn500WhenUnexpectedException() throws Exception {
+        Integer id = 8;
+        doThrow(new RuntimeException("Boom"))
+                .when(loanService).getLoanById(id);
+
+        mockMvc.perform(get("/api/loan/{id}", id))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.error").value("Internal Server Error"))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred."))
+                .andExpect(jsonPath("$.path").value("/api/loan/" + id));
+
+        verify(loanService).getLoanById(id);
+    }
+}
+
+FILE: ./src/test/java/se/omegapoint/productdirectory/mappers/CreditCardMapperTest.java 
+---
+package se.omegapoint.productdirectory.mappers;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.models.creditcards.CreditCard;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+
+import java.math.BigDecimal;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class CreditCardMapperTest {
+
+
+    private final CreditCardMapper creditCardMapper = new CreditCardMapper();
+
+
+    @Test
+    @DisplayName("Ska mappa om entitet till response")
+    void shouldMapEntityToResponse() {
+
+        // ARRANGE
+
+        // Mocka CreditCard entity
+        CreditCard entity = mock(CreditCard.class);
+
+        // Sätt in dummy-värden för entity
+        when(entity.getProductId()).thenReturn(7);
+        when(entity.getProductType()).thenReturn(ProductType.CREDIT_CARD);
+        when(entity.getProductStatus()).thenReturn(ProductStatus.ACTIVE);
+        when(entity.getCreditCardType()).thenReturn("GOLD");
+        when(entity.getCreditLimit()).thenReturn(new BigDecimal("20000"));
+        when(entity.getFee()).thenReturn(new BigDecimal("200"));
+        when(entity.getInterestRate()).thenReturn(new BigDecimal("2"));
+        when(entity.getDescription()).thenReturn("Premium credit card with rewards");
+
+        // ACT
+
+        // Mappa enity till response
+        CreditCardResponseDTO response = creditCardMapper.mapToCreditCardResponse(entity);
+
+        // ASSERT
+
+        // Hur vi förväntar oss att responsen ska se ut efter mappning
+        assertThat(response.productId()).isEqualTo(7);
+        assertThat(response.productType()).isEqualTo(ProductType.CREDIT_CARD);
+        assertThat(response.productStatus()).isEqualTo(ProductStatus.ACTIVE);
+        assertThat(response.creditCardType()).isEqualTo("GOLD");
+        assertThat(response.creditLimit()).isEqualByComparingTo(new BigDecimal("20000"));
+        assertThat(response.fee()).isEqualByComparingTo(new BigDecimal("200"));
+        assertThat(response.interestRate()).isEqualByComparingTo(new BigDecimal("2"));
+        assertThat(response.description()).isEqualTo("Premium credit card with rewards");
+
+
+    }
+
+    @Test
+    @DisplayName("Ska mappa request till entitet")
+    void shouldMapRequestToEntity() {
+
+        // ARRANGE
+
+        // Skapa en request med dummy data
+        CreditCardRequestDTO request = new CreditCardRequestDTO(
+                ProductStatus.ACTIVE,
+                ("GOLD"),
+                new BigDecimal("50000"), // creditLimit
+                new BigDecimal("150"), // fee
+                new BigDecimal("3"), // interestRate
+                "Premium gold credit card"  // description
+        );
+
+        // ACT
+
+        // Mappa om requesten till en entity
+        CreditCard entity = creditCardMapper.mapToCreditCardEntity(request);
+
+        // ASSERT
+
+        // Hur vi förväntar oss att datan mappas
+
+        assertThat(entity.getProductStatus()).isEqualTo(ProductStatus.ACTIVE);
+        assertThat(entity.getCreditCardType()).isEqualTo("GOLD");
+        assertThat(entity.getCreditLimit()).isEqualByComparingTo(new BigDecimal("50000"));
+        assertThat(entity.getFee()).isEqualByComparingTo(new BigDecimal("150"));
+        assertThat(entity.getInterestRate()).isEqualByComparingTo(new BigDecimal("3"));
+        assertThat(entity.getDescription()).isEqualTo("Premium gold credit card");
+
+        // Kontrollerar att rätt produkttyp blir satt, i detta fall CREDIT_CARD
+        assertThat(entity.getProductType()).isEqualTo(ProductType.CREDIT_CARD);
+
+        // Kontrollerar att id är null eftersom detta ska genereras automatiskt senare
+        assertThat(entity.getProductId()).isNull();
+
+
+    }
+
+}
+
+FILE: ./src/test/java/se/omegapoint/productdirectory/mappers/LoanMapperTest.java 
+---
+package se.omegapoint.productdirectory.mappers;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
+import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.models.enums.ProductStatus;
+import se.omegapoint.productdirectory.models.enums.ProductType;
+import se.omegapoint.productdirectory.models.loans.Loan;
+
+import java.math.BigDecimal;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class LoanMapperTest {
+
+    private final LoanMapper loanMapper = new LoanMapper();
+
+
+    @Test
+    @DisplayName("Ska mappa entitet till response")
+    void shouldMapEntityToResponse() {
+
+        // ARRANGE
+
+        // Mocka Loan entity
+        Loan entity = mock(Loan.class);
+
+        // Sätt in dummy-värden för entity
+        when(entity.getProductId()).thenReturn(7);
+        when(entity.getProductType()).thenReturn(ProductType.LOAN);
+        when(entity.getProductStatus()).thenReturn(ProductStatus.ACTIVE);
+        when(entity.getLoanType()).thenReturn("PRIVATE");
+        when(entity.getMinAmount()).thenReturn(new BigDecimal("500"));
+        when(entity.getMaxAmount()).thenReturn(new BigDecimal("20000"));
+        when(entity.getInterestRate()).thenReturn(new BigDecimal("2"));
+        when(entity.getDescription()).thenReturn("Personal loan for private use");
+
+        // ACT
+
+        // Mappa entity till response
+        LoanResponseDTO response = loanMapper.mapToLoanResponse(entity);
+
+        // ASSERT
+
+        // Hur vi förväntar oss att response ska se ut efter mappning
+        assertThat(response.productId()).isEqualTo(7);
+        assertThat(response.productType()).isEqualTo(ProductType.LOAN);
+        assertThat(response.productStatus()).isEqualTo(ProductStatus.ACTIVE);
+        assertThat(response.loanType()).isEqualTo("PRIVATE");
+        assertThat(response.minAmount()).isEqualByComparingTo(new BigDecimal("500"));
+        assertThat(response.maxAmount()).isEqualByComparingTo(new BigDecimal("20000"));
+        assertThat(response.interestRate()).isEqualByComparingTo(new BigDecimal("2"));
+        assertThat(response.description()).isEqualTo("Personal loan for private use");
+
+
+    }
+
+    @Test
+    @DisplayName("Ska mappa request till entitet")
+    void shouldMapRequestToEntity() {
+
+        // ARRANGE
+
+        // Skapa en request med dummy data
+        LoanRequestDTO request = new LoanRequestDTO(
+                ProductStatus.ACTIVE,
+                "PRIVATE",
+                new BigDecimal("0"), // minAmount
+                new BigDecimal("50000"), // maxAmount
+                new BigDecimal("3"), // interestRate
+                "Personal loan for private use"  // description
+        );
+
+        // ACT
+
+        // Mappa om requesten till en entity
+        Loan entity = loanMapper.mapToLoan(request);
+
+        // ASSERT
+
+        // Hur vi förväntar oss att datan mappas
+
+        assertThat(entity.getProductStatus()).isEqualTo(ProductStatus.ACTIVE);
+        assertThat(entity.getLoanType()).isEqualTo("PRIVATE");
+        assertThat(entity.getMinAmount()).isEqualByComparingTo(new BigDecimal("0"));
+        assertThat(entity.getMaxAmount()).isEqualByComparingTo(new BigDecimal("50000"));
+        assertThat(entity.getInterestRate()).isEqualByComparingTo(new BigDecimal("3"));
+        assertThat(entity.getDescription()).isEqualTo("Personal loan for private use");
+
+        // Kontrollerar att rätt produkttyp blir satt, i detta fall LOAN
+        assertThat(entity.getProductType()).isEqualTo(ProductType.LOAN);
+
+        // Kontrollerar att id är null eftersom detta ska genereras automatiskt senare
+        assertThat(entity.getProductId()).isNull();
+
+
+    }
+
+}
+
+
+FILE: ./src/test/java/se/omegapoint/productdirectory/services/CreditCardServiceTest.java 
+---
+package se.omegapoint.productdirectory.services;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import se.omegapoint.productdirectory.dtos.CreditCardRequestDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardResponseDTO;
+import se.omegapoint.productdirectory.dtos.CreditCardUpdateDTO;
+import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
+import se.omegapoint.productdirectory.mappers.CreditCardMapper;
+import se.omegapoint.productdirectory.models.creditcards.CreditCard;
+import se.omegapoint.productdirectory.repositories.CreditCardRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Credit Card Services Test")
+class CreditCardServiceTest {
+
+    @Mock
+    CreditCardRepository creditCardRepository;
+
+    @Mock
+    CreditCardMapper creditCardMapper;
+
+    @InjectMocks
+    CreditCardService creditCardService;
+
+
+    @Test
+    @DisplayName("Hämtar alla Creditcard")
+    void getAllCreditCardsShouldReturnAllMappedCreditCards() {
+
+        //ARRANGE
+
+        //Skapar två creditcard entity
+        CreditCard card1 = new CreditCard();
+        CreditCard card2 = new CreditCard();
+
+        // Mocka DTO-objekt
+        CreditCardResponseDTO dto1 = mock(CreditCardResponseDTO.class);
+        CreditCardResponseDTO dto2 = mock(CreditCardResponseDTO.class);
+
+        //Skapar en lista med båda entity
+        List<CreditCard> cards = List.of(card1, card2);
+
+
+        // Sätter vad mockarna ska returnera
+        when(creditCardRepository.findAll()).thenReturn(cards);
+        when(creditCardMapper.mapToCreditCardResponse(card1)).thenReturn(dto1);
+        when(creditCardMapper.mapToCreditCardResponse(card2)).thenReturn(dto2);
+
+        //ACT
+
+        // Anropar metoden
+        List<CreditCardResponseDTO> result = creditCardService.getAllCreditCards();
+
+        //ASSERT
+
+        // Resultatet får inte retunera null
+        assertNotNull(result);
+
+        // Kontrollerar att listan innehåller två objekt
+        assertEquals(2, result.size());
+
+        // Kontrollerar att listan innehåller dto-objekt
+        assertTrue(result.contains(dto1));
+        assertTrue(result.contains(dto2));
+
+        // Verifierar att findAll() körs en gång
+        verify(creditCardRepository, times(1)).findAll();
+
+        // Verifierar att båda creditcard entity mappas om till DTO
+        verify(creditCardMapper, times(1)).mapToCreditCardResponse(card1);
+        verify(creditCardMapper, times(1)).mapToCreditCardResponse(card2);
+
+        verifyNoMoreInteractions(creditCardRepository, creditCardMapper);
+
+    }
+
+    @Test
+    @DisplayName("Hämtar och retunerar Creditcard med specifik ID")
+    void getCreditCardByIdShouldReturnMappedCreditCardById() {
+
+        //ARRANGE
+
+        // Id:et för vår test
+        Integer id = 1;
+
+        // Skapar Creditcard
+        CreditCard card = new CreditCard();
+
+        // Mockar response-DTO som mapparen ska retunera
+        CreditCardResponseDTO response = mock(CreditCardResponseDTO.class);
+
+        // Repository hämtar kortet med hjälp av Id från db
+        when(creditCardRepository.findById(id)).thenReturn(Optional.of(card));
+
+        // Entity mappas om till dto och returnerar response
+        when(creditCardMapper.mapToCreditCardResponse(card)).thenReturn(response);
+
+        //ACT
+
+        // Anropar metoden
+        CreditCardResponseDTO result = creditCardService.getCreditCardById(id);
+
+        //ASSERT
+
+        // Resultatet får inte retunera null
+        assertNotNull(result);
+
+        // Kontrollerar att rätt dto retuneras
+        assertEquals(response, result);
+
+        // Verifierar att findById körs en gång och att det anropas med rätt id
+        verify(creditCardRepository, times(1)).findById(id);
+
+        // Verifierar att entity mappas till dto och körs en gång
+        verify(creditCardMapper, times(1)).mapToCreditCardResponse(card);
+
+        // Inga mer verifieringar/anrop sker
+        verifyNoMoreInteractions(creditCardRepository, creditCardMapper);
+
+    }
+
+    @Test
+    @DisplayName("Adderar Credit card och sparar den till db samt returnerar response ")
+    void addCreditCardShouldMapSaveAndReturnMappedDTO() {
+
+        //ARRANGE
+
+        // Mockar Request-dto
+        CreditCardRequestDTO request = mock(CreditCardRequestDTO.class);
+
+        // Skapar Creditcard
+        CreditCard card = new CreditCard();
+
+        // Skapar entity som repository ska returnera
+        CreditCard savedCard = new CreditCard();
+
+        // Mockar response-dto
+        CreditCardResponseDTO response = mock(CreditCardResponseDTO.class);
+
+        //Mappar till ett CreditCarrd entity
+        when(creditCardMapper.mapToCreditCardEntity(request)).thenReturn(card);
+
+        // Repository sparar entity och returnerar den sparade versionen
+        when(creditCardRepository.save(card)).thenReturn(savedCard);
+
+        // Mappar sparat entity till response-dto
+        when(creditCardMapper.mapToCreditCardResponse(savedCard)).thenReturn(response);
+
+        //ACT
+
+        // Anroper metoden som ska testas
+        CreditCardResponseDTO result = creditCardService.addCreditCard(request);
+
+        //ASSERT
+
+        //Kontrollerar att resultatet inte är null
+        assertNotNull(result);
+
+        //Kontrollerar att rätt response retuneras
+        assertEquals(response, result);
+
+        // Verifiera att request mappas till entity
+        verify(creditCardMapper, times(1)).mapToCreditCardEntity(request);
+
+        //Verifierar att entity sparas i repository
+        verify(creditCardRepository, times(1)).save(card);
+
+        //Verifierar att sparad entity mappas till response-dto
+        verify(creditCardMapper, times(1)).mapToCreditCardResponse(savedCard);
+
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(creditCardMapper, creditCardRepository);
+
+
+    }
+
+    @Test
+    @DisplayName("Hittar,uppdaterar och sparar Credit card by id. Returnerar dto ")
+    void updateCreditCardByIdShouldUpdateCreditCardByIdAndReturnDTO() {
+
+        //ARRANGE
+
+        Integer id = 1;
+
+        // Mockar update-dto
+        CreditCardUpdateDTO request = mock(CreditCardUpdateDTO.class);
+
+        //Existerande kreditcard
+        CreditCard existingCard = new CreditCard();
+
+        //Sparad entity efter uppdatering
+        CreditCard savedCard = new CreditCard();
+
+        // Mockar response-dto
+        CreditCardResponseDTO response = mock(CreditCardResponseDTO.class);
+
+        //Repository hittar kortet
+        when(creditCardRepository.findById(id)).thenReturn(Optional.of(existingCard));
+
+        // Repository sparar och returnerar uppdaterad entity
+        when(creditCardRepository.save(existingCard)).thenReturn(savedCard);
+
+        // Mappar sparad entity till response-dto
+        when(creditCardMapper.mapToCreditCardResponse(savedCard)).thenReturn(response);
+
+        //ACT
+
+        CreditCardResponseDTO result = creditCardService.updateCreditCard(id, request);
+
+        //ASSERT
+
+        assertNotNull(result);
+        assertEquals(response, result);
+
+        // Verifierar att kortet hämtas via id
+        verify(creditCardRepository, times(1)).findById(id);
+
+        //Verifierar att befintlig entity uppdatera med data från request
+        verify(creditCardMapper, times(1)).updateEntityFromDTO(request, existingCard);
+
+        //Verifierar att uppdaterad entity sparas
+        verify(creditCardRepository, times(1)).save(existingCard);
+
+        //Verifierar att sparad entity mappas till response-dto
+        verify(creditCardMapper, times(1)).mapToCreditCardResponse(savedCard);
+
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(creditCardRepository, creditCardMapper);
+    }
+
+    @Test
+    @DisplayName("Kastar en Exception när card by id inte hittas")
+    void updateCreditCardShouldThrowResourceNotFoundExceptionWhenNotFound() {
+
+        //ARRANGE
+
+        Integer id = 99;
+        CreditCardUpdateDTO request = mock(CreditCardUpdateDTO.class);
+
+        when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
+
+        //ACT + ASSERT
+        ResourceNotFoundException ex = assertThrows(
+                ResourceNotFoundException.class,
+                () -> creditCardService.updateCreditCard(id, request)
+        );
+
+        assertEquals("Credit card with id " + id + " not found", ex.getMessage());
+
+        // Verifierar att repository anropas
+        verify(creditCardRepository, times(1)).findById(id);
+
+        //Mapper och save ska int anropas när inget hittas
+        verifyNoMoreInteractions(creditCardMapper, creditCardRepository);
+
+        verifyNoMoreInteractions(creditCardRepository);
+
+    }
+
+    @Test
+    @DisplayName("Raderar Credit card by id")
+    void deleteCreditCardShouldDeleteCreditCardById() {
+
+        //ARRANGE
+
+        Integer id = 1;
+        CreditCard card = new CreditCard();
+
+        // Repository hittar kreditkort
+        when(creditCardRepository.findById(id)).thenReturn(Optional.of(card));
+
+        //ACT
+
+        creditCardService.deleteCreditCard(id);
+
+        //ASSERT
+
+        // Verifierar att repository hämtar kortet
+        verify(creditCardRepository, times(1)).findById(id);
+
+        // Verifierar att repository tar bort rätt entity
+        verify(creditCardRepository, times(1)).delete(card);
+
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(creditCardRepository);
+    }
+
+    @Test
+    @DisplayName("Kastar en Exception när card by id inte hittas")
+    void deleteCreditCardShouldThrowResourceNotFoundExceptionWhenNotFound() {
+
+        //ARRANGE
+        Integer id = 77;
+
+        when(creditCardRepository.findById(id)).thenReturn(Optional.empty());
+
+        // ACT + ASSERT
+
+        ResourceNotFoundException ex = assertThrows(
+                ResourceNotFoundException.class,
+                () -> creditCardService.deleteCreditCard(id)
+        );
+
+        assertEquals(
+                "Credit card with id: " + id + " not found",
+                ex.getMessage()
+        );
+
+        // Verifierar att repository anropas
+        verify(creditCardRepository, times(1)).findById(id);
+
+        // delete ska inte anropas om inget hittas
+        verify(creditCardRepository, never()).delete(any());
+
+        verifyNoMoreInteractions(creditCardRepository);
+
+    }
+}
+FILE: ./src/test/java/se/omegapoint/productdirectory/services/LoanServiceTest.java 
+---
+package se.omegapoint.productdirectory.services;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import se.omegapoint.productdirectory.dtos.LoanRequestDTO;
+import se.omegapoint.productdirectory.dtos.LoanResponseDTO;
+import se.omegapoint.productdirectory.dtos.LoanUpdateDTO;
+import se.omegapoint.productdirectory.exceptions.ResourceNotFoundException;
+import se.omegapoint.productdirectory.mappers.LoanMapper;
+import se.omegapoint.productdirectory.models.loans.Loan;
+import se.omegapoint.productdirectory.repositories.LoanRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName(" Loan Services Test")
+class LoanServiceTest {
+
+    @Mock
+    LoanRepository loanRepository;
+
+    @Mock
+    LoanMapper loanMapper;
+
+    @InjectMocks
+    LoanService loanService;
+
+    @Test
+    @DisplayName("Hämtar alla Loan")
+    void getAllLoansShouldReturnAllMappedLoans() {
+
+        //ARRANGE
+
+        //Skapar två loan entity
+        Loan loan1 = new Loan();
+        Loan loan2 = new Loan();
+
+        // Mocka DTO-objekt
+        LoanResponseDTO dto1 = mock(LoanResponseDTO.class);
+        LoanResponseDTO dto2 = mock(LoanResponseDTO.class);
+
+        //Skapar en lista med båda entity
+        List<Loan> loans = List.of(loan1, loan2);
+
+
+        // Sätter vad mockarna ska returnera
+        when(loanRepository.findAll()).thenReturn(loans);
+        when(loanMapper.mapToLoanResponse(loan1)).thenReturn(dto1);
+        when(loanMapper.mapToLoanResponse(loan2)).thenReturn(dto2);
+
+        //ACT
+
+        // Anropar metoden
+        List<LoanResponseDTO> result = loanService.getAllLoans();
+
+        //ASSERT
+
+        // Resultatet får inte retunera null
+        assertNotNull(result);
+
+        // Kontrollerar att listan innehåller två objekt
+        assertEquals(2, result.size());
+
+        // Kontrollerar att listan innehåller dto-objekt
+        assertTrue(result.contains(dto1));
+        assertTrue(result.contains(dto2));
+
+        // Verifierar att findAll() körs en gång
+        verify(loanRepository, times(1)).findAll();
+
+        // Verifierar att båda loan entity mappas om till DTO
+        verify(loanMapper, times(1)).mapToLoanResponse(loan1);
+        verify(loanMapper, times(1)).mapToLoanResponse(loan2);
+
+        verifyNoMoreInteractions(loanRepository, loanMapper);
+
+    }
+
+    @Test
+    @DisplayName("Hämtar och retunerar Loan med specifik ID")
+    void getLoanByIdShouldReturnMappedLoanById() {
+
+        //ARRANGE
+
+        // Id:et för vår test
+        Integer id = 1;
+
+        // Skapar Loan
+        Loan loan = new Loan();
+
+        // Mockar response-DTO som mapparen ska retunera
+        LoanResponseDTO response = mock(LoanResponseDTO.class);
+
+        // Repository hämtar kortet med hjälp av Id från db
+        when(loanRepository.findById(id)).thenReturn(Optional.of(loan));
+
+        // Entity mappas om till dto och returnerar response
+        when(loanMapper.mapToLoanResponse(loan)).thenReturn(response);
+
+        //ACT
+
+        // Anropar metoden
+        LoanResponseDTO result = loanService.getLoanById(id);
+
+        //ASSERT
+
+        // Resultatet får inte retunera null
+        assertNotNull(result);
+
+        // Kontrollerar att rätt dto retuneras
+        assertEquals(response, result);
+
+        // Verifierar att findById körs en gång och att det anropas med rätt id
+        verify(loanRepository, times(1)).findById(id);
+
+        // Verifierar att entity mappas till dto och körs en gång
+        verify(loanMapper, times(1)).mapToLoanResponse(loan);
+
+        // Inga mer verifieringar/anrop sker
+        verifyNoMoreInteractions(loanRepository, loanMapper);
+
+    }
+
+    @Test
+    @DisplayName("Adderar  loan och sparar den till db samt returnerar response ")
+    void addLoanShouldMapSaveAndReturnMappedDTO() {
+
+        //ARRANGE
+
+        // Mockar Request-dto
+        LoanRequestDTO request = mock(LoanRequestDTO.class);
+
+        // Skapar loan
+        Loan loan = new Loan();
+
+        // Skapar entity som repository ska returnera
+        Loan savedLoan = new Loan();
+
+        // Mockar response-dto
+        LoanResponseDTO response = mock(LoanResponseDTO.class);
+
+        //Mappar till ett loan entity
+        when(loanMapper.mapToLoan(request)).thenReturn(loan);
+
+        // Repository sparar entity och returnerar den sparade versionen
+        when(loanRepository.save(loan)).thenReturn(savedLoan);
+
+        // Mappar sparat entity till response-dto
+        when(loanMapper.mapToLoanResponse(savedLoan)).thenReturn(response);
+
+        //ACT
+
+        // Anroper metoden som ska testas
+        LoanResponseDTO result = loanService.addLoan(request);
+
+        //ASSERT
+
+        //Kontrollerar att resultatet inte är null
+        assertNotNull(result);
+
+        //Kontrollerar att rätt response retuneras
+        assertEquals(response, result);
+
+        // Verifiera att request mappas till entity
+        verify(loanMapper, times(1)).mapToLoan(request);
+
+        //Verifierar att entity sparas i repository
+        verify(loanRepository, times(1)).save(loan);
+
+        //Verifierar att sparad entity mappas till response-dto
+        verify(loanMapper, times(1)).mapToLoanResponse(savedLoan);
+
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(loanMapper, loanRepository);
+
+
+    }
+
+    @Test
+    @DisplayName("Hittar,uppdaterar och sparar  loan by id. Returnerar dto ")
+    void updateLoanByIdShouldUpdateLoanByIdAndReturnDTO() {
+
+        //ARRANGE
+
+        Integer id = 1;
+
+        // Mockar request-dto
+        LoanUpdateDTO request = mock(LoanUpdateDTO.class);
+
+        //Existerande loan
+        Loan existingLoan = new Loan();
+
+        //Sparad entity efter uppdatering
+        Loan savedLoan = new Loan();
+
+        // Mockar response-dto
+        LoanResponseDTO response = mock(LoanResponseDTO.class);
+
+        //Repository hittar kortet
+        when(loanRepository.findById(id)).thenReturn(Optional.of(existingLoan));
+
+        // Repository sparar och returnerar uppdaterad entity
+        when(loanRepository.save(existingLoan)).thenReturn(savedLoan);
+
+        // Mappar sparad entity till response-dto
+        when(loanMapper.mapToLoanResponse(savedLoan)).thenReturn(response);
+
+        //ACT
+
+        LoanResponseDTO result = loanService.updateLoan(id, request);
+
+        //ASSERT
+
+        assertNotNull(result);
+        assertEquals(response, result);
+
+        // Verifierar att kortet hämtas via id
+        verify(loanRepository, times(1)).findById(id);
+
+        //Verifierar att befintlig entity uppdatera med data från request
+        verify(loanMapper, times(1)).updateEntityFromDTO(request, existingLoan);
+
+        //Verifierar att uppdaterad entity sparas
+        verify(loanRepository, times(1)).save(existingLoan);
+
+        //Verifierar att sparad entity mappas till response-dto
+        verify(loanMapper, times(1)).mapToLoanResponse(savedLoan);
+
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(loanRepository, loanMapper);
+    }
+
+    @Test
+    @DisplayName("Kastar en Exception när loan by id inte hittas")
+    void updateLoanShouldThrowResourceNotFoundExceptionWhenNotFound() {
+
+        //ARRANGE
+
+        Integer id = 99;
+        LoanUpdateDTO request = mock(LoanUpdateDTO.class);
+
+        when(loanRepository.findById(id)).thenReturn(Optional.empty());
+
+        //ACT + ASSERT
+        ResourceNotFoundException ex = assertThrows(
+                ResourceNotFoundException.class,
+                () -> loanService.updateLoan(id, request)
+        );
+
+        assertEquals("Loan with id " + id + " not found", ex.getMessage());
+
+        // Verifierar att repository anropas
+        verify(loanRepository, times(1)).findById(id);
+
+        //Mapper och save ska int anropas när inget hittas
+        verifyNoMoreInteractions(loanMapper, loanRepository);
+
+        verifyNoMoreInteractions(loanRepository);
+
+    }
+
+    @Test
+    @DisplayName("Raderar loan by id")
+    void deleteLoanShouldDeleteLoanById() {
+
+        //ARRANGE
+
+        Integer id = 1;
+        Loan loan = new Loan();
+
+        // Repository hittar loan
+        when(loanRepository.findById(id)).thenReturn(Optional.of(loan));
+
+        //ACT
+
+        loanService.deleteLoan(id);
+
+        //ASSERT
+
+        // Verifierar att repository hämtar loan
+        verify(loanRepository, times(1)).findById(id);
+
+        // Verifierar att repository tar bort rätt entity
+        verify(loanRepository, times(1)).delete(loan);
+
+        // Säkerställer att inga extra anrop görs
+        verifyNoMoreInteractions(loanRepository);
+    }
+
+    @Test
+    @DisplayName("Kastar en Exception när loan by id inte hittas")
+    void deleteLoanShouldThrowResourceNotFoundExceptionWhenNotFound() {
+
+        //ARRANGE
+        Integer id = 77;
+
+        when(loanRepository.findById(id)).thenReturn(Optional.empty());
+
+        // ACT + ASSERT
+
+        ResourceNotFoundException ex = assertThrows(
+                ResourceNotFoundException.class,
+                () -> loanService.deleteLoan(id)
+        );
+
+        assertEquals(
+                "Loan with id: " + id + "not found",
+                ex.getMessage()
+        );
+
+        // Verifierar att repository anropas
+        verify(loanRepository, times(1)).findById(id);
+
+        // delete ska inte anropas om inget hittas
+        verify(loanRepository, never()).delete(any());
+
+        verifyNoMoreInteractions(loanRepository);
+
+    }
+}
+FILE: ./src/test/java/se/omegapoint/productdirectory/testutil/JsonTestUtils.java 
+---
+package se.omegapoint.productdirectory.testutil;
+
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+public final class JsonTestUtils {
+
+    private JsonTestUtils() {
+    }
+
+    //Metoden hämtar json filerna och läser av de i bytes och gör till en sträng. Om det inte funkar kastar den exception.
+    public static String readJson(String classpathResource) {
+        try (InputStream is = JsonTestUtils.class.getClassLoader().getResourceAsStream(classpathResource)) {
+            if (is == null) {
+                throw new IllegalArgumentException("Missing test resource: " + classpathResource);
+            }
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read test resource: " + classpathResource, e);
+        }
+    }
+}
